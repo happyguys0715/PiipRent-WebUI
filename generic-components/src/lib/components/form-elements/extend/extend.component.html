@@ -1,0 +1,242 @@
+<div class="wrapper">
+  <div class="main title">
+    {{ 'select_dates' | translate : { Default: 'Select Dates' } }}
+  </div>
+
+  <ng-container
+    webuiFormElement
+    [config]="viewConfig.shiftsDates"
+    [group]="viewData"
+    (event)="eventHandler()">
+  </ng-container>
+
+  <div class="form-element-inline-container" *ngIf="viewConfig">
+    <b>{{ 'extend' | translate : { Default: 'Extend' } }}:</b>
+
+    <ng-container
+      webuiFormElement
+      [config]="viewConfig.extendDates"
+      (event)="autofillDates($event)"
+      [group]="viewData">
+    </ng-container>
+
+    <ng-container
+      webuiFormElement
+      [config]="viewConfig.extendCandidates"
+      (event)="autofillCandidates($event)"
+      [group]="viewData">
+    </ng-container>
+
+    <webui-info
+      class="pl-2"
+      *ngIf="!showAvailability || !viewData.value.extendCandidates"
+      placement="right"
+      [description]="fillinfo">
+    </webui-info>
+
+    <webui-info
+      class="pl-2"
+      *ngIf="showAvailability && viewData.value.extendCandidates"
+      [danger]="true"
+      placement="right"
+      triggersType="click"
+      [description]="availableinfo">
+    </webui-info>
+
+    <span
+      class="message"
+      *ngIf="showAvailability && viewData.value.extendCandidates">
+      {{
+        'candidate_replaced'
+          | translate
+            : {
+                Default:
+                  'Candidate was replaced for some dates, due to unavailability'
+              }
+      }}
+    </span>
+  </div>
+
+  <ng-container *ngIf="shifts && shifts.length">
+    <div class="shifts-header">
+      <div class="title">
+        {{ 'shifts' | translate : { Default: 'Shifts' } }}
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-shadow btn-primary mr-3 py-2 px-4"
+        (click)="autocompleteCandidates()">
+        {{ 'autocomplete' | translate : { Default: 'Autocomplete' } }}
+        <webui-spinner *ngIf="autocompleteProcess"></webui-spinner>
+      </button>
+      <webui-info placement="left" [description]="requirements"></webui-info>
+    </div>
+
+    <div class="shift" *ngFor="let shift of shifts; let i = index">
+      <div class="flex items-center mb-2">
+        <span class="shift-date">
+          {{ shift.date }}
+        </span>
+        <button
+          type="button"
+          class="btn btn-link flex items-center"
+          (click)="addTime(shift)">
+          {{ 'action.add-shift' | translate }}
+          <webui-fa-icon
+            class="ml-1"
+            [icon]="['fas', 'plus-circle']"></webui-fa-icon>
+        </button>
+      </div>
+
+      <div class="col">
+        <ng-container
+          *ngFor="let group of shift.data.controls; let index = index">
+          <ng-container *ngIf="shift.config[index]">
+            <ng-container
+              *ngTemplateOutlet="
+                date;
+                context: {
+                  group: group,
+                  config: shift.config[index],
+                  index: index,
+                  target: shift.data,
+                  parentIndex: i
+                }
+              "></ng-container>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #requirements>
+  <div class="info-block">
+    <h6 class="info-block__title">
+      {{
+        'fill_shifts'
+          | translate : { Default: 'Fills shifts automatically using criteria' }
+      }}
+      :
+    </h6>
+    <ul class="info-block__list">
+      <li class="info-block__item">
+        <webui-fa-icon class="info-block__icon" icon="circle"></webui-fa-icon>
+        {{ 'candidate_score' | translate : { Default: 'Candidate Score' } }}
+      </li>
+      <li class="info-block__item">
+        <webui-fa-icon class="info-block__icon" icon="circle"></webui-fa-icon>
+        {{ 'distance' | translate : { Default: 'Distance to the jobsite' } }}
+      </li>
+      <li class="info-block__item">
+        <webui-fa-icon class="info-block__icon" icon="circle"></webui-fa-icon>
+        {{
+          'latest_activity'
+            | translate : { Default: 'Latest previous activity' }
+        }}
+      </li>
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #fillinfo>
+  <div *ngIf="autoFillData" class="info-block">
+    <h6 class="info-block__title">
+      {{
+        'use_information'
+          | translate
+            : { Default: 'Use information from last fullfilled shift' }
+      }}:
+    </h6>
+    <ul class="info-block__list" *ngFor="let date of autoFillData">
+      <li class="info-block__item">
+        <webui-fa-icon class="info-block__icon" icon="circle"></webui-fa-icon>
+        {{ date.shift_datetime | dateFormat : 'datetime' }}
+      </li>
+      <li class="info-block__item" *ngFor="let candidate of date.candidates">
+        <webui-fa-icon class="info-block__icon" icon="circle"></webui-fa-icon>
+        {{ candidate.__str__ }}
+      </li>
+    </ul>
+  </div>
+  <div class="text-danger" *ngIf="!autoFillData">
+    {{
+      'fullfilled_shift'
+        | translate : { Default: "Fulfilled shift doesn't exist on this job!" }
+    }}
+  </div>
+</ng-template>
+
+<ng-template
+  #date
+  let-group="group"
+  let-config="config"
+  let-index="index"
+  let-target="target"
+  let-parentIndex="parentIndex">
+  <div class="row">
+    <div class="time">
+      <ng-container
+        webuiFormElement
+        [config]="config.time"
+        (event)="timeChange($event, config)"
+        [group]="group">
+      </ng-container>
+    </div>
+
+    <div class="workers">
+      <ng-container webuiFormElement [config]="config.workers" [group]="group">
+      </ng-container>
+    </div>
+
+    <div class="candidates">
+      <ng-container
+        webuiFormElement
+        [config]="config.candidates"
+        [group]="group">
+      </ng-container>
+    </div>
+
+    <!-- <webui-close-button
+      [sm]="true"
+      (click)="removeTime(target, index, parentIndex)">
+    </webui-close-button> -->
+  </div>
+</ng-template>
+
+<ng-template #availableinfo>
+  <div class="available-info">
+    <h6 class="available-info-title">
+      {{
+        'unavailable_candidates'
+          | translate : { Default: 'Unavailable candidates, dates and reason' }
+      }}
+    </h6>
+
+    <div
+      class="candidate-available-info"
+      *ngFor="let candidate of availabilityCandidates">
+      <ng-container *ngIf="candidate.show">
+        <span class="candidate-name">{{ candidate.candidateName }}</span>
+        <div class="flex" *ngFor="let shift of candidate.shifts">
+          <ng-container *ngIf="shift.show">
+            <div class="available-info-datetime">
+              {{ shift.datetime | dateFormat : 'datetime' }}
+            </div>
+            <span class="flex flex-wrap" *ngFor="let message of shift.messages">
+              {{ message.status }}&nbsp;
+              <a
+                class="description"
+                *ngIf="message.job"
+                href="{{ '/hr/jobs/' + message.job + '/change' }}"
+                target="_black">
+                &nbsp;to {{ message.message }}
+              </a>
+            </span>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>

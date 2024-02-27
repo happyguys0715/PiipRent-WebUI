@@ -1,0 +1,239 @@
+<div
+  *ngIf="!config.hidden || showButton"
+  [class.inline-flex]="!config.templateOptions.title && !config.inverse"
+  [class.mb-0]="!config.templateOptions.mb && !this.group">
+  <label class="mr-1" *ngIf="label && config.templateOptions.label">
+    {{ config.templateOptions.label }}
+  </label>
+
+  <div class="form-element w-full" *ngIf="config.templateOptions.title">
+    <label class="form-element-label">
+      {{ config.templateOptions.title }}:
+    </label>
+  </div>
+
+  <button
+    webuiSubscriptionRequired
+    [type]="
+      config.templateOptions.type ? config.templateOptions.type : 'button'
+    "
+    *ngIf="
+      (!config.hidden || showButton) &&
+      (config.templateOptions.text ||
+        (repeatArray && repeatArray.length > 1)) &&
+      config.action !== 'showMessage'
+    "
+    class="btn px-3 py-1"
+    [class.btn-outline-primary]="
+      config.list &&
+      !buttonClass &&
+      !config.inverse &&
+      !config.shadow &&
+      !cssClasses
+    "
+    [class.btn-sm]="config.templateOptions.small"
+    [class.list]="config.templateOptions.p"
+    [class.disabled]="isDisabled"
+    [ngClass]="[
+      buttonClass || '',
+      textClass || '',
+      cssClasses || '',
+      config.inverse ? 'inverse' : ''
+    ]"
+    [title]="config.disableAction || isDisabled ? disabledTitle : ''"
+    [disabled]="config.disableAction || isDisabled"
+    (click)="action($event)">
+    <span *ngIf="repeatArray" class="flex items-center gap-1">
+      <ng-container
+        *ngTemplateOutlet="icon; context: { icon: config.svg }"></ng-container>
+
+      <webui-fa-icon
+        *ngFor="let icon of repeatArray; let last = last; let first = first"
+        [icon]="config.templateOptions.icon">
+      </webui-fa-icon>
+      {{
+        config.translationKey && config.templateOptions.text
+          ? (config.translationKey
+            | translate : { Default: config.templateOptions.text })
+          : (config.templateOptions.text | translate)
+      }}
+    </span>
+
+    <ng-container
+      *ngTemplateOutlet="icon; context: { icon: config.svg }"></ng-container>
+
+    <span *ngIf="!repeatArray && config.templateOptions.text">
+      {{
+        config.translationKey
+          ? (config.translationKey
+            | translate : { Default: config.templateOptions.text })
+          : (config.templateOptions.text | translate)
+      }}
+    </span>
+  </button>
+  <button
+    class="btn btn-sm btn-link mr-1"
+    type="button"
+    *ngIf="config.action === 'showMessage'"
+    [placement]="config.placement"
+    [webuiTooltip]="detail"
+    (click)="action($event)">
+    {{
+      config.translationKey && config.templateOptions.text
+        ? (config.translationKey
+          | translate : { Default: config.templateOptions.text })
+        : (config.templateOptions.text | translate)
+    }}
+  </button>
+  <span class="postfix mr-1" *ngIf="config.postfix">{{ config.postfix }}</span>
+  <button
+    webuiSubscriptionRequired
+    class="btn"
+    type="button"
+    *ngIf="
+      !config.hidden &&
+      !config.templateOptions.text &&
+      repeatArray &&
+      repeatArray.length === 1 &&
+      !config.disableAction
+    "
+    (click)="action($event)">
+    <ng-container
+      *ngTemplateOutlet="icon; context: { icon: config.svg }"></ng-container>
+    <webui-fa-icon
+      class="icon"
+      [icon]="config.templateOptions.icon"
+      [ngStyle]="{ color: config.text_color }"
+      [title]="config.title">
+    </webui-fa-icon>
+    {{
+      config.translationKey
+        ? (config.translationKey | translate : { Default: config.title })
+        : config.title
+    }}
+  </button>
+  <div *ngIf="config.customLink && config.image" class="image-wrapper">
+    <div class="tracking-mobile">
+      <button
+        type="button"
+        class="btn btn-link tracking-button"
+        (click)="action($event)">
+        {{ 'open_tracking_map' | translate }}
+      </button>
+
+      <img
+        class="mobile-image"
+        src="/assets/img/map.jpg"
+        alt="map"
+        width="123"
+        height="40" />
+    </div>
+
+    <div class="tracking-desktop">
+      <img [src]="config.image" alt="" style="border-radius: 0.5rem" />
+      <div class="backdrop" (click)="action($event)">
+        {{ 'show_map' | translate }}
+        <webui-spinner
+          style="margin-left: -0.5rem"
+          *ngIf="saveProcess"></webui-spinner>
+      </div>
+      <div
+        *ngIf="config.locationDataEmpty"
+        class="backdrop backdrop-danger"
+        (click)="action($event)">
+        {{ 'no_tracking_data' | translate }}
+      </div>
+    </div>
+  </div>
+  <span
+    *ngIf="config.customLink && !config.image"
+    class="custom-link"
+    (click)="action($event)">
+    {{ config.title }}
+  </span>
+  <span *ngIf="config.hidden && replacyValue">{{ replacyValue }}</span>
+  <small class="text-muted" *ngIf="config.templateOptions.description">
+    {{ config.templateOptions.description }}
+  </small>
+  <span *ngIf="config.delim">{{ config.delim }}</span>
+</div>
+<div
+  class="text-sm text-success"
+  *ngIf="config.templateOptions.additionalDescription">
+  {{ config.templateOptions.additionalDescription }}
+</div>
+<span *ngIf="config.emptyValue && config.hidden">{{ config.emptyValue }}</span>
+<span [class.mr-1]="config.delim !== ' '" *ngIf="config.delim && !last">
+  {{ config.delim }}
+</span>
+<br *ngIf="config.list && !config.hidden && !config.delim && !config.noDelim" />
+
+<ng-template #detail>
+  <div class="line">
+    <label for="">Data:</label>
+    <p>{{ config.value.sent_at | dateFormat : 'datetime' }}</p>
+  </div>
+
+  <div class="line">
+    <label for="">Status:</label>
+    <p>{{ config.value.status }}</p>
+  </div>
+
+  <div class="line">
+    <label for="">Text:</label>
+    <p>{{ config.value.text }}</p>
+  </div>
+</ng-template>
+
+<ng-template #icon let-icon="icon">
+  <svg
+    *ngIf="icon === 'evaluate'"
+    width="16"
+    height="15"
+    viewBox="0 0 16 15"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M8 0.693527L9.30194 4.9067C9.43142 5.32571 9.81881 5.61146 10.2574 5.61146H14.5219L11.0293 8.27949C10.6963 8.5339 10.5573 8.96898 10.681 9.36939L12.0047 13.653L8.60706 11.0575C8.24866 10.7837 7.75134 10.7837 7.39294 11.0575L3.99529 13.653L5.31901 9.36939C5.44274 8.96898 5.30368 8.5339 4.97065 8.27949L1.47815 5.61146L5.74264 5.61146C6.18119 5.61146 6.56858 5.32571 6.69806 4.9067L8 0.693527Z"
+      stroke="#FFD042" />
+  </svg>
+
+  <svg
+    *ngIf="icon === 'approve'"
+    width="12"
+    height="10"
+    viewBox="0 0 12 10"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M4.18037 7.21346C3.98331 7.42053 3.65306 7.42053 3.45599 7.21346L1.45542 5.11137C1.1829 4.82501 0.726194 4.82502 0.453667 5.11137C0.199564 5.37837 0.199564 5.79775 0.453667 6.06475L3.45599 9.21943C3.65306 9.4265 3.98331 9.4265 4.18037 9.21943L11.5463 1.47967C11.8004 1.21268 11.8004 0.793294 11.5463 0.526297C11.2738 0.23994 10.8171 0.23994 10.5446 0.526296L4.18037 7.21346Z"
+      fill="#32BA5E" />
+  </svg>
+
+  <svg
+    *ngIf="icon === 'change'"
+    width="13"
+    height="14"
+    viewBox="0 0 13 14"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M7.5976 2.39502L7.58383 2.40949V2.42947C7.58383 2.42923 7.58381 2.42929 7.5837 2.42972C7.58328 2.43124 7.5816 2.43742 7.57486 2.4516C7.57132 2.45904 7.56718 2.46716 7.56232 2.47671L7.5613 2.47871C7.55612 2.48889 7.55031 2.50032 7.54447 2.51263C7.52102 2.56195 7.49542 2.62794 7.49542 2.70844L7.49541 2.71407C7.4954 2.77882 7.4954 2.83127 7.50821 2.87844C7.52228 2.93023 7.5504 2.97219 7.5976 3.02182L9.84732 5.38736C9.8798 5.44817 9.93892 5.47555 9.99329 5.48825C10.0487 5.50118 10.1087 5.50118 10.1517 5.50117H10.1539L10.1558 5.50117C10.201 5.5012 10.3521 5.50128 10.4554 5.39268L11.3824 4.41794C11.9796 3.88482 11.9747 2.87691 11.3838 2.25559L10.5894 1.42027C10.0812 0.790801 9.11818 0.796152 8.52604 1.41879L7.5976 2.39502ZM10.825 3.74317L10.1539 4.44886L8.45443 2.66191L9.12904 1.95258L9.09281 1.91812L9.12904 1.95258C9.3746 1.69437 9.78366 1.69437 10.0292 1.95258L10.825 2.78938C11.0719 3.049 11.0719 3.48355 10.825 3.74317Z"
+      fill="#FA5C46"
+      stroke="#FA5C46"
+      stroke-width="0.1" />
+    <path
+      d="M1.04619 12.358L1.06092 12.3812H1.08754C1.08793 12.3813 1.08986 12.3816 1.09379 12.3829C1.09945 12.3847 1.10681 12.3875 1.11614 12.3916C1.12855 12.397 1.14186 12.4033 1.15681 12.4104C1.1651 12.4144 1.17388 12.4186 1.18331 12.423C1.20858 12.4348 1.23681 12.4473 1.26502 12.457C1.29278 12.4664 1.32364 12.4742 1.35369 12.4742H1.35369H1.35371H1.35372H1.35373H1.35375H1.35377H1.35378H1.35381H1.35383H1.35385H1.35388H1.35391H1.35394H1.35397H1.354H1.35404H1.35407H1.35411H1.35415H1.3542H1.35424H1.35429H1.35433H1.35438H1.35444H1.35449H1.35454H1.3546H1.35466H1.35472H1.35478H1.35484H1.3549H1.35497H1.35504H1.35511H1.35518H1.35522H1.35525H1.35532H1.3554H1.35548H1.35555H1.35563H1.35572H1.35573H1.3558H1.35588H1.35597H1.35606H1.35614H1.35623H1.35623H1.35633H1.35642H1.35651H1.35661H1.3567H1.35672H1.3568H1.3569H1.357H1.3571H1.35721H1.35731H1.35742H1.35753H1.35763H1.3577H1.35774H1.35785H1.35797H1.35808H1.35819H1.35819H1.35831H1.35843H1.35854H1.35866H1.35878H1.3589H1.35903H1.35914H1.35915H1.35927H1.3594H1.35953H1.35961H1.35965H1.35978H1.35991H1.36004H1.36008H1.36017H1.36031H1.36044H1.36055H1.36058H1.36071H1.36085H1.36099H1.36101H1.36112H1.36126H1.3614H1.36147H1.36154H1.36169H1.36183H1.36192H1.36197H1.36212H1.36226H1.36237H1.36241H1.36255H1.3627H1.36281H1.36285H1.363H1.36315H1.36325H1.3633H1.36345H1.3636H1.36369H1.36375H1.36391H1.36406H1.36413H1.36422H1.36437H1.36453H1.36456H1.36468H1.36484H1.36498H1.365H1.36516H1.36532H1.3654H1.36548H1.36564H1.3658H1.36582H1.36596H1.36612H1.36624H1.36628H1.36644H1.36661H1.36665H1.36677H1.36694H1.36706H1.3671H1.36726H1.36743H1.36746H1.3676H1.36776H1.36786H1.36793H1.3681H1.36826H1.36843H1.3686H1.36865H1.36877H1.36894H1.36904H1.3691H1.36927H1.36942H1.36944H1.36961H1.36978H1.36981H1.36995H1.37012H1.37018H1.37029H1.37047H1.37056H1.37064H1.37081H1.37093H1.37098H1.37115H1.3713H1.37132H1.3715H1.37167H1.37184H1.37201H1.37202H1.37218H1.37236H1.37238H1.37253H1.3727H1.37273H1.37287H1.37305H1.37308H1.37322H1.37339H1.37343H1.37357H1.37374H1.37377H1.37391H1.37408H1.37411H1.37426H1.37443H1.37445H1.3746H1.37477H1.37495H1.37511H1.37512H1.37529H1.37543H1.37546H1.37563H1.37575H1.3758H1.37598H1.37607H1.37615H1.37632H1.37639H1.37649H1.37666H1.3767H1.37683H1.377H1.37701H1.37717H1.37731H1.37734H1.37751H1.37761H1.37768H1.37785H1.37791H1.37802H1.37818H1.37821H1.37835H1.3785H1.37852H1.37869H1.37879H1.37885H1.37902H1.37907H1.37918H1.37935H1.37951H1.37963H1.37968H1.37984H1.37991H1.38001H1.38017H1.38018H1.38033H1.38045H1.3805H1.38066H1.38071H1.38082H1.38098H1.38114H1.38123H1.3813H1.38146H1.38149H1.38162H1.38174H1.38178H1.38193H1.38199H1.38209H1.38225H1.3824H1.38248H1.38256H1.38271H1.38272H1.38286H1.38296H1.38302H1.38317H1.38319H1.38332H1.38342H1.38347H1.38362H1.38365H1.38377H1.38388H1.38392H1.38407H1.3841H1.38421H1.38432H1.38436H1.38451H1.38453H1.38465H1.38474H1.38479H1.38494H1.38495H1.38508H1.38516H1.38522H1.38536H1.3855H1.38556H1.38564H1.38576H1.38578H1.38591H1.38595H1.38605H1.38615H1.38618H1.38632H1.38633H1.38645H1.38652H1.38658H1.3867H1.38671H1.38684H1.38688H1.38697H1.38706H1.3871H1.38723H1.38735H1.3874H1.38748H1.38757H1.3876H1.38773H1.38774H1.38785H1.3879H1.38797H1.38806H1.38809H1.3882H1.38822H1.38832H1.38837H1.38844H1.38852H1.38855H1.38867H1.38878H1.38882H1.38889H1.38896H1.389H1.38911H1.38922H1.38924H1.38932H1.38938H1.38943H1.38951H1.38953H1.38963H1.38973H1.38976H1.38983H1.38989H1.38993H1.39001H1.39003H1.39013H1.39022H1.39025H1.39031H1.39036H1.39041H1.39047H1.3905H1.39059H1.39067H1.39069H1.39076H1.39079H1.39084H1.39089H1.39093H1.39099H1.39101H1.39109H1.39117H1.39118H1.39124H1.39127H1.39132H1.39136H1.3914H1.39144H1.39147H1.39153H1.39154H1.39161H1.39168H1.39169H1.39174H1.39176H1.39181H1.39184H1.39187H1.39191H1.39193H1.39198H1.39199H1.39204H1.39205H1.39211H1.39216H1.39222H1.39223H1.39227H1.39228H1.39232H1.39234H1.39237H1.39239H1.39241H1.39244H1.39246H1.39249H1.3925H1.39253H1.39254H1.39258H1.39262H1.39266H1.39269H1.39272H1.39275H1.39278H1.39279H1.39281H1.39282H1.39283H1.39284H1.39286H1.39287H1.39288H1.39289H1.3929H1.39291H1.39292H1.39293H1.39294H1.39296H1.39298L1.39298 12.4676L4.05525 11.9628C4.09603 11.9628 4.13657 11.9628 4.17762 11.9484C4.22144 11.933 4.26109 11.9035 4.30785 11.8543L10.5416 5.29968L10.5554 5.28521V5.26523C10.5554 5.26547 10.5554 5.26541 10.5555 5.26498C10.5559 5.26346 10.5576 5.25728 10.5643 5.2431C10.5681 5.23515 10.5726 5.22642 10.5779 5.21599C10.5831 5.20581 10.5889 5.19438 10.5947 5.18207C10.6182 5.13275 10.6438 5.06677 10.6438 4.98626V4.98063C10.6438 4.91589 10.6438 4.86344 10.631 4.81626C10.6169 4.76448 10.5888 4.72252 10.5416 4.67289L8.28684 2.30207C8.1345 2.14189 7.8804 2.14189 7.72805 2.30207L1.4943 8.85671L1.48053 8.87119V8.89117C1.48053 8.92115 1.46708 8.94436 1.44409 8.98061L1.4422 8.9836C1.42157 9.01608 1.39343 9.06039 1.39216 9.11944L0.9506 11.9516L0.950003 11.9515V11.9593L0.950003 11.9619C0.950001 12.0297 0.949999 12.0918 0.961932 12.1546C0.97429 12.2196 0.998994 12.2835 1.04619 12.358ZM8.02955 3.24587L9.72899 5.03279L3.89306 11.1691L1.85614 11.5261L2.19644 9.37923L8.02955 3.24587Z"
+      fill="#FA5C46"
+      stroke="#FA5C46"
+      stroke-width="0.1" />
+    <path
+      d="M4.89134 11.2157L4.92758 11.2502C5.07857 11.0914 5.07857 10.8287 4.92758 10.6699L2.6728 8.29915C2.52046 8.13897 2.26637 8.13897 2.11403 8.29915C1.96304 8.45791 1.96304 8.72064 2.11403 8.8794L4.36373 11.2449C4.39621 11.3057 4.45532 11.3331 4.50969 11.3458C4.56512 11.3587 4.6252 11.3587 4.66826 11.3587H4.67029C4.74839 11.3587 4.81256 11.3314 4.85631 11.3051C4.87831 11.2919 4.89565 11.2786 4.90765 11.2685C4.91366 11.2634 4.91838 11.2591 4.92172 11.256L4.92571 11.2521L4.92691 11.2509L4.92731 11.2505L4.92746 11.2503L4.92753 11.2502L4.92756 11.2502L4.89134 11.2157Z"
+      fill="#FA5C46"
+      stroke="#FA5C46"
+      stroke-width="0.1" />
+    <path d="M1 12.9956H13" stroke="#FA5C46" />
+  </svg>
+</ng-template>

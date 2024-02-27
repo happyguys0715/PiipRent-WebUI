@@ -1,0 +1,282 @@
+.filter {
+  &-label {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-bottom: 6px;
+    font-size: 0.875rem;
+    line-height: 18px;
+    text-transform: uppercase;
+    color: rgba(#333, 0.5);
+  }
+
+  &-element {
+    @apply border-b border-gray-200;
+
+    min-width: 220px;
+    margin-top: 10px;
+    padding-bottom: 1rem;
+
+    font-size: 0.8rem;
+
+    @include media-breakpoint-up('xl') {
+      .inline-container {
+        margin: 0 -12px;
+      }
+
+      .inline-container & {
+        display: inline-flex;
+        align-items: flex-start;
+        flex-wrap: wrap;
+
+        padding: 0;
+        padding-left: 12px;
+
+        border-bottom: none;
+
+        .filter-label {
+          margin-top: 12px;
+        }
+
+        .filter-select-wrapper {
+          display: flex;
+          align-items: center;
+
+          max-width: 200px;
+          height: 42px;
+
+          label {
+            margin-bottom: 0;
+          }
+
+          select {
+            width: 150px;
+          }
+
+          .form-check {
+            margin-right: 9px;
+
+            &:last-child {
+              margin-right: 0;
+            }
+          }
+        }
+
+        &:not(.datepicker-element) {
+          padding-right: 12px;
+
+          border-right: 1px solid rgba(#e5e5e5, 0.8);
+        }
+
+        .dates {
+          order: 2;
+        }
+
+        .datepicker {
+          width: 157px;
+
+          margin-bottom: 0;
+
+          .input-group {
+            width: auto;
+          }
+
+          &:nth-child(2) {
+            margin-bottom: 0;
+            margin-right: 10px;
+          }
+        }
+
+        .filter-label {
+          margin-bottom: 0;
+          margin-right: 8px;
+        }
+
+        .filter-date-wrapper {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+
+          width: 325px;
+
+          margin-right: 12px;
+
+          .delimiter {
+            position: relative;
+            right: -12px;
+            display: block;
+
+            height: 40px;
+
+            border-right: 1px solid rgba(#e5e5e5, 0.8);
+          }
+        }
+      }
+    }
+
+    // @include media-breakpoint-up('md') {
+    //   .input-group {
+    //     input {
+    //       border-right: none;
+
+    //       &:focus {
+    //         border-right: none;
+
+    //         & ~ .input-group-append {
+    //           border-right: 1px solid $gray !important;
+    //           border-top: 1px solid $gray;
+    //           border-bottom: 1px solid $gray;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+
+    .input-group-append {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 50px;
+
+      border-right: 1px solid rgba($gray, 0.2);
+      border-top: 1px solid rgba($gray, 0.2);
+      border-bottom: 1px solid rgba($gray, 0.2);
+      border-radius: 0 50px 50px 0 !important;
+
+      background-color: #fdfdfd;
+
+      span {
+        cursor: pointer;
+      }
+    }
+
+    .datepicker .form-control:not(.mobile) {
+      @include media-breakpoint-down('sm') {
+        border-radius: 50px 0 0 50px !important;
+        border-right: none;
+      }
+    }
+
+    .form-control {
+      height: auto !important;
+
+      padding: 11px 12px;
+
+      font-size: 14px;
+      line-height: 18px;
+
+      border-radius: 50px;
+
+      background-color: #fdfdfd;
+
+      transition: none;
+
+      .filters-inline & {
+        border-radius: 4px;
+
+        @include media-breakpoint-down('sm') {
+          border-radius: 4px !important;
+        }
+      }
+
+      &:focus {
+        border: 1px solid $gray;
+      }
+
+      @include media-breakpoint-down('sm') {
+        border-radius: 50px !important;
+      }
+    }
+
+    .default-value {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      color: rgba($gray, 0.4);
+
+      a:hover {
+        color: $gray;
+        cursor: pointer;
+      }
+    }
+
+    .datepicker {
+      display: relative;
+      align-items: center;
+
+      input {
+        padding-left: 3rem;
+        padding-right: 0;
+
+        &:focus {
+          border-color: $gray;
+        }
+      }
+
+      .placeholder {
+        position: absolute;
+        left: 16px;
+        font-size: 12px;
+        color: rgba($gray, 0.4);
+        z-index: 3;
+      }
+    }
+
+    .autocomplete-value {
+      border: 1px solid $input-border-color;
+    }
+  }
+
+  &-date {
+    padding-left: 5rem;
+
+    &.active {
+      border-color: $gray;
+
+      & ~ .input-group-append {
+        border-color: $gray !important;
+        background-color: #fdfdfd;
+      }
+    }
+  }
+
+  &-values {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    margin-top: 0.5rem;
+
+    .badge.badge-outline {
+      position: relative;
+
+      max-width: 100%;
+
+      margin-top: 0.3rem;
+      margin-right: 0.3rem;
+
+      color: inherit;
+
+      text-overflow: ellipsis;
+      overflow: hidden;
+      gap: 0.5rem;
+    }
+
+    fa-icon {
+      font-size: 0.75rem;
+
+      color: $primary;
+      cursor: pointer;
+      padding: 0 0.25rem;
+      margin-right: 0 !important;
+
+      @each $item in $themes {
+        .#{$item}-theme & {
+          color: map-get($theme-colors, $item);
+        }
+      }
+    }
+  }
+}

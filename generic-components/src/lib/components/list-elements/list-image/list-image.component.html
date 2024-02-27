@@ -1,0 +1,59 @@
+<span [class.mr-1]="config.label" *ngIf="icon && !config.setColorForLabel">
+  <webui-fa-icon
+    [icon]="icon"
+    [ngClass]="[iconClass]"
+    [title]="config.title || ''"
+    [ngStyle]="{ 'fontSize.px': config.fontSize }">
+  </webui-fa-icon>
+</span>
+
+<ng-container *ngIf="config.label && config.label.slice">
+  <span *ngIf="!config.setColorForLabel">{{ label | translate }}&nbsp;</span>
+  <span *ngIf="config.setColorForLabel" [ngClass]="[iconClass]">
+    {{ label | translate }}&nbsp;
+  </span>
+</ng-container>
+
+<ng-container *ngIf="config.label && !config.label.slice">
+  <span *ngIf="!config.setColorForLabel">
+    {{ config.label[config.value] | translate }}&nbsp;
+  </span>
+  <span *ngIf="config.setColorForLabel" [ngClass]="[iconClass]">
+    {{ config.label[config.value] | translate }}&nbsp;
+  </span>
+</ng-container>
+
+<span class="description" *ngIf="config.emptyValue && !src">
+  {{ config.emptyValue | translate }}
+</span>
+
+<div *ngIf="isFile && src" [class.mobile]="isMobileDevice">
+  <a #filelink [href]="src" target="_blank">
+    <webui-fa-icon icon="file" class="file-icon"></webui-fa-icon>
+    <webui-fa-icon icon="download" class="download-icon"></webui-fa-icon>
+    <span *ngIf="config.text">{{ config.text | translate }}</span>
+    <span *ngIf="!config.text">
+      {{ getExtension(src) | uppercase }} {{ 'file' | translate }}
+    </span>
+  </a>
+  <webui-fa-icon
+    class="upload-button"
+    (click)="downloadFile()"
+    icon="download"></webui-fa-icon>
+</div>
+
+<ng-container *ngIf="isSignature && src">
+  <img [src]="src" alt="Signature" width="112" height="48" class="signature" />
+</ng-container>
+
+<ng-container *ngIf="isImage && src">
+  <img *ngIf="src" [src]="src" width="60" height="60" />
+</ng-container>
+
+<ng-container *ngIf="isAvatar">
+  <img *ngIf="src" [src]="src" width="60" height="60" />
+
+  <div *ngIf="contactAvatar && !src" class="contact-avatar">
+    {{ contactAvatar }}
+  </div>
+</ng-container>

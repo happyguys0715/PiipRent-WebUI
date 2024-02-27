@@ -1,0 +1,25 @@
+<webui-dialog>
+  <form
+    dialog-content
+    id="transfer-to-regular-company-form"
+    class="form"
+    [formGroup]="formGroup"
+    (ngSubmit)="onSubmit()">
+    <webui-form-input-control
+      formControlName="website"
+      type="text"
+      label="common.website"
+      [error]="(errors$ | async)?.['website']"></webui-form-input-control>
+  </form>
+
+  <button
+    dialog-footer
+    form="transfer-to-regular-company-form"
+    class="button button--primary mx-auto"
+    type="submit"
+    [disabled]="formInvalid || (saving$ | async)">
+    {{ 'save' | translate }}
+
+    <webui-spinner *ngIf="saving$ | async"></webui-spinner>
+  </button>
+</webui-dialog>

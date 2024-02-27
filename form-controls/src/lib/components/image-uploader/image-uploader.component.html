@@ -1,0 +1,25 @@
+<div class="wrapper">
+  <div class="images">
+    <div class="image-wrapper" *ngFor="let image of source">
+      <img class="image" [src]="image.src" alt="" />
+
+      <button class="btn remove" type="button" (click)="onRemove(image.id)">
+        <webui-fa-icon class="mr-0" icon="times"></webui-fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <label
+    class="btn btn-primary upload button-save mt-3"
+    *ngIf="source && source.length < this.count">
+    {{ loading ? 'uploading' : ('upload_images' | translate) }}
+
+    <webui-spinner *ngIf="loading"></webui-spinner>
+
+    <input
+      type="file"
+      (change)="fileChangeEvent($event)"
+      multiple
+      accept="images/*" />
+  </label>
+</div>

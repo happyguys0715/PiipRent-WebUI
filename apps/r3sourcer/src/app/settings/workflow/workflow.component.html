@@ -1,0 +1,219 @@
+<webui-dynamic-form [config]="config" [form]="form"> </webui-dynamic-form>
+
+<div
+  class="grid gap-4 border rounded border-primary-300 mb-4 max-w-[400px]"
+  *ngIf="currentWorkflowNodes">
+  <div class="grid" cdkDropList (cdkDropListDropped)="onDrop($event)">
+    <div
+      cdkDrag
+      class="flex items-center gap-2 group hover:bg-primary-200 p-2 relative"
+      *ngFor="let node of currentWorkflowNodes; let index = index">
+      <!-- <div class="absolute w-[2px] h-full left-[23px] bg-primary-300 z-0"></div> -->
+      <span class="text-gray cursor-grab">
+        <webui-svg-icon size="sm" icon="drag"></webui-svg-icon>
+      </span>
+      <div
+        class="w-8 h-8 rounded-full inline-flex border border-primary-300 items-center justify-center text-sm bg-white relative z-[2]">
+        {{ index + 1 }}
+      </div>
+
+      <div class="font-semibold text-am mr-auto">
+        {{
+          getNodeTranslateKey(node)
+            | translate : { Default: node.workflow_node.name_before_activation }
+        }}
+      </div>
+
+      <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100">
+        <button
+          type="button"
+          class="btn btn-icon text-warning"
+          (click)="openState(node, { size: 'sm' })">
+          <webui-svg-icon size="sm" icon="filter"></webui-svg-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-icon text-warning"
+          (click)="openEditModal(node)">
+          <webui-svg-icon size="sm" icon="edit"></webui-svg-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-icon text-danger"
+          (click)="deleteNode(node.id)">
+          <webui-svg-icon size="sm" icon="delete"></webui-svg-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-2 grid">
+    <button type="button" class="btn btn-primary" (click)="addState($event)">
+      {{ 'action.add_workflow_node' | translate }}
+    </button>
+  </div>
+</div>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modalInfo.label }}</h5>
+
+        <webui-close-button class="close ml-auto"></webui-close-button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="substates">
+        <div class="substates-item">
+          <label class="field-title"
+            >{{ 'common.nested_workflow_states' | translate }}:</label
+          >
+
+          <div>
+            <span
+              class="badge badge-outline mb-1 mr-1"
+              style="white-space: normal"
+              (click)="openState(state)"
+              *ngFor="let state of subStates[modalInfo.id]">
+              {{ state.workflow_node.name_before_activation }}
+
+              <webui-fa-icon
+                class="ml-2 text-danger"
+                icon="times"
+                (click)="deleteSubstate(state, $event)"></webui-fa-icon>
+            </span>
+          </div>
+
+          <a
+            href=""
+            class="link-underline"
+            webuiSubscriptionRequired
+            (click)="addSubstate($event, modalInfo.node)">
+            {{ 'action.add_nested_state' | translate }}
+          </a>
+        </div>
+
+        <div class="substates-item">
+          <label class="field-title">
+            {{ 'acceptance_tests.label' | translate }}
+          </label>
+
+          <div>
+            <span
+              class="badge badge-outline mb-1 mr-1"
+              style="white-space: normal"
+              *ngFor="let test of acceptanceTests[modalInfo.node.id]">
+              {{ test.acceptance_test.name }}
+
+              <webui-fa-icon
+                class="ml-2 text-danger"
+                icon="times"
+                (click)="deleteTest(test, modalInfo.node)"></webui-fa-icon>
+            </span>
+          </div>
+          <a
+            href=""
+            class="link-underline"
+            webuiSubscriptionRequired
+            (click)="addTest($event, modalInfo.node)">
+            {{ 'action.add_acceptance_test' | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #edit>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ editModalInfo.label }}</h5>
+
+        <webui-close-button class="close ml-auto"></webui-close-button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <webui-generic-form
+        [endpoint]="editModalInfo.endpoint"
+        [id]="editModalInfo.id"
+        [data]="editModalInfo.data"
+        (event)="formEvent($event)"
+        (errorForm)="formError()">
+        <button
+          webuiSubscriptionRequired
+          type="submit"
+          class="btn btn-primary button-save"
+          [disabled]="saveProcess">
+          {{ 'save' | translate }}
+          <webui-spinner *ngIf="saveProcess"></webui-spinner>
+        </button>
+      </webui-generic-form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #add>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{
+            (parentId ? 'action.add_nested_state' : 'action.add_state')
+              | translate
+          }}
+        </h5>
+
+        <webui-close-button class="close ml-auto"></webui-close-button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <webui-dynamic-form
+        [config]="addConfig.config"
+        [hiddenFields]="addConfig.hiddenFields"
+        (submitForm)="addStateToCompany($event)">
+        <button
+          webuiSubscriptionRequired
+          type="submit"
+          class="btn btn-primary button-save"
+          [disabled]="saveProcess">
+          {{ 'add' | translate }}
+          <webui-spinner *ngIf="saveProcess"></webui-spinner>
+        </button>
+      </webui-dynamic-form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #tests>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ 'action.add_acceptance_test' | translate }}
+        </h5>
+
+        <webui-close-button class="close ml-auto"></webui-close-button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <webui-dynamic-form
+        [config]="addConfig.config"
+        [hiddenFields]="addConfig.hiddenFields"
+        (submitForm)="addAcceptanceTest($event)">
+        <button
+          webuiSubscriptionRequired
+          type="submit"
+          class="btn btn-primary button-save"
+          [disabled]="saveProcess">
+          {{ 'add' | translate }}
+          <webui-spinner *ngIf="saveProcess"></webui-spinner>
+        </button>
+      </webui-dynamic-form>
+    </div>
+  </div>
+</ng-template>

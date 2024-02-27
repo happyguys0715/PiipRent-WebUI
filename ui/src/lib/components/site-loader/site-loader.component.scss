@@ -1,0 +1,25 @@
+$shadow: 0 0 5px rgba(#2196f3, 0.3);
+
+.loader {
+  border-radius: 50%;
+  background-color: #fff;
+  animation: shadow-pulse 1s infinite;
+  width: 120px;
+  height: 120px;
+
+  &-wrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%);
+  }
+}
+
+@keyframes shadow-pulse {
+  0% {
+    box-shadow: $shadow, $shadow;
+  }
+  100% {
+    box-shadow: $shadow, 0 0 0 16px rgba(#2196f3, 0);
+  }
+}

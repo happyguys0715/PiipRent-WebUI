@@ -1,0 +1,79 @@
+@use 'styles/variables';
+@use 'styles/mixins';
+
+webui-checkbox {
+  display: inline-flex;
+}
+
+.checkbox {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #bdbdbd;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+  background-color: #fff;
+
+  fa-icon {
+    visibility: hidden;
+    font-size: 8px;
+    color: white;
+  }
+
+  &--sm {
+    width: 14px;
+    height: 14px;
+  }
+
+  &.checked {
+    border-color: variables.$primary;
+    background-color: variables.$primary;
+    color: white;
+
+    @each $item in variables.$themes {
+      .#{$item}-theme & {
+        border-color: map-get(variables.$theme-colors, $item);
+        background-color: map-get(variables.$theme-colors, $item);
+      }
+    }
+
+    fa-icon {
+      visibility: visible;
+    }
+
+    &.info {
+      border-color: variables.$info;
+      background-color: variables.$info;
+    }
+
+    &.success {
+      border-color: variables.$success;
+      background-color: variables.$success;
+    }
+
+    &.danger {
+      border-color: variables.$danger;
+      background-color: variables.$danger;
+    }
+
+    &.warning {
+      border-color: variables.$warning;
+      background-color: variables.$warning;
+    }
+  }
+}
+
+@include mixins.media-breakpoint-down('sm') {
+  .checkbox,
+  .checkbox--sm {
+    width: 20px;
+    height: 20px;
+
+    fa-icon {
+      font-size: 12px;
+    }
+  }
+}

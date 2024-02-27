@@ -1,0 +1,31 @@
+@use 'styles/variables' as *;
+
+.skill-title {
+  color: $gray;
+  opacity: 0.8;
+}
+
+span {
+  opacity: 1;
+}
+
+.score {
+  display: inline-flex;
+  align-items: center;
+
+  height: 14px;
+  line-height: 14px;
+
+  margin-top: 3px;
+  margin-left: 4px;
+  padding-left: 4px;
+
+  font-size: 14px;
+  vertical-align: top;
+
+  border-left: 1px solid black;
+
+  fa-icon {
+    font-size: 10px;
+  }
+}

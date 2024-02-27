@@ -1,0 +1,27 @@
+<form
+  class="dynamic-form"
+  autocomplete="off"
+  [class.view-form-mode]="mode === 'view'"
+  [formGroup]="form"
+  (ngSubmit)="handleSubmit($event)">
+  <ng-container
+    *ngFor="let field of config; let last = last"
+    webuiFormElement
+    [last]="last"
+    [config]="field"
+    [group]="form"
+    [errors]="errors"
+    [formId]="formId"
+    (event)="eventHandler($event)"
+    (buttonAction)="buttonActionHandler($event)"
+    [message]="message">
+  </ng-container>
+
+  <webui-form-errors [formId]="formId"></webui-form-errors>
+
+  <div class="text-success mt-1 mb-3" *ngIf="message && message.message">
+    {{ message.message }}
+  </div>
+
+  <ng-content></ng-content>
+</form>

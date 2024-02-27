@@ -1,0 +1,12 @@
+<div class="form-element">
+  <label class="form-element-label">Legend:</label>
+
+  <div class="form-element-content">
+    <ul class="list">
+      <li *ngFor="let prop of list">
+        <a class="variable" (click)="onClick(prop, $event)">[[{{ prop }}]]</a> -
+        <i>{{ getDescription(prop) }}</i>
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+@use 'sass:math';
+
+:host {
+  td,
+  th {
+    @apply p-0 py-2 text-center;
+
+    &:first-child {
+      @apply text-left;
+    }
+
+    &:last-child {
+      @apply text-end;
+    }
+  }
+
+  tfoot td {
+    @apply pt-4;
+  }
+}
+
+.body {
+  position: relative;
+  min-height: 54px;
+}
+
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.description {
+  font-size: 14px;
+}
+
+.range-buttons {
+  width: 100%;
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.form {
+  $gap: 1rem;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  width: calc(100% + #{$gap});
+  margin-top: 1rem;
+  margin-left: math.div(-$gap, 2);
+  margin-right: math.div(-$gap, 2);
+
+  &__item {
+    margin: 0 0.5rem;
+    min-height: 42px;
+  }
+
+  &__field {
+    flex: 2;
+  }
+
+  &__button {
+    flex: 1;
+    border-radius: 4px;
+    align-self: flex-end;
+  }
+}

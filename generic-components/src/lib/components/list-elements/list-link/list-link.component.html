@@ -1,0 +1,109 @@
+<ng-container
+  *ngIf="arrayValue ? config.value && config.value.length : config.value">
+  <div class="list-link" [class.inline]="config.inline">
+    <span *ngIf="config.display && config.value" class="display">
+      {{ config.display }}
+    </span>
+    <span class="flex items-center" *ngIf="!arrayValue">
+      <a
+        #view
+        class="link default"
+        [class.phone]="phone"
+        [attr.href]="href"
+        *ngIf="config.value && !link"
+        [title]="config.title || ''"
+        (click)="clickHandler($event)">
+        {{ config.value }}
+      </a>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        *ngIf="phone"
+        webuiSubscriptionRequired
+        [attr.title]="smsDisabledTitle"
+        [class.disabled]="smsDisabled"
+        (click)="sendSms($event)"
+        [disabled]="smsDisabled">
+        {{ 'sms' | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        webuiSubscriptionRequired
+        *ngIf="phone"
+        (click)="linkView.nativeElement.click()">
+        {{ 'call' | translate }}
+      </button>
+
+      <a
+        class="link"
+        routerLink="{{ href }}"
+        *ngIf="config.value && link && config.link"
+        [title]="config.title || ''">
+        {{ value }}
+        <span *ngIf="config.fields">
+          <ng-container
+            *ngFor="let field of config.fields"
+            webuiListElement
+            [config]="field">
+          </ng-container>
+        </span>
+      </a>
+
+      <a
+        class="link"
+        [ngClass]="[linkClass]"
+        *ngIf="config.endpoint"
+        href=""
+        (click)="action($event)"
+        [title]="config.title || ''">
+        {{ value | translate }}
+        <span *ngIf="config.fields">
+          <ng-container
+            *ngFor="let field of config.fields"
+            webuiListElement
+            [config]="field"
+            (event)="eventHandler($event)"
+            (buttonAction)="buttonHandler($event)"></ng-container>
+        </span>
+      </a>
+
+      <span *ngIf="config.delim && !last">{{ config.delim }}</span>
+      <br *ngIf="!config.delim && !config.fields" />
+    </span>
+
+    <span class="flex flex-col" *ngIf="arrayValue && isArray(value)">
+      <span *ngFor="let item of value; let l = last; let i = index">
+        <a
+          *ngIf="item && !link"
+          class="link"
+          [href]="href[i]"
+          [title]="config.title || ''">
+          {{ item.__str__ }}
+        </a>
+
+        <a
+          *ngIf="item && link && config.link"
+          class="link"
+          [href]="href[i]"
+          [title]="config.title || ''"
+          (click)="action($event, i)">
+          {{ item.__str__ }}
+
+          <span *ngIf="config.fields">
+            <ng-container
+              *ngFor="let field of config.fields"
+              webuiListElement
+              [config]="field"></ng-container>
+          </span>
+        </a>
+
+        <span *ngIf="config.delim && !l">{{ config.delim }}</span>
+        <br *ngIf="!config.delim && !config.fields && !l" />
+      </span>
+    </span>
+  </div>
+
+  <span *ngIf="config.delim && !last">{{ config.delim }}</span>
+  <br *ngIf="!config.delim && !config.fields" />
+</ng-container>

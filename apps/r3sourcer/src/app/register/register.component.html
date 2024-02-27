@@ -1,0 +1,23 @@
+<section class="register">
+  <header class="relative p-6 border-b border-primary-300">
+    <img
+      [src]="logo"
+      alt="Comapny logo"
+      height="62px"
+      class="max-w-[200px] mx-auto" />
+
+    <div class="inline-flex gap-4 absolute right-4 top-4">
+      <webui-language-selector></webui-language-selector>
+      <webui-close-button
+        [inDialog]="false"
+        (click)="onClose()"></webui-close-button>
+    </div>
+  </header>
+
+  <main class="redesign">
+    <webui-form-builder-form
+      [id]="settings.register_form_id"
+      [companyId]="settings.company">
+    </webui-form-builder-form>
+  </main>
+</section>

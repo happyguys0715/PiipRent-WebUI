@@ -1,0 +1,382 @@
+@use 'sass:math';
+@import '../mixins';
+
+$width: 510px;
+
+.modal-header {
+  @apply flex justify-between;
+}
+
+.modal-backdrop {
+  z-index: 10 !important;
+  bottom: -100px;
+  background-color: #0f2535;
+
+  &.show {
+    opacity: 0.6;
+  }
+}
+
+.approve-modal {
+  @media (max-width: 767.98px) and (orientation: landscape) {
+    &.change .modal-dialog {
+      max-width: $width;
+    }
+
+    & .modal-dialog {
+      max-width: $width;
+
+      .content-info {
+        flex-direction: row;
+      }
+
+      .flex-fill {
+        flex: auto;
+      }
+
+      .evaluation-content {
+        align-self: flex-start;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 33px;
+      }
+
+      .group-title {
+        width: 100px;
+        margin-bottom: 5px;
+      }
+
+      .time-line {
+        margin-bottom: 0 !important;
+      }
+
+      .signature-content {
+        margin-right: auto;
+      }
+
+      .form-navigation {
+        display: none;
+      }
+    }
+  }
+
+  .modal-dialog {
+    max-width: $width;
+    margin: 15px auto;
+    padding: 0 15px;
+    box-sizing: content-box;
+
+    .form-element {
+      &-content:not(.full-width) {
+        flex-wrap: nowrap;
+
+        width: auto;
+
+        @include media-breakpoint-down('sm') {
+          max-width: 100%;
+        }
+      }
+
+      &-label {
+        color: #4f4f4f;
+        margin-bottom: 3px;
+      }
+    }
+
+    .dynamic-form {
+      margin: 0;
+
+      .input-group {
+        &:first-child {
+          margin-right: 8px;
+        }
+
+        &-append {
+          padding: 5px 6px 5px 4px;
+
+          border: 1px solid rgba($gray, 0.6) !important;
+          border-left: none !important;
+          border-radius: 0 4px 4px 0 !important;
+        }
+      }
+
+      .form-control[date-role='datebox'],
+      .form-control[data-role='datebox'] {
+        height: auto;
+        min-height: none;
+        border: 1px solid rgba($gray, 0.6);
+        border-right: none !important;
+        border-radius: 4px 0 0 4px;
+        padding: 5px 0 5px 6px;
+
+        transition: none;
+      }
+
+      .time-wrapper > .input-group {
+        max-width: 145px;
+      }
+    }
+
+    @include media-breakpoint-down('sm') {
+      max-width: 345px;
+    }
+
+    @media (max-width: 767.98px) and (orientation: landscape) {
+      max-width: 450px;
+    }
+  }
+}
+
+.extend-modal {
+  width: auto !important;
+
+  .modal-dialog {
+    max-width: 805px;
+  }
+
+  .modal-body {
+    margin-top: 40px;
+    margin-bottom: 20px;
+
+    .form-element-label {
+      font-family: 'Source Sans Pro', sans-serif;
+      text-transform: uppercase;
+      color: rgba($gray, 0.4);
+    }
+
+    .shift .form-element-content {
+      min-height: 36px;
+      align-items: center;
+    }
+
+    .form-element-content {
+      width: auto;
+      height: auto;
+      max-height: none;
+      min-height: auto;
+
+      input {
+        padding: 10px 12px;
+        height: auto;
+        min-height: auto;
+        border: 1px solid rgba($gray, 0.6);
+        border-radius: 0.25rem;
+        background: $white;
+
+        &[date-role='datebox'] {
+          border-right: none;
+        }
+      }
+
+      .input-group-append {
+        border: 1px solid rgba($gray, 0.6) !important;
+        border-radius: 0.25rem !important;
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-left: none !important;
+        background: $white;
+      }
+    }
+  }
+
+  .form-element .custom-checkbox {
+    width: 16px;
+    height: 16px;
+
+    svg {
+      width: 9px;
+      height: 7px;
+    }
+  }
+
+  .button-save {
+    display: block;
+    margin: 0 auto;
+    width: 160px;
+  }
+
+  .tooltip-inner {
+    max-width: 360px;
+  }
+}
+
+.small-modal {
+  .modal-dialog {
+    max-width: 400px;
+
+    .form-element-content {
+      width: auto;
+      max-width: none;
+    }
+
+    .button-save {
+      @include flex-center;
+
+      margin: 0 auto;
+
+      width: 160px;
+      height: 40px;
+
+      line-height: 16px;
+    }
+  }
+}
+
+.modal {
+  &[id*='jtdb'] {
+    z-index: 22;
+
+    .modal-backdrop {
+      z-index: 21 !important;
+    }
+  }
+
+  &.shiftdates .modal-content {
+    // &.visible-mode .modal-content {
+    @include media-breakpoint-up('md') {
+      overflow: visible;
+    }
+
+    @include media-breakpoint-down('sm') {
+      .form-group {
+        margin-bottom: 5px;
+      }
+
+      .modal-header {
+        padding: 0.5rem 1rem;
+
+        h5 {
+          font-size: 1rem;
+        }
+      }
+
+      max-height: 95vh;
+    }
+  }
+
+  &.message-detail .modal-content {
+    padding: 20px;
+
+    .dynamic-form {
+      margin-top: 0;
+    }
+  }
+}
+
+.message-detail-header {
+  @apply flex items-center justify-between px-5 pt-5 mb-6;
+
+  .message-label {
+    font-size: 32px;
+    line-height: 36px;
+  }
+
+  button {
+    @apply self-start;
+  }
+}
+
+.modal-lg {
+  @include media-breakpoint-up('xl') {
+    max-width: 1170px;
+  }
+}
+
+.modal-md {
+  @include media-breakpoint-up('xl') {
+    max-width: 729px;
+  }
+}
+
+.modal-header {
+  background-color: #fff;
+
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.modal-title {
+  margin-inline-end: auto;
+}
+
+.modal-content {
+  overflow: auto;
+  box-shadow: 0 0 8px 0 rgba(51, 51, 51, 0.1);
+  border: none;
+
+  .modal-header-wrapper {
+    position: sticky;
+    width: 100%;
+    top: 0;
+    z-index: 5;
+  }
+
+  .modal-body {
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+
+  .modal-title {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+
+.modal-content .has-tabs .button-save {
+  display: none;
+}
+
+.modal-content .has-tabs .close-btn {
+  display: none;
+}
+
+.modal-content .has-tabs .save {
+  margin-left: auto;
+}
+
+.modal-content .form-tabs {
+  margin: 0 -16px !important;
+
+  .nav {
+    padding: 0 16px;
+  }
+}
+
+.modal {
+  z-index: 10 !important;
+}
+
+.modal-body,
+.modal-footer,
+.modal-header {
+  @apply p-4;
+}
+
+.modal-footer {
+  @apply border-t border-primary-300 flex justify-center;
+}
+
+.cdk-overlay-pane {
+  @apply bg-white rounded;
+}
+
+.cdk-dialog-container {
+  @apply overflow-y-auto rounded;
+
+  @include scrollbar();
+
+  .close-button {
+    margin: 10px;
+  }
+
+  .form-tabs {
+    margin: 0 -16px !important;
+
+    .nav {
+      padding: 0 16px;
+    }
+  }
+}
+
+.modal-content-wrapper {
+  position: relative;
+}

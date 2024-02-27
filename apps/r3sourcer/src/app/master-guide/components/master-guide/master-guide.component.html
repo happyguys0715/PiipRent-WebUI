@@ -1,0 +1,43 @@
+<div
+  class="guide"
+  *ngIf="!skiped && guide"
+  [class.guide--placeholder]="showPlaceholder"
+  [class.guide--pulse]="!inactiveIcon && !showPlaceholder"
+  [class.guide--show]="showContent">
+  <webui-master-guide-icon
+    [inactive]="inactiveIcon"
+    (toggle)="togglePlaceholder()"></webui-master-guide-icon>
+
+  <h5 class="guide__title" [class.guide__title--show]="showContent">
+    {{ 'master-guide.label' | translate }}
+    <span *ngIf="showContent" class="guide__minimize-btn" (click)="minimize()">
+      {{ 'action.minimize' | translate }}
+      <webui-fa-icon class="f-size-8 ml-1" icon="chevron-down"></webui-fa-icon>
+    </span>
+  </h5>
+
+  <webui-master-guide-content
+    [guide]="guide"
+    *ngIf="showContent"
+    (updateEvent)="update($event)">
+  </webui-master-guide-content>
+
+  <div *ngIf="!showContent" class="guide-progress">
+    <div
+      class="guide-progress__indicator"
+      [ngStyle]="{ width: getProgress() + '%' }"></div>
+  </div>
+
+  <div class="guide__footer" [class.guide__footer--show]="showContent">
+    <button type="button" class="btn guide__btn" (click)="skipGuide()">
+      {{ 'action.skip' | translate }}
+    </button>
+    <button
+      *ngIf="!showContent"
+      type="button"
+      class="btn guide__btn guide__btn-primary"
+      (click)="onShowContent()">
+      {{ 'action.show' | translate }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+$box-shadow: 0 2px 12px 0 rgba(51, 51, 51, 0.3);
+
+:host {
+  @apply flex flex-col py-3 px-3.5 rounded bg-white text-xs gap-1;
+
+  box-shadow: $box-shadow;
+
+  &.dark {
+    color: #f2f2f2;
+    background: #4f4f4f;
+  }
+
+  &.flat {
+    @apply p-0;
+  }
+}

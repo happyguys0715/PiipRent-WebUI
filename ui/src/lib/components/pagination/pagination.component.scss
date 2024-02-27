@@ -1,0 +1,20 @@
+:host {
+  @apply flex items-center gap-1 flex-wrap;
+
+  .action {
+    @apply inline-flex items-center justify-center text-sm h-7 w-7 rounded border border-gray-300 transition-all;
+
+    &:hover:not(.disabled),
+    &.active {
+      @apply bg-primary text-white border-primary;
+    }
+
+    &.disabled {
+      @apply opacity-40;
+
+      &:hover {
+        @apply cursor-not-allowed;
+      }
+    }
+  }
+}

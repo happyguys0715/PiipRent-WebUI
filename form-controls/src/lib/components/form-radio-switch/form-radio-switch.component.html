@@ -1,0 +1,7 @@
+<div class="wrapper">
+  <label class="option" *ngFor="let option of options">
+    <input type="radio" [formControl]="control" [value]="option.value" />
+
+    <span class="label">{{ option.label | translate }}</span>
+  </label>
+</div>

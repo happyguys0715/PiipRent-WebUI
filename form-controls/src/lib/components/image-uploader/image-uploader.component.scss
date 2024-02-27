@@ -1,0 +1,51 @@
+@use 'styles/variables' as *;
+
+.wrapper {
+  display: inline-flex;
+  flex-direction: column;
+
+  input {
+    display: none;
+  }
+
+  .images {
+    display: flex;
+    align-items: center;
+  }
+
+  .image {
+    width: 100px;
+    height: auto;
+    border-radius: 0.25rem;
+    object-fit: cover;
+    object-position: center;
+
+    &:not(:last-child) {
+      margin-right: 1rem;
+    }
+  }
+
+  .upload {
+    color: white;
+  }
+
+  .image-wrapper {
+    position: relative;
+  }
+
+  .remove {
+    background-color: rgba($gray, 0.7);
+    border-radius: 50%;
+    color: white;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    position: absolute;
+    top: -0.5rem;
+    right: 0.5rem;
+
+    &:hover {
+      background-color: $gray;
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<webui-overlay-dropdown (opened)="onOpened()">
+  <ng-container target>
+    <ng-content></ng-content>
+  </ng-container>
+
+  <div class="grid grid-cols-2 gap-2 max-h-[180px] mb-2" content>
+    <ul class="flex flex-col overflow-y-auto scrollbar-hide">
+      <li
+        #li
+        class="rounded inline-flex items-center justify-center px-3 py-1 cursor-pointer hover:bg-primary-300 transition-colors"
+        *ngFor="let hour of hours"
+        [class.active]="(value$ | async)?.hour === hour"
+        (click)="onChange(hour, 'hour')">
+        {{ hour | number : '2.0' }}
+      </li>
+    </ul>
+
+    <ul class="flex flex-col overflow-y-auto scrollbar-hide">
+      <li
+        #li
+        class="rounded inline-flex items-center justify-center px-3 py-1 cursor-pointer hover:bg-primary-300 transition-colors"
+        *ngFor="let minute of minutes"
+        [class.active]="(value$ | async)?.minute === minute"
+        (click)="onChange(minute, 'minute')">
+        {{ minute | number : '2.0' }}
+      </li>
+    </ul>
+  </div>
+</webui-overlay-dropdown>

@@ -1,0 +1,43 @@
+input {
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px rgba($primary, 0.2) inset;
+    box-shadow: 0 0 0px 1000px rgba($primary, 0.2) inset;
+    transition: background-color 5000s ease-in-out 5000s;
+
+    @each $item in $themes {
+      .#{$item}-theme & {
+        -webkit-box-shadow: 0
+          0
+          0px
+          1000px
+          rgba(map-get($theme-colors, $item), 0.2)
+          inset;
+        box-shadow: 0
+          0
+          0px
+          1000px
+          rgba(map-get($theme-colors, $item), 0.2)
+          inset;
+      }
+    }
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  &[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}

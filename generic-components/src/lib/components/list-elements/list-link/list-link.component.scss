@@ -1,0 +1,113 @@
+@use 'styles/variables' as *;
+
+.list-link {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  a,
+  a:hover {
+    text-decoration: none;
+  }
+
+  a ~ .btn {
+    display: inline-block;
+    visibility: hidden;
+
+    padding: 0.1rem 0.3rem 0.1rem 0.3rem;
+
+    margin-right: 0.2rem;
+    margin-bottom: 0;
+
+    font-size: 10px;
+    line-height: 1;
+
+    transition: none;
+  }
+
+  .phone {
+    margin-right: 0.2rem;
+  }
+
+  &:hover {
+    .phone {
+      color: $primary;
+
+      @each $item in $themes {
+        .#{$item}-theme & {
+          color: map-get($theme-colors, $item);
+        }
+      }
+
+      & ~ .btn {
+        visibility: visible;
+      }
+    }
+  }
+
+  &.inline {
+    flex-direction: row;
+    align-items: flex-start;
+
+    a:not(.default) {
+      font-size: 0.9rem;
+      font-weight: normal;
+
+      color: $gray;
+
+      &:hover,
+      &:focus {
+        color: $primary;
+
+        @each $item in $themes {
+          .#{$item}-theme & {
+            color: map-get($theme-colors, $item);
+          }
+        }
+      }
+    }
+
+    .display {
+      order: 0;
+      margin-right: 0.2rem;
+
+      &:after {
+        content: ':';
+      }
+    }
+  }
+
+  .display {
+    order: 2;
+
+    color: rgba($gray, 0.3);
+  }
+
+  a:not(.default) {
+    font-size: 1rem;
+    font-weight: 600;
+
+    color: rgba($gray, 0.8);
+
+    &:hover,
+    &:focus {
+      color: $primary;
+
+      @each $item in $themes {
+        .#{$item}-theme & {
+          color: map-get($theme-colors, $item) !important;
+        }
+      }
+    }
+  }
+}
+
+a.custom-link:not(.default) {
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

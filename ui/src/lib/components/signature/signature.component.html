@@ -1,0 +1,5 @@
+<signature-pad
+  #signaturePad
+  *ngIf="params$ | async as params"
+  [options]="params"
+  (onEndEvent)="drawComplete()"></signature-pad>

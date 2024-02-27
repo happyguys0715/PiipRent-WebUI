@@ -1,0 +1,15 @@
+@use 'styles/variables' as *;
+
+:host {
+  display: block;
+  padding-bottom: 8px;
+
+  .link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 16px;
+    gap: 0.5rem;
+    color: $primary;
+  }
+}

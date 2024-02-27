@@ -1,0 +1,83 @@
+@use 'styles/variables';
+@use 'styles/mixins';
+
+.billing {
+  &__page {
+    padding-top: 3rem;
+    max-width: 1448px;
+    display: grid;
+    gap: 20px;
+
+    @include mixins.media-breakpoint-up('lg') {
+      grid-template-columns: 1fr 520px;
+    }
+  }
+
+  &__section {
+    background: variables.$white;
+    border: 1px solid variables.$border-color;
+    box-shadow: 0px 4px 23px rgba(211, 222, 234, 0.25);
+    border-radius: 5px;
+    overflow-x: auto;
+  }
+}
+
+.divider {
+  color: variables.$border-color;
+  margin: 1.5rem 0;
+}
+
+.group {
+  &__label {
+    font-family: 'Roboto';
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: variables.$secondary-color;
+    margin-bottom: 0.5rem;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+
+  &__footer {
+    margin-top: 1rem;
+    padding: 20px 35px;
+    background-color: variables.$brand-light-color;
+    align-items: center;
+  }
+}
+
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 14px;
+  line-height: 1.2;
+  color: variables.$content-color;
+  font-weight: 600;
+  gap: 1rem;
+
+  &__label {
+    font-family: 'Roboto';
+    font-size: 12px;
+    line-height: 16px;
+    text-transform: uppercase;
+    font-weight: normal;
+    color: variables.$secondary-color;
+    margin-bottom: 0;
+    min-width: 180px;
+    padding-top: 3px;
+  }
+
+  a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    text-decoration: underline;
+  }
+}

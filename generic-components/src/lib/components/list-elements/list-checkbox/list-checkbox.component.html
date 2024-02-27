@@ -1,0 +1,57 @@
+<webui-fa-icon
+  *ngIf="!config.values"
+  [class.text-danger]="config.value === false"
+  [class.text-success]="config.value === true"
+  [class.text-muted]="config.value === null"
+  [icon]="[
+    'fas',
+    config.value
+      ? 'check-circle'
+      : config.value === false
+      ? 'times-circle'
+      : 'minus-circle'
+  ]">
+</webui-fa-icon>
+
+<span
+  class="inline-block"
+  [ngClass]="{
+    undelivered:
+      (getTranslationKey(config.value) | translate : { Default: value }) ===
+      'Undelivered',
+    received:
+      (getTranslationKey(config.value) | translate : { Default: value }) ===
+      'Received',
+    delivered:
+      (getTranslationKey(config.value) | translate : { Default: value }) ===
+      'Delivered',
+    success: ['RECEIVED', 'SENT'].includes(config.value),
+    danger: config.value === 'ERROR',
+    warning: ['WAIT', 'SENDING', 'CREATED'].includes(config.value)
+  }"
+  *ngIf="config.values && !config.content && value">
+  {{ getTranslationKey(config.value) | translate : { Default: value } }}
+</span>
+
+<span
+  *ngIf="config.values && config.content"
+  class="dropdown cursor-pointer"
+  [ngClass]="[iconClass]"
+  placement="bottom"
+  trigger="click"
+  [webuiTooltip]="actionsTemplate">
+  <span class="value">
+    {{ getTranslationKey(config.value) | translate : { Default: value } }}
+  </span>
+  <webui-fa-icon class="icon" icon="chevron-down"></webui-fa-icon>
+</span>
+
+<br *ngIf="!config.delim" />
+
+<ng-template #actionsTemplate>
+  <ng-container
+    webuiListElement
+    [config]="config.content"
+    (buttonAction)="buttonHandler($event)">
+  </ng-container>
+</ng-template>

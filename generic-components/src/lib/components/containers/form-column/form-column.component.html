@@ -1,0 +1,10 @@
+<ng-container
+  *ngFor="let field of config.children"
+  webuiFormElement
+  [config]="field"
+  [group]="group"
+  [errors]="errors"
+  (event)="eventHandler($event)"
+  (buttonAction)="buttonActionHandler($event)"
+  [message]="message">
+</ng-container>

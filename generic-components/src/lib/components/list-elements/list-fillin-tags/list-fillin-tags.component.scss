@@ -1,0 +1,35 @@
+@use 'styles/variables' as *;
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  margin-bottom: 6px;
+}
+
+.required {
+  background-color: rgba($success, 0.2);
+}
+
+.existing {
+  background-color: rgba($info, 0.2);
+}
+
+.missing {
+  background-color: rgba($danger, 0.2);
+}
+
+.badge {
+  padding: 2px 12px;
+  margin-bottom: 0.3rem;
+  margin-right: 0.2rem;
+
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.description {
+  margin-bottom: 0.3rem;
+  margin-left: 12px;
+}

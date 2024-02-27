@@ -1,0 +1,35 @@
+<div #autocomplete class="autocomplete">
+  <input
+    type="text"
+    class="form-control mb-1"
+    autocomplete="off"
+    autofocus
+    [formControl]="searchInput" />
+
+  <div class="text-center" *ngIf="loading">
+    <webui-loader></webui-loader>
+  </div>
+
+  <div
+    class="autocomplete-list"
+    infinite-scroll
+    [infiniteScrollDistance]="modalScrollDistance"
+    [infiniteScrollThrottle]="modalScrollThrottle"
+    [scrollWindow]="false"
+    (scrolled)="onModalScrollDown()"
+    [hidden]="!(data && data.length) || loading">
+    <ul class="list-group w-full">
+      <li
+        class="list-group-item autocomplete-item p-1 pl-2"
+        style="cursor: pointer"
+        *ngFor="let option of data; trackBy: trackByFn"
+        (click)="setValue(option)">
+        {{ option.__str__ }}
+      </li>
+    </ul>
+
+    <div *ngIf="isCanUploadMore" class="autocomplete-preloader">
+      <webui-spinner></webui-spinner>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+.form-tabs {
+  position: relative;
+
+  .form-element-list {
+    display: none !important;
+  }
+}
+
+.view-mode .form-element {
+  display: inline;
+
+  .form-element-content {
+    display: inline;
+
+    a {
+      font-size: 18px;
+      line-height: 20px;
+      font-weight: 600;
+    }
+  }
+}
+
+.nav {
+  padding: 0 40px;
+
+  &.nav-pills .nav-link.active {
+    color: $white;
+  }
+}
+
+.nav:not(.nav-pills) {
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+
+  padding: 0 40px;
+
+  border: none;
+
+  .form-tabs & {
+    &::after {
+      height: 2px;
+      width: 100%;
+      background-color: rgba(#e5e5e5, 0.8);
+      display: block;
+      content: '';
+      position: absolute;
+      z-index: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .nav-item {
+      position: relative;
+      z-index: 1;
+
+      &.disabled {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  .mobile-device & {
+    padding: 0 20px;
+  }
+
+  .nav-link {
+    @apply block;
+
+    padding: 4px 5px;
+    font-size: 14px;
+    line-height: 16px;
+    border-bottom: 2px solid transparent;
+
+    color: rgba(black, 0.43);
+
+    &.active {
+      background-color: transparent;
+      border-color: none;
+      color: inherit;
+
+      @each $item in $themes {
+        .#{$item}-theme & {
+          border-bottom-color: map-get($theme-colors, $item);
+        }
+      }
+    }
+  }
+}
+
+.tab-pane {
+  .dynamic-form {
+    margin: 0;
+  }
+
+  @include media-breakpoint-down('md') {
+    padding: 20px;
+  }
+}

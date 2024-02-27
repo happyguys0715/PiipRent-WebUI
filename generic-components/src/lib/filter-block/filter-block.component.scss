@@ -1,0 +1,73 @@
+@use 'styles/variables';
+@use 'styles/mixins';
+
+.filters {
+  &-block {
+    height: 100%;
+    padding: 0 10px 50px;
+    padding-bottom: 30px !important;
+    border-right: 1px solid variables.$border-color;
+    overflow: auto;
+
+    &.in-container {
+      height: 100%;
+      margin: 0 4px;
+    }
+
+    @include mixins.scrollbar();
+    @include mixins.media-breakpoint-up('xl') {
+      &.inline {
+        width: auto;
+        height: auto;
+        max-height: none;
+
+        margin: 0;
+        padding: 0;
+
+        overflow: visible;
+      }
+    }
+
+    @include mixins.media-breakpoint-down('lg') {
+      padding-bottom: 0px;
+    }
+  }
+
+  &-label {
+    @apply border-b border-gray-200;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 11px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+
+    h5 {
+      font-size: 24px;
+      line-height: 24px;
+      font-weight: normal;
+
+      color: #4f4f4f;
+    }
+
+    .reset {
+      font-size: 0.875rem;
+      line-height: 24px;
+
+      color: rgba(variables.$gray, 0.2);
+      cursor: pointer;
+
+      &:hover {
+        color: variables.$gray;
+      }
+    }
+  }
+}
+
+@include mixins.media-breakpoint-up('xl') {
+  .inline-container {
+    margin: 0 -12px;
+  }
+}

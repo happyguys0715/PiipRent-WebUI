@@ -1,0 +1,17 @@
+<div class="filter-element" [class.active]="!isCollapsed">
+  <webui-filter-header
+    [label]="config.label"
+    [key]="config.key"
+    [resetButton]="query"
+    (resetEvent)="resetFilter()"></webui-filter-header>
+
+  <ul class="list-unstyled filter-choice">
+    <li
+      *ngFor="let item of config.list"
+      [class.selected]="query === item.value"
+      style="cursor: pointer"
+      (click)="select(item.value)">
+      {{ getTranslateKey(item.value) | translate : { Default: item.label } }}
+    </li>
+  </ul>
+</div>

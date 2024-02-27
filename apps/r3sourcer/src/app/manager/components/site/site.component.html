@@ -1,0 +1,327 @@
+<ng-container *ngIf="(loader$ | async) === false">
+  <webui-navigation
+    [user]="user"
+    (changePasswordEmitter)="openChangePassword()">
+  </webui-navigation>
+
+  <ng-container *ngIf="!identifyDevice()">
+    <div
+      class="site-page"
+      [class.mobile-device]="isMobileDevice"
+      *ngIf="pageData && !dashboard"
+      [ngSwitch]="pageData.pathData.type">
+      <div
+        *ngSwitchCase="'form'"
+        class="form-page"
+        [class.profile-page]="isProfilePage(pageData)">
+        <ng-container
+          *ngIf="
+            listName &&
+            !(
+              pageData.pathData.postfix &&
+              pageData.pathData.postfix === 'fillin'
+            ) &&
+            !isProfilePage(pageData)
+          ">
+          <webui-back-link
+            [label]="this.backToListLabel"
+            [path]="pageData.pathData.path">
+          </webui-back-link>
+        </ng-container>
+
+        <div
+          class="form-content"
+          [class.timesheet-submit-form]="pageData.pathData.postfix === 'submit'"
+          *ngIf="
+            (!reload &&
+              !(
+                pageData.endpoint === '/acceptance-tests/acceptancetests/' &&
+                pageData.pathData.id
+              ) &&
+              pageData.endpoint !== '/core/forms/') ||
+            pageData.pathData.postfix === 'submit'
+          ">
+          <webui-generic-form
+            *ngIf="
+              (!reload &&
+                pageData.endpoint !== '/core/forms/' &&
+                !pageData.pathData.postfix) ||
+              pageData.pathData.postfix === 'submit'
+            "
+            [title]="
+              pageData.pathData.postfix === 'submit' ? 'submit_timesheet' : ''
+            "
+            [endpoint]="pageData.endpoint"
+            [id]="pageData.pathData.id"
+            [edit]="!!pageData.pathData.postfix"
+            [mode]="formMode"
+            [errors]="errors"
+            [data]="additionalData"
+            [path]="pageData.pathData.path"
+            [metadataQuery]="pageData.pathData.metadataQuery"
+            (event)="formEvent($event)"
+            (modeEvent)="modeEvent($event)"
+            (errorForm)="formError()"
+            (permissionError)="permissionErrorHandler()"
+            (str)="changeFormLabel($event)">
+            <div class="flex">
+              <button
+                type="button"
+                webuiSubscriptionRequired
+                class="btn button-delete custom-button"
+                *ngIf="showDeleteButton()"
+                (click)="deleteElement(pageData)">
+                <webui-fa-icon [icon]="['fas', 'trash']"></webui-fa-icon>
+                {{ 'delete' | translate }}
+              </button>
+
+              <button
+                type="button"
+                webuiSubscriptionRequired
+                class="btn button-close mt-2"
+                *ngIf="formMode === FormMode.Edit"
+                (click)="changeMode(FormMode.View)">
+                {{ 'close_without_save' | translate }}
+              </button>
+
+              <button
+                type="button"
+                webuiSubscriptionRequired
+                class="btn btn-primary btn-shadow ml-auto px-4 py-2 button-edit"
+                *ngIf="formMode === FormMode.View && checkPermission('update')"
+                (click)="changeMode(FormMode.Edit)">
+                <webui-fa-icon [icon]="['fas', 'pencil-alt']"></webui-fa-icon>
+                {{ 'edit_mode' | translate }}
+              </button>
+
+              <button
+                type="submit"
+                webuiSubscriptionRequired
+                class="btn btn-primary button-save save mt-2"
+                *ngIf="
+                  !formStorage &&
+                  formMode !== FormMode.View &&
+                  (checkPermission('post') || checkPermission('update')) &&
+                  pageData.endpoint !== '/core/users/'
+                "
+                [disabled]="saveProcess">
+                {{ 'save' | translate }}
+                <webui-spinner *ngIf="saveProcess"></webui-spinner>
+              </button>
+
+              <button
+                type="button"
+                webuiSubscriptionRequired
+                class="btn btn-success mr-2 ml-auto"
+                *ngIf="
+                  formStorage &&
+                  !approvedStorage &&
+                  formMode === FormMode.Edit &&
+                  checkPermission('post')
+                "
+                (click)="approveFormStorage(pageData)">
+                {{ 'action.approve' | translate }}
+              </button>
+            </div>
+          </webui-generic-form>
+        </div>
+        <div class="form-content" *ngIf="pageData.endpoint === '/core/forms/'">
+          <webui-form-builder
+            [path]="pageData.pathData.path"
+            [endpoint]="pageData.endpoint"
+            [id]="pageData.pathData.id"
+            (str)="changeFormLabel($event)">
+          </webui-form-builder>
+        </div>
+
+        <div
+          class="form-content"
+          *ngIf="
+            !reload &&
+            pageData.endpoint === '/acceptance-tests/acceptancetests/' &&
+            pageData.pathData.id
+          ">
+          <webui-test-builder [testData]="acceptenceTestData">
+            <webui-generic-form
+              [endpoint]="pageData.endpoint"
+              [id]="pageData.pathData.id"
+              [path]="pageData.pathData.path"
+              [mode]="formMode"
+              (modeEvent)="modeEvent($event)"
+              (errorForm)="formError()"
+              (event)="formEvent($event)"
+              (str)="setTestData($event)">
+              <div class="flex">
+                <button
+                  type="button"
+                  webuiSubscriptionRequired
+                  class="btn button-delete custom-button"
+                  *ngIf="pageData.pathData.id && checkPermission('delete')"
+                  (click)="deleteElement(pageData)">
+                  <webui-fa-icon [icon]="['fas', 'trash']"></webui-fa-icon>
+                  {{ 'delete' | translate }}
+                </button>
+
+                <button
+                  type="button"
+                  class="btn button-close"
+                  *ngIf="formMode === FormMode.Edit"
+                  (click)="changeMode(FormMode.View)">
+                  {{ 'close_without_save' | translate }}
+                </button>
+
+                <button
+                  type="button"
+                  webuiSubscriptionRequired
+                  class="btn btn-primary btn-shadow ml-auto px-4 py-2 button-edit"
+                  *ngIf="
+                    formMode === FormMode.View && checkPermission('update')
+                  "
+                  (click)="changeMode(FormMode.Edit)">
+                  <webui-fa-icon [icon]="['fas', 'pencil-alt']"></webui-fa-icon>
+                  {{ 'edit_mode' | translate }}
+                </button>
+
+                <button
+                  type="submit"
+                  webuiSubscriptionRequired
+                  class="btn btn-primary"
+                  *ngIf="
+                    !formStorage &&
+                    formMode !== FormMode.View &&
+                    (checkPermission('post') || checkPermission('update'))
+                  "
+                  [disabled]="saveProcess">
+                  {{ 'save' | translate }}
+                  <webui-spinner *ngIf="saveProcess"></webui-spinner>
+                </button>
+              </div>
+            </webui-generic-form>
+          </webui-test-builder>
+        </div>
+      </div>
+
+      <ng-container *ngSwitchCase="'list'">
+        <div
+          class="datatable-list"
+          *ngIf="!pageData.pathData.postfix"
+          infinite-scroll
+          [scrollWindow]="true"
+          (scrolled)="onModalScrollDown()">
+          <webui-generic-list
+            [upload]="upload"
+            [clientId]="getClientId()"
+            [listNameCache]="listNameCache"
+            [allowPermissions]="permissionMethods"
+            [endpoint]="pageData.endpoint">
+          </webui-generic-list>
+        </div>
+
+        <div
+          class="datatable-list"
+          *ngIf="
+            pageData.pathData.postfix && pageData.pathData.postfix === 'fillin'
+          ">
+          <webui-generic-list
+            [responseField]="fillInData.responseField || 'results'"
+            [paginated]="fillInData.paginated"
+            [supportData]="fillInData.supportData"
+            [metaType]="fillInData.metaType"
+            [actions]="fillInData.actions"
+            [clientId]="getClientId()"
+            [listNameCache]="listNameCache"
+            [allowPermissions]="permissionMethods"
+            [endpoint]="pageData.endpoint"
+            (checkedObjects)="checkedObjects($event)"
+            (listUpdated)="data = null"
+            (event)="fillinListEventHandler($event)">
+          </webui-generic-list>
+
+          <div *ngIf="data" class="buttons mb-5">
+            <button type="button" class="btn btn-secondary" (click)="back()">
+              {{ 'cancel' | translate }}
+            </button>
+            <button
+              type="button"
+              webuiSubscriptionRequired
+              class="btn btn-primary pr-3"
+              [disabled]="!data || fillInList.loading"
+              (click)="sendData()">
+              {{ 'fill_in.label' | translate }}
+              <webui-spinner *ngIf="fillInList.loading"></webui-spinner>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <webui-map *ngSwitchCase="'map'"></webui-map>
+    </div>
+  </ng-container>
+
+  <div class="dashboard" *ngIf="dashboard">
+    <webui-dashboard></webui-dashboard>
+  </div>
+
+  <ng-template #modal>
+    <div class="modal-content-wrapper">
+      <div class="modal-header-wrapper">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ 'change_password' | translate }}</h5>
+
+          <webui-close-button class="ml-auto"></webui-close-button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <webui-generic-form
+          [endpoint]="changePasswordEndpoint"
+          [edit]="true"
+          [needData]="false"
+          (event)="resetEvent($event)">
+          <a class="forgot" href="" (click)="openResetForm()">
+            {{ 'forgot_password' | translate }}
+          </a>
+          <div class="flex items-center">
+            <button
+              webuiSubscriptionRequired
+              type="submit"
+              class="btn btn-primary ml-auto">
+              {{ 'save' | translate }}
+            </button>
+          </div>
+        </webui-generic-form>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #forgotPassword>
+    <div class="modal-content-wrapper">
+      <div class="modal-header-wrapper">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ 'password_reset' | translate }}</h5>
+
+          <webui-close-button class="ml-auto"></webui-close-button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <webui-generic-form
+          endpoint="/core/contacts/forgot_password/"
+          [data]="passwordData"
+          (event)="resetEvent($event)">
+          <div class="flex items-center">
+            <button
+              webuiSubscriptionRequired
+              type="submit"
+              class="btn btn-primary ml-auto">
+              {{ 'reset' | translate }}
+            </button>
+          </div>
+        </webui-generic-form>
+      </div>
+    </div>
+  </ng-template>
+
+  <webui-master-guide
+    *ngIf="user?.currentRole?.is_primary"></webui-master-guide>
+</ng-container>
+
+<webui-site-loader *ngIf="loader$ | async"></webui-site-loader>

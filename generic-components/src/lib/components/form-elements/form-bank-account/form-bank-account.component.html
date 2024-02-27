@@ -1,0 +1,99 @@
+<webui-form-element-view [label]="config.templateOptions.label" [many]="true">
+  <div class="flex flex-col" *ngIf="config.many">
+    <span
+      class="inline-flex items-center my-1"
+      *ngFor="let account of accounts">
+      <a href="#" (click)="viewAccount(account, $event)">
+        {{ 'contact.bank_accounts.label' | translate }}
+      </a>
+
+      <button
+        type="button"
+        class="btn btn-danger ml-2"
+        (click)="deleteAccount(account)">
+        {{ 'delete' | translate }}
+      </button>
+    </span>
+
+    <button
+      class="btn btn-primary btn-sm mt-2"
+      type="button"
+      (click)="addAccount()">
+      {{ 'action.add_account' | translate }}
+    </button>
+  </div>
+
+  <ng-container *ngIf="!config.many">
+    <ng-container *ngIf="!viewMode">
+      <div
+        class="form-control autocomplete-value"
+        [class.placeholder]="!account">
+        <div style="overflow: hidden; white-space: nowrap">
+          {{ account ? 'View' : 'Add new account' }}
+        </div>
+      </div>
+
+      <div class="form-element-content-actions items-center">
+        <button
+          *ngIf="!account"
+          type="button"
+          class="btn btn-primary text-white alone"
+          (click)="addAccount()">
+          {{ 'add_new' | translate }}
+        </button>
+
+        <button
+          *ngIf="account"
+          type="button"
+          class="btn btn-warning text-white"
+          (click)="viewAccount(account, $event)">
+          {{ 'action.view' | translate }}
+        </button>
+
+        <button
+          *ngIf="account"
+          type="button"
+          class="btn btn-danger text-white"
+          (click)="deleteAccount(account)">
+          {{ 'delete' | translate }}
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="viewMode">
+      <a *ngIf="account" href="#" (click)="viewAccount(account, $event)">
+        {{ 'action.view' | translate }}
+      </a>
+
+      <span *ngIf="!account">-</span>
+    </ng-container>
+  </ng-container>
+</webui-form-element-view>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modalData.title }}</h5>
+
+        <webui-close-button class="ml-auto"></webui-close-button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <webui-dynamic-form
+        [config]="modalData.metadata"
+        [errors]="modalData.errors"
+        (submitForm)="submitForm($event)">
+        <button
+          *ngIf="!modalData.view"
+          type="submit"
+          class="btn btn-primary button-save"
+          [disabled]="saveProcess">
+          {{ 'save' | translate }}
+          <webui-spinner *ngIf="saveProcess"></webui-spinner>
+        </button>
+      </webui-dynamic-form>
+    </div>
+  </div>
+</ng-template>

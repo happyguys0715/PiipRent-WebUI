@@ -1,0 +1,7 @@
+<ng-container *ngIf="control?.statusChanges | async">
+  <ng-container *ngFor="let item of keys">
+    <div *ngIf="control?.hasError(item.key)" class="text-danger">
+      {{ item.message | translate : item.values() }}
+    </div>
+  </ng-container>
+</ng-container>

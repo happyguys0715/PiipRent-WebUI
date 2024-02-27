@@ -1,0 +1,181 @@
+@use 'styles/variables' as *;
+
+:host {
+  @apply block;
+}
+
+.badge {
+  line-height: 1.2;
+  text-align: left;
+}
+
+.state-info {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  &-label {
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    opacity: 0.3;
+    color: #333;
+  }
+
+  .state-tests {
+    min-width: 300px;
+  }
+
+  .state-substate {
+    width: 200px;
+
+    padding: 10px;
+    margin-bottom: 5px;
+
+    border-radius: 5px;
+    border: 1px solid $gray;
+
+    cursor: pointer;
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-top: 10px;
+}
+
+.state-progress {
+  font-size: 12px;
+  line-height: 14px;
+
+  margin-left: 10px;
+}
+
+.timeline {
+  padding-bottom: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-top: 1rem;
+
+  &-element {
+    @apply inline-flex items-center px-3;
+
+    font-size: 12px;
+    height: 24px;
+
+    transition: 0.3s;
+
+    &-wrapper {
+      display: inline-flex;
+      align-items: center;
+
+      &:not(:last-of-type) .timeline-element {
+        margin-right: 8px;
+      }
+
+      &.dropdown-wrapper {
+        display: none;
+      }
+    }
+
+    &-wrapper:hover .timeline-requirements {
+      display: block;
+    }
+
+    &.active:hover:not(.timeline-select),
+    &.active:focus:not(.timeline-select),
+    &.allowed:hover:not(.timeline-select),
+    &.allowed:focus:not(.timeline-select) {
+      cursor: pointer;
+      box-shadow: 2px 2px 4px rgba($gray, 0.3);
+    }
+  }
+
+  button i {
+    line-height: 14px;
+  }
+
+  option {
+    color: rgba($gray, 0.8);
+    background-color: $white;
+  }
+
+  .active {
+    border-color: $success;
+    background-color: $success;
+    color: $white;
+  }
+
+  .allowed {
+    border-color: $success;
+    color: $success;
+  }
+
+  .not-allowed {
+    border-color: #828282;
+    color: rgba($gray, 0.7);
+
+    opacity: 0.2;
+  }
+
+  .need-requirements {
+    border-color: #828282;
+    color: rgba($gray, 0.7);
+  }
+
+  .visited {
+    border-color: $gray;
+    background-color: rgba($gray, 0.5);
+    color: rgba($gray, 0.7);
+  }
+
+  .next {
+    margin: 0 6px;
+  }
+
+  &-select-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0;
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: 9px;
+  right: 16px;
+}
+
+.table {
+  th {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    opacity: 0.8;
+  }
+
+  tr:nth-child(even) {
+    background-color: rgba($primary, 0.1);
+  }
+
+  td {
+    font-size: 14px;
+  }
+}
+
+.save {
+  background: rgba($gray, 0.2);
+
+  webui-spinner {
+    position: relative;
+    top: -1px;
+  }
+}

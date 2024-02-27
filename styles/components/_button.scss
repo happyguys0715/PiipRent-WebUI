@@ -1,0 +1,467 @@
+$shadow: 0px 4px 6px 0;
+
+.ng-invalid button[type='submit'] {
+  position: relative;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.5;
+
+  &.button-save:hover::after,
+  &.save:hover::after {
+    position: absolute;
+    display: block;
+    top: -35px;
+    left: 0;
+    width: 240px;
+    padding: 0.2rem;
+    font-size: 14px;
+    border-radius: 0.25rem;
+    background-color: rgba($gray, 0.8);
+    content: 'Please fill all the REQUIRED fields';
+    z-index: 1;
+  }
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full leading-4 py-2 px-5;
+
+  &:focus,
+  &:active {
+    box-shadow: none;
+  }
+
+  &-icon {
+    @apply p-1;
+  }
+}
+
+button.app-button {
+  &__size-m,
+  &__size-l {
+    padding: 6px !important;
+    font-size: 14px !important;
+    line-height: 18px !important;
+  }
+
+  &__size-m {
+    min-width: 90px;
+  }
+
+  &__size-l {
+    min-width: 160px;
+    height: auto !important;
+  }
+
+  &__shadow {
+    box-shadow: $shadow rgba(black, 0.3);
+
+    &:hover:not([disabled]) {
+      box-shadow: $shadow rgba(black, 0.2);
+    }
+
+    &:active:not([disabled]) {
+      box-shadow: none;
+    }
+
+    &-success {
+      box-shadow: $shadow rgba($success, 0.3);
+
+      &:hover,
+      &:focus {
+        box-shadow: $shadow rgba($success, 0.2);
+      }
+    }
+
+    &-danger {
+      box-shadow: $shadow rgba($danger, 0.3);
+
+      &:hover,
+      &:focus {
+        box-shadow: $shadow rgba($danger, 0.2);
+      }
+    }
+  }
+
+  &__default {
+    $shadow: 0 1px 5px rgba(43, 46, 51, 0.2);
+    background-color: #fdfdfd;
+    box-shadow: $shadow;
+
+    &:focus,
+    &:hover,
+    &:active {
+      box-shadow: $shadow;
+    }
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    &:active {
+      background-color: #f2f2f2;
+    }
+  }
+
+  &__success {
+    background-color: rgba($success, 0.7);
+    color: #fff;
+
+    &:hover,
+    &:focus {
+      background-color: $success;
+      color: #fff;
+    }
+
+    &:active {
+      background-color: $success;
+      color: #fff;
+    }
+  }
+
+  &__primary {
+    background-color: rgba($primary, 0.2);
+
+    &:hover:not([disabled]),
+    &:focus:not([disabled]) {
+      background-color: rgba($primary, 0.3);
+    }
+
+    &:active:not([disabled]) {
+      background-color: rgba($primary, 0.5);
+    }
+  }
+
+  &__danger {
+    background-color: rgba($danger, 0.7);
+    color: #fff;
+
+    &:hover,
+    &:focus {
+      background-color: $danger;
+      color: #fff;
+    }
+
+    &:active {
+      background-color: $danger;
+      color: #fff;
+    }
+  }
+
+  &__mr {
+    margin-right: 12px;
+  }
+
+  @include media-breakpoint-down('sm') {
+    &__resize {
+      width: 172px;
+    }
+  }
+}
+
+.btn-secondary {
+  color: #292b2c;
+  background-color: #fff;
+  border-color: transparent;
+}
+
+.btn-default {
+  color: $gray;
+  background: $white;
+  border: none;
+
+  &:hover,
+  &:active,
+  &:focus {
+    color: $white;
+
+    @each $item in $themes {
+      .#{$item}-theme & {
+        background-color: map-get($theme-colors, $item);
+      }
+    }
+  }
+}
+
+.btn-primary {
+  color: $white;
+
+  &:focus {
+    box-shadow: 0 0 2px rgba($primary, 0.5);
+    color: $white;
+
+    @each $item in $themes {
+      .#{$item}-theme & {
+        box-shadow: 0 0 2px rgba(map-get($theme-colors, $item), 0.5);
+      }
+    }
+  }
+
+  &:disabled,
+  &.disabled {
+    pointer-events: initial;
+    cursor: not-allowed;
+    color: $white;
+    opacity: 0.5;
+  }
+
+  &:hover {
+    color: $white;
+  }
+
+  @each $item in $themes {
+    .#{$item}-theme & {
+      border-color: map-get($theme-colors, $item);
+      background: map-get($theme-colors, $item);
+    }
+  }
+}
+
+.btn-link {
+  // color: $primary;
+  text-decoration: none;
+
+  @each $item in $themes {
+    .#{$item}-theme & {
+      color: map-get($theme-colors, $item);
+    }
+  }
+}
+
+.btn-shadow {
+  box-shadow: $shadow rgba(black, 0.1);
+
+  &:active {
+    box-shadow: none;
+  }
+}
+
+// .btn-outline-primary {
+//   font-size: 0.625rem;
+//   padding: 0.25rem;
+
+//   @each $item in $themes {
+//     .#{$item}-theme & {
+//       border-color: map-get($theme-colors, $item);
+//       color: map-get($theme-colors, $item);
+
+//       &:hover {
+//         background-color: map-get($theme-colors, $item);
+//         color: white;
+
+//         &.disabled {
+//           background-color: #fff;
+//           color: map-get($theme-colors, $item);
+//           cursor: default;
+//         }
+//       }
+//     }
+//   }
+// }
+
+.big-btn {
+  height: 42px;
+  width: 160px;
+}
+
+webui-form-button:not(:first-child) {
+  .danger-btn,
+  .warning-btn {
+    margin-top: 6px;
+  }
+}
+
+@each $item in $themes {
+  .#{$item}-theme .bg-primary,
+  .#{$item}-theme button.bg-primary:hover {
+    background-color: map-get($theme-colors, $item) !important;
+  }
+}
+
+@each $item in $themes {
+  .#{$item}-theme button.btn.active {
+    border-color: map-get($theme-colors, $item);
+
+    background-color: map-get($theme-colors, $item);
+  }
+}
+
+@mixin button() {
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  text-transform: uppercase;
+  border-radius: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: none;
+
+  &:disabled,
+  &.disabled {
+    filter: grayscale(1);
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.button-primary {
+  @include button;
+
+  color: #fff;
+  background-color: $primary;
+  box-shadow: 2px 10px 30px rgba(0, 51, 105, 0.12);
+
+  transition: background-color 0.2s linear;
+  will-change: background-color;
+  gap: 1rem;
+
+  &:hover:not(:disabled) {
+    background-color: darken($color: $primary, $amount: 5%);
+  }
+}
+
+.button-secondary {
+  @include button;
+
+  color: $primary;
+  border: 1px solid $primary;
+  background-color: transparent;
+  box-shadow: 2px 10px 30px rgba(0, 51, 105, 0.12);
+
+  transition: background-color 0.2s linear;
+  will-change: background-color;
+
+  &:hover:not(:disabled) {
+    background-color: $brand-light-color;
+  }
+
+  &--without-shadow {
+    box-shadow: none;
+  }
+}
+
+@include media-breakpoint-up('md') {
+  .btn.only-mobile {
+    display: none;
+  }
+}
+
+.button-save {
+  padding: 8px 20px;
+
+  &:disabled,
+  &.disabled {
+    cursor: not-allowed;
+  }
+
+  @include media-breakpoint-down('sm') {
+    & {
+      width: 100%;
+    }
+  }
+}
+
+// .input-group .dbOpenButton {
+//   height: 100%;
+//   margin-bottom: 0;
+//   width: 100%;
+// }
+
+.btn-success,
+.btn-danger {
+  color: $white;
+
+  &:disabled,
+  &.disabled,
+  &:hover,
+  &:active,
+  &:focus {
+    color: $white;
+  }
+}
+
+.btn-success {
+  @apply bg-success;
+}
+
+.btn-danger {
+  @apply bg-danger;
+}
+
+.btn-warning {
+  @apply bg-warning;
+}
+
+.button {
+  font-size: 16px;
+  line-height: 19px;
+  font-weight: 500;
+  font-family: inherit;
+  text-transform: uppercase;
+  box-shadow: 2px 10px 30px 0px rgba(#003369, 0.12);
+  padding: 12px 24px;
+  min-width: 210px;
+  background-color: $white;
+  border-radius: 30px;
+  color: $content-color;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: box-shadow 0.4s linear;
+
+  &--primary {
+    @each $item in $themes {
+      .#{$item}-theme & {
+        background-color: map-get($theme-colors, $item);
+        color: $white;
+      }
+    }
+  }
+
+  @include media-breakpoint-down('md') {
+    width: 100%;
+  }
+
+  &:disabled,
+  &.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.btn-outline-primary {
+  @apply text-primary border border-current;
+
+  &:hover:not(:disabled) {
+    @apply text-white bg-primary border-transparent;
+  }
+}
+
+.btn-outline-secondary {
+  @apply text-gray border border-current;
+
+  &:hover:not(:disabled) {
+    @apply text-white bg-gray border-transparent;
+  }
+}
+
+.btn-outline-info {
+  @apply text-info border border-current;
+
+  &:hover:not(:disabled) {
+    @apply text-white bg-info border-transparent;
+  }
+}
+
+.btn-outline-success {
+  @apply text-success border border-current;
+
+  &:hover:not(:disabled) {
+    @apply text-white bg-success border-transparent;
+  }
+}

@@ -1,0 +1,31 @@
+<webui-dialog>
+  <form
+    dialog-content
+    id="change-email-form"
+    class="form"
+    [formGroup]="formGroup"
+    (ngSubmit)="onSubmit()">
+    <webui-form-input-control
+      formControlName="password"
+      type="password"
+      [label]="'old_password.label' | translate"
+      [error]="(errors$ | async)?.['password']"></webui-form-input-control>
+
+    <webui-form-input-control
+      formControlName="new_email"
+      type="email"
+      [label]="'contact.email.label' | translate"
+      [error]="(errors$ | async)?.['new_email']"></webui-form-input-control>
+  </form>
+
+  <button
+    dialog-footer
+    form="change-email-form"
+    class="button button--primary"
+    type="submit"
+    [disabled]="formInvalid || (saving$ | async)">
+    {{ 'save' | translate }}
+
+    <webui-spinner *ngIf="saving$ | async"></webui-spinner>
+  </button>
+</webui-dialog>

@@ -1,0 +1,92 @@
+<label *ngIf="isDate || isDateTime" class="wrapper">
+  <span class="control__label">{{ label | translate }}</span>
+  <span class="control__input-wrapper">
+    <input
+      [formControl]="dateControl"
+      class="control__input"
+      type="date"
+      local="fr" />
+    <webui-icon
+      *ngIf="hasIcon('date')"
+      class="control__input-icon"
+      [icon]="Icon.Calendar"
+      [size]="IconSize.Medium"></webui-icon>
+  </span>
+</label>
+
+<label *ngIf="isTime || isDateTime" class="wrapper">
+  <span *ngIf="isTime" class="control__label">
+    {{ label | translate }}
+  </span>
+  <span *ngIf="isDateTime" class="control__label empty">&nbsp;</span>
+  <span class="control__input-wrapper">
+    <webui-time-picker
+      #t
+      [time]="timeControl.value"
+      (changed)="onTimeChange($event)">
+      <div class="relative flex items-center">
+        <input
+          [formControl]="timeControl"
+          class="control__input"
+          readonly
+          type="text"
+          (focus)="t.onFocus()" />
+
+        <webui-icon
+          class="control__input-icon"
+          [icon]="Icon.Clock"
+          [size]="IconSize.Medium"></webui-icon>
+      </div>
+    </webui-time-picker>
+  </span>
+</label>
+
+<label *ngIf="isTimer" class="wrapper wrapper--half" cdk-overlay-origin>
+  <span class="control__label">{{ label | translate }}</span>
+  <span class="control__input-wrapper">
+    <input
+      [formControl]="durationControl"
+      class="control__input"
+      type="text"
+      readonly
+      (focusin)="showDurationDropdown()" />
+    <webui-icon
+      class="control__input-icon"
+      [icon]="Icon.Timer"
+      [size]="IconSize.Medium"></webui-icon>
+  </span>
+</label>
+
+<ng-template #content let-payload="payload">
+  <div class="dropdown-wrapper">
+    <div class="control-wrapper">
+      <button class="btn" type="button" (click)="plus(hoursControl)">
+        <webui-icon [icon]="Icon.ArrowUp" [size]="IconSize.Medium"></webui-icon>
+      </button>
+      <input
+        class="control__input"
+        placeholder="HH"
+        type="text"
+        [formControl]="hoursControl" />
+      <button class="btn" type="button" (click)="minus(hoursControl)">
+        <webui-icon [icon]="Icon.ArrowUp" [size]="IconSize.Medium"></webui-icon>
+      </button>
+    </div>
+
+    <span>:</span>
+
+    <div class="control-wrapper">
+      <button class="btn" type="button" (click)="plus(minutesControl)">
+        <webui-icon [icon]="Icon.ArrowUp" [size]="IconSize.Medium"></webui-icon>
+      </button>
+      <input
+        class="control__input"
+        placeholder="MM"
+        type="text"
+        [formControl]="minutesControl" />
+      <button class="btn" type="button" (click)="minus(minutesControl)">
+        <webui-icon [icon]="Icon.ArrowUp" [size]="IconSize.Medium"></webui-icon>
+      </button>
+    </div>
+  </div>
+</ng-template>

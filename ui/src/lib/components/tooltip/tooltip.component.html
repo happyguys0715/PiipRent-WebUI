@@ -1,0 +1,11 @@
+<div class="flex justify-end" *ngIf="onClose">
+  <webui-close-button
+    [inDialog]="false"
+    (click)="onClose()"></webui-close-button>
+</div>
+
+<span *ngIf="message">{{ message }}</span>
+
+<ng-container *ngIf="templateRef">
+  <ng-container *ngTemplateOutlet="templateRef"></ng-container>
+</ng-container>

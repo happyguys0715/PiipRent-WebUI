@@ -1,0 +1,51 @@
+<ng-container *ngIf="pages$ | async as pages">
+  <ng-container *ngIf="pages.length > 1">
+    <span class="text-sm mr-auto"> {{ count }} {{ label }} </span>
+
+    <button
+      [class.disabled]="!(activeActions$ | async)?.prev"
+      class="action"
+      type="button"
+      (click)="prevPage()">
+      <webui-fa-icon icon="chevron-left"></webui-fa-icon>
+    </button>
+
+    <div>
+      <webui-overlay-dropdown
+        #dropdown
+        placement="end"
+        (opened)="onOpen()"
+        (closed)="onClose()">
+        <span
+          class="inline-flex items-center justify-between h-7 px-2 rounded border cursor-pointer w-16"
+          target
+          (click)="dropdown.openDropdown()">
+          {{ page }}
+
+          <webui-fa-icon
+            icon="chevron-down"
+            class="transition-all"
+            [class.rotate-180]="dropdownOpened$ | async"></webui-fa-icon>
+        </span>
+
+        <ul class="flex mb-2 flex-col overflow-y-auto" content>
+          <li
+            class="inline-flex justify-center transition-all py-1 px-2 hover:cursor-pointer hover:bg-primary hover:text-white rounded"
+            *ngFor="let item of pages$ | async"
+            (click)="setPage(item)"
+            [class.font-bold]="item === page">
+            {{ item }}
+          </li>
+        </ul>
+      </webui-overlay-dropdown>
+    </div>
+
+    <button
+      [class.disabled]="!(activeActions$ | async)?.next"
+      class="action"
+      type="button"
+      (click)="nextPage()">
+      <webui-fa-icon icon="chevron-right"></webui-fa-icon>
+    </button>
+  </ng-container>
+</ng-container>

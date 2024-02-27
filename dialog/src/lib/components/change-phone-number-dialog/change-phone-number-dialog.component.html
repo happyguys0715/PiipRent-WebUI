@@ -1,0 +1,35 @@
+<webui-dialog>
+  <form
+    dialog-content
+    class="form"
+    id="change-phone-number-form"
+    [formGroup]="formGroup"
+    (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <webui-form-input-control
+        formControlName="password"
+        type="password"
+        [label]="'old_password.label' | translate"
+        [error]="(errors$ | async)?.['password']"></webui-form-input-control>
+    </div>
+
+    <div class="form-row">
+      <webui-form-input-control
+        formControlName="new_phone_mobile"
+        type="tel"
+        [label]="'contact.phone_mobile.label' | translate"
+        [error]="(errors$ | async)?.['new_phone_mobile']"></webui-form-input-control>
+    </div>
+  </form>
+
+  <button
+    dialog-footer
+    form="change-phone-number-form"
+    class="button button--primary"
+    type="submit"
+    [disabled]="formInvalid || (saving$ | async)">
+    {{ 'save' | translate }}
+
+    <webui-spinner *ngIf="saving$ | async"></webui-spinner>
+  </button>
+</webui-dialog>

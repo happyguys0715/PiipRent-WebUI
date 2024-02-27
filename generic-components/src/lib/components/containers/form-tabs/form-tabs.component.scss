@@ -1,0 +1,37 @@
+:host {
+  .form-tabs {
+    margin: 0 -40px;
+  }
+
+  .header {
+    @apply flex items-center justify-end flex-wrap mb-4 gap-4;
+  }
+
+  button {
+    @apply py-2 px-4;
+
+    &:hover {
+      box-shadow: 0 0 12px rgba(black, 0.15);
+    }
+
+    &:active {
+      box-shadow: 0 0 8px rgba(black, 0.15);
+    }
+  }
+
+  .edit-mode {
+    background-color: #fdfdfd;
+    color: rgba(black, 0.55);
+    box-shadow: 0 0 8px rgba(black, 0.15);
+  }
+
+  .close-btn {
+    @apply bg-white;
+
+    border: 1px solid var(--primary-color);
+  }
+
+  .nav {
+    padding: 0 24px;
+  }
+}

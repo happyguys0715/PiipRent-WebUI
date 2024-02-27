@@ -1,0 +1,58 @@
+<div class="form-group" [formGroup]="group" *ngIf="!config.hide">
+  <div class="form-element">
+    <label
+      class="form-element-label"
+      [class.required]="config.templateOptions.required"
+      [attr.for]="key"
+      *ngIf="label && config.templateOptions.label">
+      {{
+        getTranslationKey(config.key, 'label')
+          | translate : { Default: config.templateOptions.label }
+      }}:
+    </label>
+    <webui-info
+      *ngIf="config.templateOptions.description"
+      [description]="
+        getTranslationKey(config.key, 'description')
+          | translate : { Default: config.templateOptions.description || '' }
+      "></webui-info>
+    <div
+      class="form-element-content edit"
+      [class.full-width]="config.templateOptions.full"
+      style="height: auto; max-height: none">
+      <textarea
+        [rows]="config.templateOptions.rows || 2"
+        *ngIf="!viewMode"
+        class="form-control"
+        #textarea
+        [formControlName]="key"
+        [attr.type]="
+          config.templateOptions.type ? config.templateOptions.type : 'text'
+        "
+        [attr.id]="key"
+        [attr.name]="key"
+        [attr.placeholder]="
+          config.templateOptions.placeholder
+            ? config.templateOptions.placeholder
+            : ''
+        "
+        (focus)="onFocus()"></textarea>
+      <span
+        [ngClass]="[className]"
+        [class.readonly-value]="editMode"
+        *ngIf="viewMode"
+        >{{ displayValue }}</span
+      >
+    </div>
+  </div>
+  <div *ngIf="errors">
+    <div class="text-danger mt-3" *ngIf="errors[config.key]">
+      {{ errors[config.key] }}
+    </div>
+  </div>
+  <div *ngIf="message">
+    <div *ngIf="message[config.key]" class="text-success mt-1">
+      {{ message[config.key] }}
+    </div>
+  </div>
+</div>

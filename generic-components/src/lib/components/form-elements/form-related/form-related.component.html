@@ -1,0 +1,802 @@
+<div
+  *ngIf="(!viewMode || config.list) && !config.hide"
+  class="input_type_autocomplete"
+  [ngClass]="['input_type_' + key]">
+  <div *ngIf="!config.list" class="form-group" [formGroup]="group">
+    <div class="form-element" *ngIf="!config.many">
+      <label
+        class="form-element-label"
+        [attr.for]="key"
+        [class.required]="config.templateOptions?.required"
+        *ngIf="label && config.templateOptions?.label">
+        {{
+          getTranslationKey(config.translateKey || config.key, 'label')
+            | translate : { Default: config.templateOptions?.label }
+        }}
+      </label>
+
+      <webui-info
+        *ngIf="config.templateOptions?.description"
+        [description]="
+          getTranslationKey(this.key, 'description')
+            | translate : { Default: config.templateOptions?.description || '' }
+        ">
+      </webui-info>
+      <webui-info
+        *ngIf="!viewMode && config.errorMessage && config.errorMessage.visible"
+        [description]="
+          getTranslationKey(config.key, 'error_message')
+            | translate : { Default: config.errorMessage.message }
+        "
+        [danger]="true"></webui-info>
+
+      <div
+        class="form-element-content flex-row edit relative"
+        [class.disabled]="fieldDisabled"
+        darkTheme
+        placement="bottom"
+        [webuiTooltip]="disableMessage">
+        <webui-overlay-dropdown
+          #dropdown
+          size="full"
+          (opened)="openAutocomplete()"
+          (closed)="onClose()">
+          <ng-container target>
+            <div
+              class="form-control autocomplete-value"
+              [class.placeholder]="placeholder && !displayValue"
+              (click)="dropdown.openDropdown()">
+              <div style="overflow: hidden; white-space: nowrap">
+                {{ displayValue || (this.placeholder | translate) }}
+              </div>
+            </div>
+
+            <div
+              class="form-element-content-actions items-center"
+              *ngIf="hasActions">
+              <button
+                *ngIf="displayValue"
+                class="clear-button mr-1"
+                type="button"
+                (click)="clearField()">
+                <webui-fa-icon
+                  class="text-secondary"
+                  [icon]="['fas', 'times']"></webui-fa-icon>
+              </button>
+              <button
+                webuiSubscriptionRequired
+                type="button"
+                class="btn btn-primary text-white"
+                [class.alone]="!canEdit && !canDelete"
+                *ngIf="canCreate"
+                (click)="open('post')">
+                {{ 'add_new' | translate }}
+              </button>
+              <button
+                webuiSubscriptionRequired
+                type="button"
+                class="btn btn-warning text-white mr-1"
+                *ngIf="canEdit"
+                (click)="open('update')">
+                {{ 'edit' | translate }}
+              </button>
+              <button
+                webuiSubscriptionRequired
+                type="button"
+                class="btn btn-danger text-white"
+                *ngIf="canDelete"
+                (click)="open('delete')">
+                {{ 'delete' | translate }}
+              </button>
+            </div>
+          </ng-container>
+
+          <div content>
+            <input
+              type="text"
+              class="form-control autocomplete-dropdown-input"
+              autocomplete="off"
+              #search="ngModel"
+              #searchElement
+              [(ngModel)]="searchValue"
+              [ngModelOptions]="{ standalone: true }" />
+
+            <div class="text-center" *ngIf="loading">
+              <webui-loader></webui-loader>
+            </div>
+
+            <div
+              class="autocomplete-dropdown-list"
+              infinite-scroll
+              [infiniteScrollDistance]="modalScrollDistance"
+              [infiniteScrollThrottle]="modalScrollThrottle"
+              [scrollWindow]="false"
+              (scrolled)="onModalScrollDown()"
+              *ngIf="!loading">
+              <ul>
+                <li
+                  [class.font-bold]="
+                    config.endpoint === '/core/tags/' &&
+                    option.owner === 'system'
+                  "
+                  class="autocomplete-dropdown-item"
+                  *ngFor="let option of previewList; trackBy: trackByFn"
+                  (click)="setValue(option, true); dropdown.closeDropdown()">
+                  {{ option.__str__ }}
+                </li>
+
+                <li
+                  *ngIf="!previewList?.length && !loading && !skipScroll"
+                  class="text-secondary text-center mt-2">
+                  {{ 'message.empty-list' | translate }}
+                </li>
+              </ul>
+
+              <div class="autocomplete-dropdown-preloader" *ngIf="skipScroll">
+                <webui-spinner></webui-spinner>
+              </div>
+            </div>
+          </div>
+        </webui-overlay-dropdown>
+      </div>
+
+      <div *ngIf="config?.additional_text" class="additional-text">
+        {{
+          getTranslationKey(config.key, 'additional_text')
+            | translate : { Default: config.additional_text }
+        }}
+      </div>
+    </div>
+
+    <div class="form-element" *ngIf="config.many">
+      <label
+        class="form-element-label"
+        [attr.for]="key"
+        *ngIf="label && config.templateOptions?.label"
+        [class.required]="config.templateOptions?.required">
+        {{
+          getTranslationKey(config.key, 'label')
+            | translate : { Default: config.templateOptions?.label }
+        }}
+      </label>
+      <webui-info
+        *ngIf="config.templateOptions?.description"
+        [description]="
+          getTranslationKey(this.key, 'description')
+            | translate : { Default: config.templateOptions?.description || '' }
+        ">
+      </webui-info>
+      <div
+        *ngIf="config.many && results && !config.useOptions"
+        class="form-element-content flex-col items-start edit"
+        [class.many]="config.many && results">
+        <webui-overlay-dropdown
+          #dropdown
+          (opened)="generateList()"
+          size="full"
+          (closed)="onClose()">
+          <div class="relative" target>
+            <input
+              [hidden]="config.hideSelect"
+              type="text"
+              class="form-control autocomplete-value"
+              autocomplete="off"
+              #search="ngModel"
+              #searchElement
+              [(ngModel)]="searchValue"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="{{ 'select' | translate : { Default: 'Select' } }}"
+              (focus)="dropdown.openDropdown()" />
+
+            <div
+              class="form-element-content-actions"
+              *ngIf="config.options && config.templateOptions?.add">
+              <button
+                webuiSubscriptionRequired
+                type="button"
+                class="btn btn-primary text-white alone"
+                *ngIf="config.templateOptions?.add && checkPermission('post')"
+                (click)="open('post')">
+                {{ 'add_new' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <div content>
+            <div class="text-center" *ngIf="loading">
+              <webui-loader></webui-loader>
+            </div>
+
+            <div
+              *ngIf="!loading"
+              class="autocomplete-dropdown-list"
+              infinite-scroll
+              [infiniteScrollDistance]="modalScrollDistance"
+              [infiniteScrollThrottle]="modalScrollThrottle"
+              [scrollWindow]="false"
+              (scrolled)="onModalScrollDown()">
+              <ul>
+                <li
+                  [class.bold]="
+                    config.endpoint === '/core/tags/' &&
+                    option.owner === 'system'
+                  "
+                  class="autocomplete-dropdown-item"
+                  style="cursor: pointer"
+                  *ngFor="let option of previewList; trackBy: trackByFn"
+                  (click)="setValue(option, true); dropdown.closeDropdown()">
+                  {{ option.__str__ }}
+                  <span *ngIf="config.templateOptions?.info">
+                    |
+
+                    <span
+                      class="inline-flex items-center mx-1"
+                      [style.color]="colors[getScore(option.score)]">
+                      {{ option.score | number : '1.1-1' }}
+
+                      <webui-fa-icon class="ml-1" icon="star"></webui-fa-icon>
+                    </span>
+                    |
+                    <span>{{ option.distance }} km</span>
+                  </span>
+                </li>
+
+                <li
+                  *ngIf="!previewList?.length && !loading && !skipScroll"
+                  class="text-secondary text-center mt-2">
+                  {{ 'message.empty-list' | translate }}
+                </li>
+              </ul>
+
+              <div class="autocomplete-dropdown-preloader" *ngIf="skipScroll">
+                <webui-spinner></webui-spinner>
+              </div>
+            </div>
+          </div>
+        </webui-overlay-dropdown>
+
+        <ng-container *ngIf="!config.tests && !config.templateOptions?.info">
+          <div class="flex flex-wrap mt-2 gap-1">
+            <ng-container *ngFor="let item of results; let i = index">
+              <span class="badge badge-outline">
+                <span
+                  class="inline-block max-w-[120px] truncate"
+                  [title]="item | apiTranslate | async">
+                  {{ item | apiTranslate | async }}
+                </span>
+                <ng-container *ngIf="config.sendData">
+                  <span *ngIf="item.default" class="text-secondary">
+                    (&nbsp;{{ 'default' | translate }}&nbsp;)
+                  </span>
+                  <button
+                    *ngIf="!item.default"
+                    type="button"
+                    class="btn btn-outline-secondary text-xs leading-none"
+                    (click)="setDefault(i, item)">
+                    {{ 'make_default' | translate }}
+                  </button>
+                </ng-container>
+                <webui-fa-icon
+                  class="text-danger"
+                  icon="times"
+                  (click)="deleteItem(i, item)"></webui-fa-icon>
+              </span>
+            </ng-container>
+          </div>
+        </ng-container>
+
+        <div class="object-list" *ngIf="config.tests">
+          <div
+            class="object-list__item"
+            *ngFor="let item of results; let i = index">
+            {{ item.__str__ }}
+            <webui-fa-icon
+              class="ml-2 mr-3 text-danger"
+              icon="times"
+              (click)="deleteItem(i, item)"></webui-fa-icon>
+            <button
+              type="button"
+              *ngIf="item.tests && item.tests.length && !item.passed"
+              class="object-list__btn btn btn-outline-primary"
+              (click)="passTests(item, $event)">
+              {{ 'pass_test' | translate }}
+            </button>
+            <button
+              type="button"
+              *ngIf="item.passed"
+              disabled
+              class="object-list__btn btn btn-outline-primary bg-primary text-white">
+              {{ 'passed' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="flex flex-wrap gap-2 w-full pt-2"
+          *ngIf="config.templateOptions?.info">
+          <div
+            *ngFor="let item of results; let i = index"
+            class="candidate-info">
+            <span>{{ item.__str__ }}</span>
+            |
+            <span
+              class="inline-flex items-center mx-1"
+              [style.color]="colors[getScore(item.score)]">
+              {{
+                item.score ||
+                  (item.candidate_scores && item.candidate_scores.average_score)
+                  | number : '1.1-1'
+              }}
+              <webui-fa-icon class="ml-1" icon="star"></webui-fa-icon>
+            </span>
+            |
+            <span>{{ item.distance }} km</span>
+
+            <webui-close-button
+              class="ml-2"
+              *ngIf="!config.doNotChoice"
+              [sm]="true"
+              [inDialog]="false"
+              (click)="deleteItem(i, item)">
+            </webui-close-button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="form-element-content flex-col items-start edit"
+        *ngIf="config.many && results && config.useOptions"
+        [class.many]="config.many && results">
+        <webui-overlay-dropdown #dropdown (opened)="generateList()" size="full">
+          <ng-container target>
+            <input
+              type="text"
+              class="form-control autocomplete-value"
+              autocomplete="off"
+              #search="ngModel"
+              #searchElement
+              [(ngModel)]="searchValue"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="{{ 'select' | translate : { Default: 'Select' } }}"
+              (focus)="dropdown.openDropdown()" />
+          </ng-container>
+
+          <div content>
+            <div class="autocomplete-dropdown-list">
+              <ul>
+                <li
+                  [class.fornt-bold]="
+                    config.endpoint === '/core/tags/' &&
+                    option.owner === 'system'
+                  "
+                  class="autocomplete-dropdown-item"
+                  *ngFor="let option of previewList; trackBy: trackByFn">
+                  <label class="flex items-center w-full mb-0 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      [(ngModel)]="option.checked"
+                      name="checked"
+                      [ngModelOptions]="{ standalone: true }"
+                      (ngModelChange)="setValue(option, true)"
+                      hidden />
+                    <webui-checkbox
+                      [sm]="true"
+                      [checked]="option.checked"></webui-checkbox>
+                    {{ option.__str__ }}
+                  </label>
+                </li>
+
+                <li
+                  *ngIf="!previewList?.length"
+                  class="text-secondary text-center mt-2">
+                  {{ 'message.empty-list' | translate }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </webui-overlay-dropdown>
+
+        <div *ngIf="results && results.length" class="results">
+          <button
+            type="button"
+            class="badge badge-outline"
+            (click)="deleteItem(i, item)"
+            *ngFor="let item of results; let i = index">
+            {{ item.__str__ }}
+
+            <span (click)="deleteItem(i, item)" class="badge-remove">
+              {{ 'delete' | translate }}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-list" *ngIf="config.list">
+    <div class="flex items-center gap-2">
+      <div class="mr-auto flex flex-col justify-center">
+        <h4 class="mb-0">
+          {{
+            getTranslationKey(config.key, 'label')
+              | translate : { Default: config.templateOptions?.label }
+          }}
+        </h4>
+      </div>
+
+      <button
+        webuiSubscriptionRequired
+        *ngIf="config.delay && checkPermission('post')"
+        type="button"
+        class="btn btn-primary btn-shadow py-2 px-4 align-self-center"
+        (click)="addObject()">
+        {{ 'add' | translate }}
+      </button>
+
+      <button
+        webuiSubscriptionRequired
+        *ngIf="config.addAll"
+        type="button"
+        class="btn btn-primary btn-shadow py-2 px-4 align-self-center"
+        (click)="addAllObjects()">
+        {{ 'action.add_all' | translate }}
+      </button>
+
+      <button
+        webuiSubscriptionRequired
+        *ngIf="config.templateOptions?.add_label && config.templateOptions?.add"
+        type="button"
+        class="btn btn-primary btn-shadow py-2 px-4 align-self-center"
+        (click)="addObject()">
+        {{ 'add' | translate }}
+      </button>
+    </div>
+
+    <div #tableWrapper id="collapseExample" class="list-related my-2 datatable">
+      <table *ngIf="dataOfList" class="w-full">
+        <thead class="bg-secondary-300">
+          <tr>
+            <ng-container *ngFor="let col of config.metadata">
+              <th
+                class="p-[9px] first:pl-4"
+                *ngIf="!col.hide"
+                [class.required]="col.templateOptions?.required"
+                [style.width.px]="col?.width">
+                <span class="head-cell">
+                  {{
+                    col.key + '.label'
+                      | translate : { Default: col.templateOptions?.label }
+                  }}
+                </span>
+              </th>
+            </ng-container>
+
+            <th class="p-[9px]">
+              <span class="head-cell">{{ 'actions' | translate }}</span>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let object of dataOfList; let index = index">
+            <ng-container *ngFor="let field of object.metadata">
+              <td *ngIf="!field.hide" [class.invalid]="object.data.invalid">
+                <ng-container
+                  webuiFormElement
+                  [label]="false"
+                  [config]="field"
+                  [group]="object.data"
+                  (event)="updateValue($event)"></ng-container>
+              </td>
+            </ng-container>
+            <td>
+              <span *ngIf="object.id" class="flex items-center">
+                <button
+                  type="button"
+                  class="button-more"
+                  placement="left"
+                  trigger="click"
+                  [webuiTooltip]="actionsTemplate">
+                  <webui-fa-icon icon="ellipsis-v"> </webui-fa-icon>
+                </button>
+
+                <ng-template #actionsTemplate>
+                  <div class="flex flex-col items-start">
+                    <button
+                      type="button"
+                      webuiSubscriptionRequired
+                      class="btn"
+                      [title]="'delete' | translate"
+                      *ngIf="
+                        config.templateOptions?.delete &&
+                        checkPermission('delete')
+                      "
+                      (click)="deleteObject(object)">
+                      <webui-fa-icon
+                        class="icon text-danger"
+                        [icon]="['fas', 'trash']"></webui-fa-icon>
+
+                      {{ 'delete' | translate }}
+                    </button>
+                    <button
+                      type="button"
+                      webuiSubscriptionRequired
+                      class="btn"
+                      [title]="'edit' | translate"
+                      *ngIf="
+                        config.templateOptions?.edit &&
+                        checkPermission('update')
+                      "
+                      (click)="editObject(object)">
+                      <webui-fa-icon
+                        class="icon text-warning"
+                        [icon]="['fas', 'pencil-alt']">
+                      </webui-fa-icon>
+
+                      {{ 'edit' | translate }}
+                    </button>
+                    <button
+                      type="button"
+                      webuiSubscriptionRequired
+                      class="btn"
+                      [title]="'set_as_default' | translate"
+                      *ngIf="skillEndpoint && !object.allData.default_rate"
+                      (click)="setAsDefault(object)">
+                      <webui-fa-icon
+                        class="icon text-primary"
+                        [icon]="['fas', 'check']">
+                      </webui-fa-icon>
+                    </button>
+                  </div>
+                </ng-template>
+              </span>
+
+              <button
+                type="button"
+                webuiSubscriptionRequired
+                *ngIf="!object.id"
+                class="btn"
+                [title]="'delete' | translate"
+                (click)="removeItem(index)">
+                <webui-fa-icon
+                  class="icon text-danger"
+                  icon="trash"></webui-fa-icon>
+
+                {{ 'delete' | translate }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="text-danger my-2 ml-4" *ngIf="config.message">
+        {{ config.message }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="form-group form-element"
+  [ngClass]="{ indent: config.templateOptions?.indent }"
+  [class.custom]="customTemplate"
+  *ngIf="
+    viewMode &&
+    !config.list &&
+    !config.hide &&
+    !(!this.displayValue && !results?.length && config.hideIfNull)
+  ">
+  <label
+    class="form-element-label"
+    *ngIf="
+      label &&
+      config.templateOptions?.label &&
+      !config.templateOptions?.hideLabel
+    ">
+    {{
+      getTranslationKey(config.translateKey || config.key, 'label')
+        | translate : { Default: config.templateOptions?.label }
+    }}
+    <span *ngIf="!customTemplate">:</span>
+  </label>
+  <div class="form-element-content" [class.many]="config.many && results">
+    <span
+      *ngIf="
+        !displayValue &&
+        !(customTemplate && customTemplate.length) &&
+        (!results || results.length === 0)
+      ">
+      -
+    </span>
+    <a
+      class="one-line"
+      [class.readonly-value]="editMode"
+      [class.readonly]="!config.templateOptions?.edit"
+      *ngIf="
+        !config.many &&
+        displayValue &&
+        this.linkPath &&
+        !(customTemplate && customTemplate.length)
+      "
+      [title]="displayValue"
+      href="{{ hideDetail || isClient() ? '' : this.linkPath }}"
+      (click)="open('update', undefined, $event)">
+      {{ displayValue }}
+    </a>
+    <div
+      [ngClass]="{ 'flex items-top flex-wrap': config.key === 'tags' }"
+      *ngIf="config.many && results && !config.templateOptions?.deleteList">
+      <span
+        [ngClass]="{
+          'badge badge-outline mb-2 mr-1': config.key === 'tags',
+          block: config.column
+        }"
+        *ngFor="let item of results; let l = last">
+        <a
+          *ngIf="config.key !== 'tags'"
+          [class.readonly-value]="editMode"
+          href="/"
+          (click)="open('update', item)">
+          {{ item | apiTranslate | async }};
+        </a>
+        <span *ngIf="config.key === 'tags'" [class.readonly-value]="editMode">
+          {{ item.__str__ }}
+        </span>
+      </span>
+    </div>
+    <div
+      *ngIf="config.many && results && config.templateOptions?.deleteList"
+      class="flex flex-wrap items-center mt-2">
+      <span
+        class="badge badge-outline mt-2 mr-1"
+        style="white-space: normal"
+        *ngFor="let item of results; let i = index">
+        {{ item.__str__ }}
+        <webui-fa-icon
+          class="text-danger"
+          [icon]="['fas', 'times']"
+          (click)="
+            deleteItem(i, item, config.templateOptions?.deleteList)
+          "></webui-fa-icon>
+      </span>
+    </div>
+  </div>
+
+  <ng-container *ngTemplateOutlet="custom"></ng-container>
+</div>
+
+<ng-container *ngIf="!config.hide">
+  <div class="mb-2" *ngIf="hasObjectExistError()">
+    <div class="text-danger">{{ errors[config.key][0] }}</div>
+    <a
+      *ngIf="errors[config.key][1] && errors[config.key][2]"
+      [attr.href]="errors[config.key][2]"
+      (click)="open('update', errors[config.key][3])">
+      {{ errors[config.key][1] }}
+    </a>
+  </div>
+  <div *ngIf="hasError()">
+    <div class="text-danger mt-3 mb-2">{{ errors[config.key] }}</div>
+  </div>
+  <div *ngIf="message">
+    <div *ngIf="message[config.key]" class="text-success mt-1">
+      {{ message[config.key] }}
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modalData.title }}</h5>
+
+        <webui-close-button class="ml-auto"></webui-close-button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="modalData.type !== 'delete'">
+        <div
+          class="description"
+          *ngIf="modalData.description"
+          [innerHTML]="modalData.description"></div>
+
+        <webui-generic-form
+          [endpoint]="modalData.endpoint"
+          [mode]="modalData.mode"
+          [data]="modalData.data"
+          [needData]="modalData.needData"
+          [edit]="modalData.edit"
+          [id]="modalData.id"
+          [metadataQuery]="
+            modalData.mode === 'edit'
+              ? config.metadata_query
+              : config.add_metadata_query
+          "
+          (event)="formEvent($event)"
+          (errorForm)="formError()">
+          <button
+            *ngIf="checkPermission(modalData.type)"
+            type="submit"
+            class="btn btn-primary button-save"
+            [disabled]="saveProcess">
+            {{ 'save' | translate }}
+            <webui-spinner *ngIf="saveProcess"></webui-spinner>
+          </button>
+        </webui-generic-form>
+      </div>
+      <div *ngIf="modalData.type === 'delete'">
+        {{ 'are_you_sure' | translate }}
+      </div>
+    </div>
+
+    <div *ngIf="modalData.type === 'delete'" class="modal-footer">
+      <button type="button" class="btn btn-danger" (click)="deleteElement()">
+        {{ 'delete' | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #custom>
+  <div
+    *ngIf="customTemplate && customTemplate.length"
+    class="flex flex-col justify-center">
+    <span *ngFor="let field of customTemplate">
+      <webui-fa-icon
+        *ngIf="field.value && field.icon"
+        [icon]="['fas', field.icon]"
+        class="text-primary"></webui-fa-icon>
+      <span
+        *ngIf="
+          (field.value && !field.link && !field.prefix && !field.outside) ||
+          isClient()
+        ">
+        {{ field.value }}
+      </span>
+      <a
+        *ngIf="field.value && field.link && !isClient()"
+        [href]="linkPath"
+        (click)="open('update')">
+        {{ field.value }}
+      </a>
+      <a
+        *ngIf="field.value && field.prefix && !isClient()"
+        [href]="field.prefix + field.value">
+        {{ field.value }}
+      </a>
+      <a
+        *ngIf="field.value && field.outside && !isClient()"
+        [href]="field.value">
+        {{ field.value }}
+      </a>
+    </span>
+  </div>
+  <div
+    *ngIf="customTemplate && !customTemplate.length"
+    class="flex flex-col justify-center">
+    -
+  </div>
+</ng-template>
+
+<ng-template #messageDetail>
+  <div class="message-detail-header">
+    <h5 class="message-label">{{ modalData.label }}</h5>
+
+    <webui-close-button class="close ml-2"></webui-close-button>
+  </div>
+
+  <webui-generic-form
+    [endpoint]="modalData.endpoint"
+    [metadataQuery]="modalData.metadataQuery"
+    [id]="modalData.id"
+    [mode]="modalData.mode"
+    [data]="modalData.data"
+    [edit]="modalData.edit"
+    (str)="changeLabel($event)"
+    (event)="formEvent($event)"
+    (errorForm)="formError()">
+  </webui-generic-form>
+</ng-template>

@@ -1,0 +1,906 @@
+<div
+  #datatable
+  [class.mobile]="identifyDevice()"
+  [class.on-list]="!inForm"
+  class="mw-full datatable">
+  <div
+    class="datatable-content"
+    [ngClass]="{
+      open: !filtersHidden,
+      'in-form': inForm,
+      'inline-filters': inlineFilters
+    }">
+    <div
+      webuiScroll
+      [enable]="!inForm"
+      class="filter-wrapper"
+      *ngIf="(first || poped) && showFilters && !inlineFilters"
+      [class.open]="!filtersHidden"
+      [class.in-form]="inForm">
+      <div class="filter-wrapper-close">
+        <button (click)="toggleFilterBlock()">
+          <webui-svg-icon icon="close"></webui-svg-icon>
+        </button>
+      </div>
+      <webui-filter-block
+        [key]="config.list.list"
+        [config]="filtersOfList"
+        (event)="filterHandler($event)">
+      </webui-filter-block>
+    </div>
+    <div class="background" (click)="toggleFilterBlock()"></div>
+    <div
+      class="datatable-body"
+      [ngClass]="{
+        'card-block': poped,
+        'in-form': inForm,
+        'open-filters': !filtersHidden && showFilters,
+        'inline-filters': inlineFilters
+      }"
+      [class.mobile-device]="identifyDevice()">
+      <ng-content></ng-content>
+
+      <div
+        class="datatable-label mb-0"
+        style="flex-wrap: nowrap"
+        [class.has-description]="description"
+        *ngIf="
+          (config.list &&
+            inForm &&
+            (config.list.search_enabled ||
+              (config.list.buttons && config.list.buttons.length)) &&
+            !delay) ||
+          (!inForm && !poped)
+        ">
+        <span *ngIf="!inForm && !description" class="mr-auto my-1">
+          {{ getListLabelKey() | translate }}
+        </span>
+        <p *ngIf="description">
+          <span>{{ label || config.list.label }}</span> <br />
+          <span class="description">{{ description }}</span>
+        </p>
+        <webui-list-buttons
+          [buttons]="config.list.buttons"
+          [first]="first"
+          [inForm]="inForm"
+          [list]="config.list.list"
+          [poped]="poped"
+          [allowPermissions]="allowPermissions"
+          [endpoint]="endpoint"
+          (event)="buttonAction($event)">
+        </webui-list-buttons>
+      </div>
+      <div
+        *ngIf="
+          (showFilters && !(identifyDevice() || isMobileDevice)) ||
+          config.list.search_enabled
+        "
+        class="datatable-header"
+        [class.open-filters]="!filtersHidden && showFilters"
+        [class.in-form]="inForm">
+        <button
+          [class.active]="!filtersHidden"
+          class="btn filter-button mb-1 mb-sm-0"
+          (click)="toggleFilterBlock()"
+          *ngIf="showFilters && !(identifyDevice() || isMobileDevice)">
+          <webui-svg-icon icon="filter"></webui-svg-icon>
+          {{ 'filters' | translate : { Default: 'Filters' } }}
+        </button>
+        <webui-list-search-bar
+          class="datatable-search"
+          *ngIf="data && config.list.search_enabled"
+          [param]="config.list.searchParameter"
+          [count]="data.count || data.list.length"
+          [label]="config.list.pagination_label || config.list.label"
+          [list]="config.list.list"
+          (event)="filterHandler($event)">
+        </webui-list-search-bar>
+      </div>
+
+      <div
+        class="filter-wrapper inline"
+        *ngIf="(first || poped) && showFilters && inlineFilters"
+        webuiScroll
+        [enable]="!inForm"
+        [ngClass]="{ open: !filtersHidden, 'in-form': inForm }">
+        <webui-filter-block
+          [key]="config.list.list"
+          [inline]="true"
+          [config]="filtersOfList"
+          (event)="filterHandler($event)"></webui-filter-block>
+      </div>
+
+      <div class="background" (click)="toggleFilterBlock()"></div>
+
+      <webui-action-element
+        *ngIf="config.list.actions"
+        [actionProcess]="actionProcess"
+        [count]="selectedCount"
+        [config]="config.list.actions"
+        (event)="actionHandler($event)">
+        <button
+          *ngIf="hasButtonInAction"
+          webuiSubscriptionRequired
+          type="button"
+          class="btn btn-primary px-4 py-2"
+          (click)="onCreateNewItem()">
+          {{ '+ Add' | translate }}
+        </button>
+      </webui-action-element>
+
+      <div
+        class="flex items-center justify-between"
+        *ngIf="identifyDevice() || isMobileDevice">
+        <button
+          class="btn filter-button btn-link text-secondary flex items-center text-uppercase fw-600 mb-0"
+          (click)="toggleFilterBlock()"
+          *ngIf="showFilters"
+          style="font-size: 14px">
+          <svg class="mr-1" width="16" height="12" viewBox="0 0 20 15">
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M 5.58236 3.51318C 4.87141 3.51318 4.29285 2.93807 4.29285 2.23032C 4.29285 1.52304 4.87141 0.94746 5.58236 0.94746C 6.29331 0.94746 6.87189 1.52304 6.87189 2.23032C 6.87189 2.93807 6.29331 3.51318 5.58236 3.51318ZM 19.0476 1.77933L 8.09522 1.77933C 7.9776 1.77933 7.87332 1.82623 7.78998 1.89682C 7.62665 0.826186 6.70379 1.30114e-07 5.58236 1.30114e-07C 4.49808 1.30114e-07 3.59142 0.770285 3.38523 1.78975C 3.36761 1.78786 3.35189 1.77933 3.33332 1.77933L 0.476187 1.77933C 0.21333 1.77933 -2.46465e-06 1.99156 -2.46465e-06 2.25306C -2.46465e-06 2.51456 0.21333 2.72679 0.476187 2.72679L 3.33332 2.72679C 3.35618 2.72679 3.37523 2.71684 3.39713 2.714C 3.61999 3.7112 4.51332 4.46064 5.58236 4.46064C 6.68903 4.46064 7.60522 3.65672 7.7857 2.60599C 7.86951 2.67894 7.97569 2.72679 8.09522 2.72679L 19.5238 2.72679C 19.7871 2.72679 20 2.51456 20 2.25306C 20 1.99156 19.7871 1.77933 19.5238 1.77933L 19.0476 1.77933ZM 19.5238 7.46419L 16.8252 7.46419C 16.7067 6.34381 15.7633 5.46505 14.6067 5.46505C 13.45 5.46505 12.5067 6.34381 12.3886 7.46419L 0.476231 7.46419C 0.213374 7.46419 4.11318e-05 7.67594 4.11318e-05 7.93792C 4.11318e-05 8.19941 0.213374 8.41164 0.476231 8.41164L 12.4943 8.41164C 12.7957 9.28899 13.6238 9.92569 14.6067 9.92569C 15.5895 9.92569 16.4176 9.28899 16.7195 8.41164L 19.5238 8.41164C 19.7867 8.41164 20 8.19941 20 7.93792C 20 7.67594 19.7867 7.46419 19.5238 7.46419ZM 14.6067 8.97823C 13.8957 8.97823 13.3172 8.40264 13.3172 7.69536C 13.3172 6.98809 13.8957 6.41251 14.6067 6.41251C 15.3176 6.41251 15.8962 6.98809 15.8962 7.69536C 15.8962 8.40264 15.3176 8.97823 14.6067 8.97823ZM 20 12.6749C 20 12.4134 19.7871 12.2012 19.5238 12.2012L 8.09522 12.2012C 7.97284 12.2012 7.86331 12.2505 7.77903 12.3263C 7.57141 11.3082 6.66569 10.5394 5.58236 10.5394C 4.53855 10.5394 3.66666 11.2561 3.41809 12.2183C 3.38952 12.213 3.36332 12.2012 3.33332 12.2012L 0.476187 12.2012C 0.21333 12.2012 -2.46465e-06 12.4134 -2.46465e-06 12.6749C -2.46465e-06 12.9369 0.21333 13.1487 0.476187 13.1487L 3.33332 13.1487C 3.34951 13.1487 3.36284 13.1416 3.37808 13.1397C 3.55665 14.1932 4.47332 15 5.58236 15C 6.72712 15 7.66283 14.1392 7.79712 13.0359C 7.87902 13.1032 7.98045 13.1487 8.09522 13.1487L 19.5238 13.1487C 19.7871 13.1487 20 12.9369 20 12.6749ZM 5.58236 14.0525C 4.87141 14.0525 4.29285 13.4774 4.29285 12.7697C 4.29285 12.0624 4.87141 11.4868 5.58236 11.4868C 6.29331 11.4868 6.87189 12.0624 6.87189 12.7697C 6.87189 13.4774 6.29331 14.0525 5.58236 14.0525Z" />
+          </svg>
+          {{ 'filters' | translate : { Default: 'Filters' } }}
+        </button>
+      </div>
+
+      <ng-container *ngIf="identifyDevice()">
+        <div class="mobile-item" *ngFor="let row of body">
+          <ng-container
+            *ngTemplateOutlet="
+              getView();
+              context: { data: row, status: getElement('status', row.content) }
+            "></ng-container>
+        </div>
+      </ng-container>
+
+      <div #tableWrapper [hidden]="identifyDevice()" class="table-wrapper">
+        <table class="w-full" *ngIf="config.list">
+          <thead class="bg-secondary-300">
+            <tr>
+              <th
+                class="p-[9px] pl-4 w-12 text-center"
+                *ngIf="hasSelectColumn || hasEditLink">
+                <ng-container *ngIf="config.list.actions || actions">
+                  <label class="head-cell mb-0">
+                    {{ 'all' | translate }}
+
+                    <input
+                      id="all-checkbox"
+                      type="checkbox"
+                      hidden
+                      webuiSubscriptionRequired
+                      *ngIf="config.list.actions || actions"
+                      [ngModel]="selectedAll"
+                      (ngModelChange)="selectAll($event)" />
+                  </label>
+                </ng-container>
+              </th>
+
+              <ng-container *ngFor="let field of config.list.columns">
+                <ng-container *ngIf="!field.hide">
+                  <th
+                    class="p-[9px] first:pl-4"
+                    [class.text-center]="field.center"
+                    *ngIf="!(field.tab && field.tab.is_collapsed)">
+                    <webui-list-column-header
+                      [config]="field"
+                      (sortChange)="onSortChange()"></webui-list-column-header>
+                  </th>
+                </ng-container>
+              </ng-container>
+
+              <th class="p-[9px]" *ngIf="config.list.tabs">
+                <button
+                  class="button-more hover:text-primary"
+                  type="button"
+                  (click)="openAllTabs()">
+                  <webui-fa-icon
+                    [icon]="
+                      collapsed ? 'chevron-down' : 'chevron-up'
+                    "></webui-fa-icon>
+                </button>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody *ngIf="body && !loading">
+            <ng-container *ngFor="let row of body">
+              <tr
+                [class.active-row]="checkPermission('get') && !inForm"
+                *ngIf="!row.hide"
+                [class.table-warning]="row.highlight && row.highlight.highlight"
+                [ngStyle]="
+                  row.highlight &&
+                  row.highlight.color && {
+                    'background-color': row.highlight.color
+                  }
+                "
+                (click)="openDetails(row, $event)"
+                [id]="row.id">
+                <td class="w-12" *ngIf="hasSelectColumn || hasEditLink">
+                  <label
+                    class="mb-2 pl-2"
+                    *ngIf="config.list.actions || actions">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      [checked]="select[row.id]"
+                      hidden
+                      webuiSubscriptionRequired />
+                    <webui-checkbox
+                      [checked]="select[row.id]"
+                      (click)="toggleCheckbox($event, row)"></webui-checkbox>
+                  </label>
+
+                  <a
+                    class="flex min-w-6 h-6 w-full items-center justify-center text-secondary hover:text-primary"
+                    [routerLink]="row.id + '/change'"
+                    *ngIf="hasEditLink">
+                    <webui-fa-icon
+                      icon="pencil-alt"
+                      class="icon"></webui-fa-icon>
+                  </a>
+
+                  <webui-fa-icon
+                    *ngIf="
+                      !first &&
+                      !config.list.editEndpoint &&
+                      !config.list.editDisable &&
+                      checkPermission('get')
+                    "
+                    icon="pencil-alt"
+                    class="icon"
+                    (click)="editObject(row.id, row.__str__)"></webui-fa-icon>
+                </td>
+
+                <ng-container
+                  *ngFor="let cell of row.content; let first = first">
+                  <td
+                    *ngIf="!cell.hide"
+                    [class.text-center]="cell.center"
+                    [ngStyle]="{
+                      'width.px': cell.width,
+                      'maxWidth.px': cell.width
+                    }"
+                    [attr.data-label]="cell.label"
+                    [hidden]="cell.tab && cell.tab.is_collapsed"
+                    [class.action-cell]="cell.name === 'actions'">
+                    <label class="cell-label" *ngIf="isMobileDevice">
+                      {{ cell.label }}
+                    </label>
+                    <br *ngIf="isMobileDevice" />
+
+                    <ng-container
+                      *ngIf="cell.name !== 'actions'"
+                      webuiListElement
+                      [config]="cell.content"
+                      (event)="eventHandler($event)"
+                      (buttonAction)="buttonHandler($event)">
+                    </ng-container>
+
+                    <ng-template #actionsTemplate>
+                      <ng-container
+                        webuiListElement
+                        [config]="cell.content"
+                        [padding]="true"
+                        (event)="eventHandler($event)"
+                        (buttonAction)="buttonHandler($event, false, cell)">
+                      </ng-container>
+                    </ng-template>
+
+                    <ng-container
+                      *ngIf="cell.name === 'actions' && isMobileDevice">
+                      <ng-container
+                        *ngTemplateOutlet="actionsTemplate"></ng-container>
+                    </ng-container>
+
+                    <button
+                      type="button"
+                      *ngIf="
+                        cell.name === 'actions' &&
+                        !isMobileDevice &&
+                        cell.isShow
+                      "
+                      class="button-more"
+                      trigger="click"
+                      [webuiTooltip]="actionsTemplate"
+                      flat
+                      [useReposition]="false"
+                      placement="left">
+                      <webui-fa-icon icon="ellipsis-v"></webui-fa-icon>
+                    </button>
+
+                    <div
+                      *ngIf="
+                        innerTables &&
+                        innerTables[row.id] &&
+                        innerTables[row.id][cell.name]
+                      ">
+                      <webui-list-table
+                        *ngIf="innerTables[row.id][cell.name].body"
+                        [config]="
+                          innerTables[row.id][cell.name]
+                        "></webui-list-table>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <td *ngIf="config.list.tabs">
+                  <button
+                    type="button"
+                    class="button-more"
+                    (click)="toggleTab($event, row)">
+                    <webui-fa-icon
+                      [icon]="row.collapsed ? 'chevron-down' : 'chevron-up'">
+                    </webui-fa-icon>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="row.additionalBody && !row.collapsed">
+                <td
+                  *ngIf="
+                    (!inForm && config.list.actions) || actions || !noneEdit
+                  ">
+                  &nbsp;
+                </td>
+                <td [attr.colspan]="row.content.length + 1">
+                  <table
+                    *ngIf="!row.additionalBody.inline"
+                    class="inner-table table table-sm">
+                    <thead>
+                      <tr>
+                        <th *ngFor="let acell of row.additionalBody.content">
+                          <span>
+                            {{
+                              acell.name | translate : { Default: acell.label }
+                            }}
+                          </span>
+                          <!-- <span>{{ acell.label }}</span> -->
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td
+                          *ngFor="let acell of row.additionalBody.content"
+                          [ngStyle]="{ 'width.px': acell.width }">
+                          <div
+                            class="additional-data"
+                            *ngFor="let field of acell.content">
+                            <span
+                              *ngIf="
+                                field.content &&
+                                acell.content.length > 1 &&
+                                !acell.hideLabel
+                              "
+                              class="description">
+                              {{
+                                field.name + '.label'
+                                  | translate : { Default: field.label }
+                              }}
+                            </span>
+                            <span class="additional-data-content">
+                              <ng-container
+                                *ngFor="let innerField of field.content"
+                                webuiListElement
+                                [config]="innerField"
+                                (event)="eventHandler($event)"
+                                (buttonAction)="buttonHandler($event)">
+                              </ng-container>
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <ng-container *ngIf="row.additionalBody.inline">
+                    <div
+                      class="additional-data-wrapper"
+                      *ngFor="let acell of row.additionalBody.content">
+                      <span class="additional-data-label">
+                        {{
+                          acell.label + '.label'
+                            | translate : { Default: acell.label }
+                        }}
+                      </span>
+                      <div
+                        class="additional-data inline"
+                        *ngFor="let field of acell.content">
+                        <span class="additional-data-content">
+                          <ng-container
+                            *ngFor="let innerField of field.content"
+                            webuiListElement
+                            [config]="innerField"
+                            (event)="eventHandler($event)"
+                            (buttonAction)="buttonHandler($event)">
+                          </ng-container>
+                        </span>
+                      </div>
+                    </div>
+                  </ng-container>
+                </td>
+                <!-- <td *ngIf="config.list.tabs">&nbsp;</td> -->
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-content select="div.list-actions"></ng-content>
+
+      <div class="pb-4">
+        <webui-pagination
+          *ngIf="pageSize && inForm"
+          [label]="
+            getListLabelKey()
+              | translate : { Default: label || config.list.label }
+          "
+          [count]="data.count"
+          [page]="page"
+          [size]="pageSize"
+          (pageChange)="pageChange($event)"></webui-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modalInfo.label }}</h5>
+
+        <webui-close-button
+          class="close-button ml-auto align-self-center"></webui-close-button>
+      </div>
+    </div>
+    <div class="modal-body" [ngSwitch]="modalInfo.type">
+      <webui-generic-form
+        *ngSwitchCase="'form'"
+        [endpoint]="modalInfo.endpoint"
+        [metadataQuery]="
+          !modalInfo.dontUseMetadataQuery
+            ? addMetadataQuery || metadataQuery
+            : ''
+        "
+        [id]="modalInfo.id"
+        [mode]="modalInfo.mode"
+        [data]="modalInfo.data"
+        [edit]="modalInfo.edit"
+        (event)="formEvent($event)"
+        (errorForm)="formError()">
+        <button
+          type="submit"
+          class="btn btn-shadow btn-primary text-white button-save mt-3"
+          [disabled]="saveProcess || modalInfo.form.disableSaveButton">
+          {{ 'save' | translate : { Default: 'Save' } }}
+          <webui-spinner *ngIf="saveProcess"></webui-spinner>
+        </button>
+      </webui-generic-form>
+      <google-map *ngSwitchCase="'map'" [zoom]="13">
+        <!-- <agm-marker
+          [latitude]="modalInfo.latitude"
+          [longitude]="modalInfo.longitude"
+        ></agm-marker> -->
+      </google-map>
+      <!-- <agm-map
+        *ngSwitchCase="'map'"
+        [latitude]="modalInfo.latitude"
+        [longitude]="modalInfo.longitude"
+        [zoom]="13"
+        [disableDefaultUI]="true"
+      >
+        <agm-marker
+          [latitude]="modalInfo.latitude"
+          [longitude]="modalInfo.longitude"
+        ></agm-marker>
+      </agm-map> -->
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #messageDetail>
+  <div class="message-detail-header">
+    <h5 class="message-label">{{ modalInfo.label | translate }}</h5>
+    <webui-close-button class="close-button ml-auto"></webui-close-button>
+  </div>
+
+  <div class="px-5">
+    <webui-generic-form
+      [endpoint]="modalInfo.endpoint"
+      [metadataQuery]="modalInfo.metadataQuery"
+      [id]="modalInfo.id"
+      [mode]="modalInfo.mode"
+      [data]="modalInfo.data"
+      [edit]="modalInfo.edit"
+      (event)="formEvent($event)"
+      (errorForm)="formError()">
+    </webui-generic-form>
+  </div>
+</ng-template>
+
+<ng-template #confirmModal>
+  <div class="modal-header">
+    <p>{{ modalInfo.message }}</p>
+    <webui-close-button class="close-button ml-auto"></webui-close-button>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="callAction(modalInfo)">
+      {{ modalInfo.agree_label }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="modalRef?.close(false)">
+      {{ modalInfo.decline_label }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #confirmProfileModal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <webui-close-button class="close-button ml-auto"></webui-close-button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p style="text-indent: 12px">
+        {{ 'buy_profile.message' | translate : { amount: modalInfo.amount } }}
+      </p>
+    </div>
+    <div class="modal-footer justify-center py-2">
+      <button
+        type="button"
+        class="btn big-btn btn-shadow btn-primary button-save"
+        (click)="confirmCandidateBuy()">
+        {{ 'accept' | translate }}
+        <webui-spinner *ngIf="saveProcess"></webui-spinner>
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #sendMessageModal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ 'send_message' | translate }}</h5>
+        <webui-close-button class="close-button ml-auto"></webui-close-button>
+      </div>
+    </div>
+    <div class="modal-body p-0">
+      <iframe
+        class="send-sms"
+        [src]="modalInfo.url"
+        frameborder="0"
+        sandbox="allow-forms allow-scripts allow-same-origin allow-modals"></iframe>
+      <br />
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #pdfDocumentModal>
+  <webui-close-button class="close-button ml-3 mt-3 mr-3"></webui-close-button>
+  <div class="modal-body">
+    <object
+      type="application/pdf"
+      [data]="modalInfo.url"
+      style="width: 100%; height: 80vh"></object>
+  </div>
+</ng-template>
+
+<ng-template #mapModal>
+  <webui-close-button class="close-button"></webui-close-button>
+  <google-map [zoom]="13" [center]="modalInfo" style="margin-top: 36px">
+    <map-marker [position]="modalInfo"></map-marker>
+  </google-map>
+</ng-template>
+
+<ng-template #history let-data="data" let-status="status">
+  <div class="header">
+    <div class="flex justify-center flex-col">
+      <ng-container
+        *ngFor="let field of getElement('position', data.content).content"
+        webuiListElement
+        [config]="field"
+        [length]="getElement('position', data.content).content.length"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+    <div class="flex items-center">
+      <ng-container
+        *ngFor="
+          let field of getElement(
+            'job_offer.candidate_contact.contact.picture',
+            data.content
+          ).content
+        "
+        webuiListElement
+        [config]="field"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+  </div>
+  <div class="body">
+    <ng-container
+      *ngFor="let field of getElement('times', data.content).content"
+      webuiListElement
+      [length]="getElement('times', data.content).content.length"
+      [config]="field"
+      (event)="eventHandler($event)"
+      (buttonAction)="buttonHandler($event)">
+    </ng-container>
+    <div class="mb-3 total-time-wrapper">
+      <!-- <span
+        class="text-success mr-1"
+        style="display: inline-block; font-size: 15px; width: 50%"
+        >{{
+          'total_time.label' | translate: { Default: 'Total time' }
+        }}:&nbsp;</span
+      > -->
+      <!-- <ng-container
+        *ngFor="let field of getElement('totalTime', data.content).content"
+        webuiListElement
+        [length]="getElement('totalTime', data.content).content.length"
+        [config]="field"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)"
+      >
+      </ng-container> -->
+    </div>
+    <div class="flex items-center mb-2">
+      <ng-container
+        *ngFor="let field of getElement('tracking', data.content).content"
+        webuiListElement
+        [config]="inverseButton(field)"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+    <span class="label"
+      >{{ 'evaluate.label' | translate : { Default: 'Evaluation' } }}:</span
+    >
+    <!-- <div class="inline-block">
+      <ng-container
+        *ngFor="let field of getElement('evaluate', data.content).content"
+        webuiListElement
+        [config]="field"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)"
+      >
+      </ng-container>
+    </div> -->
+  </div>
+
+  <div
+    class="footer relative"
+    [class.footer-container]="status && status.content[0].value !== 5">
+    <div
+      class="flex justify-center flex-col"
+      *ngIf="status && status.content[0].value !== 5">
+      <ng-container
+        *ngFor="
+          let field of getElement('status', data.content).content;
+          let last = last
+        ">
+        <ng-container
+          *ngIf="!isInteger(field.value)"
+          webuiListElement
+          [last]="last"
+          [config]="field"
+          (event)="eventHandler($event)"
+          (buttonAction)="buttonHandler($event)">
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <div class="button-wrapper" *ngIf="status && status.content[0].value === 5">
+      <ng-container
+        *ngFor="let field of getElement('approve', data.content).content"
+        webuiListElement
+        [config]="inverseButton(field)"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+    <div class="button-wrapper" *ngIf="status && status.content[0].value === 5">
+      <ng-container
+        *ngFor="let field of getElement('change', data.content).content"
+        webuiListElement
+        [config]="inverseButton(field)"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #timesheetsCandidate let-data="data" let-status="status">
+  <div class="header">
+    <div class="flex justify-center flex-col">
+      <ng-container
+        *ngFor="let field of getElement('jobsite', data.content).content"
+        webuiListElement
+        [config]="field"
+        [length]="getElement('jobsite', data.content).content.length"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+  </div>
+  <div class="body">
+    <ng-container
+      *ngFor="let field of getElement('mobileTimes', data.content).content"
+      webuiListElement
+      [length]="getElement('mobileTimes', data.content).content.length"
+      [config]="field"
+      (event)="eventHandler($event)"
+      (buttonAction)="buttonHandler($event)">
+    </ng-container>
+    <div class="mb-3">
+      <!-- <span
+        class="text-success mr-1"
+        style="display: inline-block; font-size: 15px; width: 50%"
+        >{{
+          'totalTime.label' | translate: { Default: 'Total time' }
+        }}:&nbsp;</span
+      > -->
+      <!-- <ng-container
+        *ngFor="let field of getElement('totalTime', data.content).content"
+        webuiListElement
+        [length]="getElement('totalTime', data.content).content.length"
+        [config]="field"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)"
+      >
+      </ng-container> -->
+    </div>
+    <div class="flex items-center mb-2">
+      <ng-container
+        *ngFor="let field of getElement('tracking', data.content).content"
+        webuiListElement
+        [config]="inverseButton(field)"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="footer relative" [class.footer-container]="status">
+    <div
+      class="flex"
+      *ngIf="status"
+      [ngClass]="{
+        'items-center flex-wrap justify-between w-full':
+          status.content[0].value !== 7,
+        'flex-col justify-center': status.content[0].value === 7,
+        'no-signature':
+          !status.content[status.content.length - 1].value.origin &&
+          status.content[0].value === 7
+      }">
+      <ng-container
+        *ngFor="
+          let field of getElement('status', data.content).content;
+          let last = last
+        ">
+        <ng-container
+          webuiListElement
+          [last]="last"
+          [config]="field"
+          (event)="eventHandler($event)"
+          (buttonAction)="buttonHandler($event)">
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #unapproved let-data="data">
+  <div class="header">
+    <div class="flex justify-center flex-col">
+      <ng-container
+        *ngFor="let field of getElement('position', data.content).content"
+        webuiListElement
+        [config]="field"
+        [length]="getElement('position', data.content).content.length"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+    <div class="flex items-center">
+      <ng-container
+        *ngFor="
+          let field of getElement(
+            'job_offer.candidate_contact.contact.picture',
+            data.content
+          ).content
+        "
+        webuiListElement
+        [config]="field"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+  </div>
+  <div class="body">
+    <label>Times</label>
+    <ng-container
+      *ngFor="let field of getElement('times', data.content).content"
+      webuiListElement
+      [length]="getElement('times', data.content).content.length"
+      [config]="field"
+      (event)="eventHandler($event)"
+      (buttonAction)="buttonHandler($event)">
+    </ng-container>
+    <div class="mb-3 total-time-wrapper">
+      <!-- <span
+        class="text-success mr-1"
+        style="display: inline-block; font-size: 15px; width: 50%"
+        >Total time:&nbsp;</span
+      > -->
+      <!-- <ng-container
+        *ngFor="let field of getElement('hours', data.content).content"
+        webuiListElement
+        [length]="getElement('hours', data.content).content.length"
+        [config]="field"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)"
+      >
+      </ng-container> -->
+    </div>
+    <div class="flex items-center mb-2">
+      <ng-container
+        *ngFor="let field of getElement('tracking', data.content).content"
+        webuiListElement
+        [config]="inverseButton(field)"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+    <span class="label">Evaluation:</span>
+    <!-- <div class="inline-block">
+      <ng-container
+        *ngFor="let field of getElement('evaluate', data.content).content"
+        webuiListElement
+        [config]="field"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)"
+      >
+      </ng-container>
+    </div> -->
+  </div>
+  <div class="footer">
+    <div class="button-wrapper">
+      <ng-container
+        *ngFor="
+          let field of getElement('approve', data.content).content.slice(0, 1)
+        "
+        webuiListElement
+        [config]="inverseButton(field)"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+    <div class="button-wrapper">
+      <ng-container
+        *ngFor="
+          let field of getElement('approve', data.content).content.slice(1, 2)
+        "
+        webuiListElement
+        [config]="inverseButton(field)"
+        (event)="eventHandler($event)"
+        (buttonAction)="buttonHandler($event)">
+      </ng-container>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,67 @@
+<div
+  class="form-group form-radio"
+  [formGroup]="group"
+  *ngIf="!config.read_only"
+  [ngClass]="['input_type_' + key]">
+  <div class="form-element">
+    <label
+      class="form-element-label"
+      [class.required]="config.templateOptions.required"
+      *ngIf="config.label || config.templateOptions.label">
+      {{
+        getTranslationKey(config.key, 'label')
+          | translate : { Default: config.templateOptions.label }
+      }}:
+    </label>
+    <div class="edit inline" [class.column]="config.templateOptions.column">
+      <ng-container *ngFor="let radio of config.templateOptions.options">
+        <div class="form-element-checkbox" *ngIf="radio.value">
+          <label
+            [attr.for]="radio.value"
+            class="form-check-label flex items-center"
+            [ngClass]="radio.value === isChecked ? 'checked' : ''">
+            <input
+              class="form-check-input mr-2"
+              [hidden]="true"
+              (change)="eventHandler($event)"
+              type="radio"
+              [formControlName]="key"
+              [id]="radio.value"
+              [value]="radio.value"
+              [name]="key"
+              [checked]="radio.value === value" />
+            <div
+              class="radio-circle"
+              *ngIf="config.templateOptions.type !== 'color'">
+              <div class="inner"></div>
+            </div>
+            <span
+              class="color-preview mr-2"
+              *ngIf="config.templateOptions.type === 'color'"
+              [ngStyle]="{ backgroundColor: radio.label }"></span>
+            <ng-container *ngIf="config.templateOptions.type !== 'color'">
+              <span class="radio-label">{{
+                getTranslationKey(key, radio.value)
+                  | translate : { Default: radio.label }
+              }}</span>
+            </ng-container>
+          </label>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <small class="text-muted" *ngIf="config.templateOptions.description">
+    {{ config.templateOptions.description }}
+  </small>
+  <div *ngIf="errors">
+    <div class="text-danger mt-3" *ngIf="errors[config.key]">
+      {{ errors[config.key] }}
+    </div>
+  </div>
+  <div *ngIf="message">
+    <div *ngIf="message[config.key]" class="text-success mt-1">
+      {{ message[config.key] }}
+    </div>
+  </div>
+</div>

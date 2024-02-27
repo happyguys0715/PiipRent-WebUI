@@ -1,0 +1,152 @@
+<ul ngbNav #nav="ngbNav" class="px-0" [(activeId)]="activeTab">
+  <li ngbNavItem="group">
+    <a ngbNavLink>{{ 'tabs.groups' | translate }}</a>
+    <ng-template ngbNavContent>
+      <div class="flex gap-4 mt-4">
+        <input
+          type="text"
+          class="control__input"
+          placeholder="Group"
+          [(ngModel)]="name" />
+
+        <button
+          type="button"
+          class="btn btn-primary px-4 py-2"
+          (click)="addGroup(name)">
+          {{ 'add' | translate }}
+        </button>
+      </div>
+
+      <div class="flex flex-wrap gap-4 mt-4">
+        <ng-container
+          *ngTemplateOutlet="
+            list;
+            context: {
+              title: 'tabs.groups' | translate,
+              list: groups,
+              param: 'name',
+              element: 'group',
+              type: 'list'
+            }
+          "></ng-container>
+        <ng-container *ngIf="targetId">
+          <ng-container
+            *ngTemplateOutlet="
+              list;
+              context: {
+                title: 'tabs.permissions.label' | translate,
+                list: permissionsList,
+                param: 'name',
+                element: 'group',
+                type: 'permission'
+              }
+            "></ng-container>
+        </ng-container>
+      </div>
+    </ng-template>
+  </li>
+
+  <li ngbNavItem="user">
+    <a ngbNavLink>{{ 'tabs.users' | translate }}</a>
+    <ng-template ngbNavContent>
+      <div
+        class="grid grid-cols-1 gap-4 mt-4"
+        [ngClass]="{ 'md:grid-cols-12': !!targetId }">
+        <div class="md:col-span-4">
+          <ng-container
+            *ngTemplateOutlet="
+              list;
+              context: {
+                title: 'tabs.users' | translate,
+                list: users,
+                param: 'name',
+                element: 'user',
+                type: 'list'
+              }
+            "></ng-container>
+        </div>
+        <ng-container *ngIf="targetId">
+          <div class="md:col-span-5">
+            <ng-container
+              *ngTemplateOutlet="
+                list;
+                context: {
+                  title: 'tabs.permissions.label' | translate,
+                  list: permissionsList,
+                  param: 'name',
+                  element: 'user',
+                  type: 'permission'
+                }
+              "></ng-container>
+          </div>
+          <div class="md:col-span-3">
+            <ng-container
+              *ngTemplateOutlet="
+                list;
+                context: {
+                  title: 'tabs.groups' | translate,
+                  list: userGroups,
+                  param: 'name',
+                  element: 'user',
+                  type: 'group'
+                }
+              "></ng-container>
+          </div>
+        </ng-container>
+      </div>
+    </ng-template>
+  </li>
+</ul>
+
+<div [ngbNavOutlet]="nav"></div>
+
+<ng-template
+  #list
+  let-t="title"
+  let-l="list"
+  let-p="param"
+  let-a="actions"
+  let-type="type"
+  let-e="element">
+  <div class="flex flex-col gap-2 grow">
+    <input
+      type="text"
+      [(ngModel)]="search[type]"
+      placeholder="Search"
+      class="control__input rounded p-2 pr-5"
+      (keyup)="filter(search[type], type, l, e)" />
+
+    <ul
+      class="grid gap-3 overflow-y-auto p-2 border rounded border-primary-300 max-h-[260px]">
+      <li
+        *ngFor="let item of l"
+        class="flex gap-4 justify-between items-center rounded py-2 px-4 shadow group hover:shadow-md hover:cursor-pointer active:shadow-none"
+        [class.text-white]="item.id === targetId && type === 'list'"
+        [class.bg-primary]="item.id === targetId && type === 'list'"
+        (click)="toggle(type, e, item)">
+        {{ item[p] }}
+
+        <webui-fa-icon
+          class="text-success"
+          [class.invisible]="!item.active"
+          icon="check"></webui-fa-icon>
+
+        <button
+          *ngIf="e === 'group' && type === 'list'"
+          class="action group-hover:opacity-100 opacity-0 text-danger"
+          (click)="removeGroup(item)">
+          <webui-svg-icon size="sm" icon="delete"></webui-svg-icon>
+        </button>
+      </li>
+    </ul>
+
+    <div *ngIf="type === 'permission'" class="flex gap-2 m-2 items-center">
+      <button class="btn btn-success px-4 py-2" (click)="selectAll(e)">
+        {{ 'select_all' | translate }}
+      </button>
+      <button class="btn btn-danger px-4 py-2" (click)="removeAll(e)">
+        {{ 'remove_all' | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>

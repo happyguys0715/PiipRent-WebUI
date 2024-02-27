@@ -1,0 +1,18 @@
+<div class="filter-element">
+  <webui-filter-header
+    [label]="config.label"
+    [key]="config.key"
+    [resetButton]="hasQuery$ | async"
+    (resetEvent)="resetFilter()"></webui-filter-header>
+
+  <div class="filter-select-wrapper">
+    <select class="form-control filter-select" [formControl]="control">
+      <option value="">{{ 'all' | translate : { Default: 'All' } }}</option>
+      <option *ngFor="let option of options$ | async" [value]="option.value">
+        {{
+          getTranslateKey(option.value) | translate : { Default: option.label }
+        }}
+      </option>
+    </select>
+  </div>
+</div>

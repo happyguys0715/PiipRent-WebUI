@@ -1,0 +1,21 @@
+<webui-form-element-view
+  [label]="
+    config.translateKey | translate : { Default: config.templateOptions.label }
+  ">
+  <span *ngIf="isViewMode">{{ displayValue }}</span>
+
+  <ng-container *ngIf="isEditMode">
+    <div class="form-control autocomplete-value" (click)="onShowDropdown()">
+      {{ displayValue }}
+    </div>
+
+    <webui-dropdown
+      *ngIf="showDropdown"
+      [count]="count"
+      [loading]="loading"
+      [data]="list"
+      (upload)="onUploadMore()"
+      (set)="onSet($event)"
+      (search)="onSearch($event)"></webui-dropdown>
+  </ng-container>
+</webui-form-element-view>

@@ -1,0 +1,291 @@
+<webui-dynamic-form [config]="config" (event)="eventHandler($event)">
+  <div class="px-2">
+    <button
+      type="submit"
+      class="connect-btn btn btn-success mb-1"
+      [ngStyle]="{ 'background-color': connectButton.color }"
+      [disabled]="connectProcess"
+      (click)="connectHandler()">
+      {{ connectProcess ? 'Connecting' : connectButton.text }}
+      <webui-spinner *ngIf="connectProcess"></webui-spinner>
+    </button>
+    <p class="description">
+      <span class="border rounded-circle border-info mr-1">i</span>
+      Please click button to authorize access to your MYOB online files!
+    </p>
+  </div>
+</webui-dynamic-form>
+
+<div class="content">
+  <h6
+    class="flex items-center rounded border mb-3"
+    [ngClass]="{ 'bg-primary text-white': !companyFile.isCollapsed }">
+    <webui-fa-icon
+      class="p-2"
+      [icon]="companyFile.isCollapsed ? 'eye' : 'eye-slash'"
+      (click)="companyFile.isCollapsed = !companyFile.isCollapsed"
+      [attr.aria-expanded]="!companyFile.isCollapsed"
+      aria-controls="collapseExample"
+      style="cursor: pointer">
+    </webui-fa-icon>
+    <span class="mr-auto">Company File</span>
+
+    <span class="date"
+      >Last refreshed -
+      {{
+        MYOBSettings.company_files_last_refreshed | dateFormat : 'datetime'
+      }}</span
+    >
+    <button
+      type="button"
+      class="btn btn-primary mx-3"
+      [disabled]="!authData || !authData.length"
+      (click)="refreshCompanyFiles()">
+      Refresh
+    </button>
+  </h6>
+  <div
+    id="collapseExample"
+    [ngbCollapse]="companyFile.isCollapsed"
+    class="px-2">
+    <div
+      class="company-file flex items-center flex-wrap py-2"
+      *ngFor="let file of companyFile.list">
+      <label class="label mb-0 my-1">{{ file.name }}</label>
+
+      <div class="form-element my-1">
+        <div class="form-element-content">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Username"
+            [(ngModel)]="file.username" />
+        </div>
+      </div>
+
+      <div class="form-element my-1">
+        <div class="form-element-content">
+          <input
+            type="password"
+            class="form-control"
+            placeholder="Password"
+            [(ngModel)]="file.password" />
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="test-btn btn btn-success mr-3 my-1"
+        (click)="testCompanyFile(file)">
+        Test
+      </button>
+
+      <webui-fa-icon
+        [icon]="['fas', file.authenticated ? 'check' : 'times']"
+        [class.text-success]="file.authenticated"
+        [class.text-danger]="!file.authenticated">
+      </webui-fa-icon>
+    </div>
+
+    <p class="description" *ngIf="companyFile">
+      <span class="border rounded-circle border-info mr-1">i</span>
+      Please enter your company file credentials!
+    </p>
+  </div>
+
+  <h6
+    class="flex items-center rounded border mb-3"
+    [ngClass]="{ 'bg-primary text-white': !payrollAccounts.isCollapsed }">
+    <webui-fa-icon
+      class="p-2"
+      [icon]="['fas', payrollAccounts.isCollapsed ? 'eye' : 'eye-slash']"
+      (click)="payrollAccounts.isCollapsed = !payrollAccounts.isCollapsed"
+      [attr.aria-expanded]="!payrollAccounts.isCollapsed"
+      aria-controls="collapseExample"
+      style="cursor: pointer"></webui-fa-icon>
+    <span class="mr-auto">Payroll accounts</span>
+
+    <span class="date"
+      >Last refreshed -
+      {{
+        MYOBSettings.payroll_accounts_last_refreshed | dateFormat : 'datetime'
+      }}</span
+    >
+    <button
+      type="button"
+      class="btn btn-primary mx-3"
+      [disabled]="!authData || !authData.length"
+      (click)="refreshAccounts()">
+      Refresh
+    </button>
+  </h6>
+  <form
+    *ngIf="payrollAccounts"
+    #accountForm="ngForm"
+    id="collapseExample"
+    [ngbCollapse]="payrollAccounts.isCollapsed"
+    class="px-2">
+    <div class="flex flex-wrap">
+      <div class="grow shrink">
+        <h6 class="group-label">Invoice settings</h6>
+
+        <div class="flex items-center mb-3">
+          <div class="form-element">
+            <label class="form-element-label">
+              {{ payrollAccounts.invoice_company_file.label }}
+            </label>
+
+            <div class="form-element-content">
+              <select
+                class="form-control"
+                name="invoice_company_file"
+                required
+                [(ngModel)]="payrollAccounts.invoice_company_file.value"
+                [disabled]="viewMode"
+                (ngModelChange)="
+                  getAccountsOfCompanyFile($event, 'invoice_activity_account')
+                "
+                [title]="viewMode ? 'Please use Edit mode for change it' : ''">
+                <option value="">Select company file</option>
+                <option
+                  *ngFor="
+                    let item of payrollAccounts.invoice_company_file.options
+                  "
+                  [value]="item.id">
+                  {{ item.name || item.cf_name }}
+                </option>
+              </select>
+              <ng-container
+                *ngTemplateOutlet="
+                  errors;
+                  context: {
+                    errors: payrollAccounts.invoice_company_file.error
+                  }
+                "></ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center mb-3">
+          <div class="form-element">
+            <label class="form-element-label">
+              {{ payrollAccounts.invoice_activity_account.label }}
+            </label>
+
+            <div class="form-element-content">
+              <select
+                class="form-control"
+                name="invoice_activity_account"
+                required
+                [(ngModel)]="payrollAccounts.invoice_activity_account.value"
+                [disabled]="viewMode"
+                [title]="viewMode ? 'Please use Edit mode for change it' : ''">
+                <option value="">Select account</option>
+                <option
+                  *ngFor="
+                    let item of payrollAccounts.invoice_activity_account.options
+                  "
+                  [value]="item.id">
+                  {{ item.number }} - {{ item.name }}
+                </option>
+              </select>
+              <ng-container
+                *ngTemplateOutlet="
+                  errors;
+                  context: {
+                    errors: payrollAccounts.invoice_activity_account.error
+                  }
+                "></ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grow shrink">
+        <h6 class="group-label">TimeSheet Settings</h6>
+
+        <div class="flex items-center mb-3">
+          <div class="form-element">
+            <label class="form-element-label">
+              {{ payrollAccounts.timesheet_company_file.label }}
+            </label>
+
+            <div class="form-element-content">
+              <select
+                class="form-control"
+                name="timesheet_company_file"
+                required
+                [(ngModel)]="payrollAccounts.timesheet_company_file.value"
+                [disabled]="viewMode"
+                [title]="viewMode ? 'Please use Edit mode for change it' : ''">
+                <option value="">Select company file</option>
+                <option
+                  *ngFor="
+                    let item of payrollAccounts.timesheet_company_file.options
+                  "
+                  [value]="item.id">
+                  {{ item.name || item.cf_name }}
+                </option>
+              </select>
+              <ng-container
+                *ngTemplateOutlet="
+                  errors;
+                  context: {
+                    errors: payrollAccounts.timesheet_company_file.error
+                  }
+                "></ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p
+      class="description mt-3"
+      *ngIf="
+        !(
+          payrollAccounts.invoice_company_file.value ||
+          payrollAccounts.timesheet_company_file.value ||
+          payrollAccounts.invoice_activity_account.value
+        )
+      ">
+      <span class="border rounded-circle border-info mr-1">i</span>
+      Please assign preferred company files and accounts in “Edit mode”!
+    </p>
+
+    <div
+      *ngIf="authData && authData.length"
+      class="flex justify-end items-center mt-2">
+      <button
+        type="button"
+        class="btn btn-primary btn-shadow ml-auto px-4 py-2 button-edit"
+        *ngIf="viewMode"
+        (click)="viewMode = false">
+        <webui-fa-icon [icon]="['fas', 'pencil-alt']"></webui-fa-icon>
+        Edit mode
+      </button>
+      <button
+        type="button"
+        class="btn button-close"
+        *ngIf="!viewMode"
+        (click)="reset()">
+        Close without save
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary button-save save"
+        *ngIf="!viewMode"
+        [disabled]="saveProcess || !accountForm.valid"
+        (click)="sendForm(accountForm.value)">
+        Save
+        <webui-spinner *ngIf="saveProcess"></webui-spinner>
+      </button>
+    </div>
+  </form>
+</div>
+
+<ng-template #error let-errors="errors">
+  <div class="text-danger p-2" *ngFor="let err of errors">
+    {{ err }}
+  </div>
+</ng-template>

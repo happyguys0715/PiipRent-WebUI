@@ -1,0 +1,22 @@
+:host {
+  color: #b2c2d3;
+
+  .label {
+    @apply inline-flex gap-2 items-center justify-center uppercase font-medium cursor-default;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #b2c2d3;
+
+    &:not(.disabled):hover,
+    &:not(.disabled):focus {
+      @apply opacity-100 text-primary cursor-pointer;
+    }
+
+    .icon {
+      font-size: 15px;
+    }
+  }
+}

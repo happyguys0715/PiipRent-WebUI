@@ -1,0 +1,323 @@
+<div
+  *ngIf="!config.hide"
+  [class.mb-0]="config.templateOptions?.bottom"
+  [formGroup]="group"
+  [ngClass]="['input_type_' + key]"
+  class="form-group"
+  style="position: relative">
+  <div [class.inline]="config.templateOptions?.inline" class="form-element">
+    <label
+      *ngIf="label && config.templateOptions?.label"
+      [attr.for]="key"
+      [class.bold]="config.templateOptions?.bold"
+      [class.inline]="config.templateOptions?.inline"
+      [class.required]="config.templateOptions?.required"
+      [ngClass]="[
+        config.templateOptions?.inline ? config.templateOptions?.color : ''
+      ]"
+      class="form-element-label">
+      {{
+        getTranslationKey('label')
+          | translate : { Default: templateOptions?.label }
+      }}
+      <b
+        *ngIf="templateOptions?.icon && templateOptions?.iconParsed"
+        class="text-secondary">
+        &nbsp;({{ templateOptions?.iconParsed }})
+      </b>
+    </label>
+    <webui-info
+      *ngIf="config.templateOptions?.description"
+      [description]="
+        getTranslationKey('description')
+          | translate : { Default: config.templateOptions?.description || '' }
+      "></webui-info>
+    <i
+      *ngIf="dataListMap"
+      [webuiTooltip]="dataListTemplate"
+      placement="bottom"
+      class="data-list-trigger info-icon">
+      View
+    </i>
+
+    <div
+      [class.flex-col]="
+        (!viewMode && isPhoneField) || config.templateOptions?.type === 'email'
+      "
+      [class.full]="addonIcon"
+      [class.showAll]="viewMode || config.type === 'static'"
+      class="form-element-content edit">
+      <div *ngIf="!viewMode && isPhoneField">
+        <ng-container *ngTemplateOutlet="phoneField"></ng-container>
+      </div>
+
+      <ng-container
+        *ngIf="
+          (this.config.type !== 'static' ||
+            (this.config.type === 'static' && !this.config.read_only)) &&
+          !viewMode &&
+          !config.read_only &&
+          !isAddressField &&
+          !isPhoneField &&
+          config.templateOptions?.type !== 'score'
+        ">
+        <ng-container *ngTemplateOutlet="inputField"></ng-container>
+      </ng-container>
+
+      <ng-container
+        *ngIf="config.type !== 'static' && !viewMode && isAddressField">
+        <ng-container *ngTemplateOutlet="addressField"></ng-container>
+      </ng-container>
+
+      <ng-container
+        *ngIf="
+          !viewMode &&
+          !config.read_only &&
+          config.templateOptions?.type === 'score'
+        ">
+        <ng-container *ngTemplateOutlet="scoreField"></ng-container>
+      </ng-container>
+
+      <div
+        *ngIf="
+          (viewMode || config.read_only) &&
+          config.type !== 'static' &&
+          config.templateOptions?.type !== 'score'
+        "
+        [class.readonly-value]="editMode">
+        {{ displayValue }}
+      </div>
+
+      <div *ngIf="addonIcon" class="addon">
+        <webui-fa-icon
+          *ngIf="isIconName(addonIcon)"
+          [icon]="['fas', addonIcon]"></webui-fa-icon>
+        <img
+          *ngIf="addonIcon && addonIcon.indexOf('.') > -1"
+          [src]="addonIcon" />
+      </div>
+
+      <button
+        (click)="switchType(config.templateOptions?.type)"
+        *ngIf="config.key === 'password' && config.templateOptions?.addon"
+        class="password"
+        type="button">
+        <ng-container *ngTemplateOutlet="iconEye"></ng-container>
+      </button>
+
+      <span
+        *ngIf="
+          config.type === 'static' && config.templateOptions?.type !== 'score'
+        "
+        [ngClass]="config.templateOptions?.color"
+        [ngStyle]="{
+          fontWeight: config.templateOptions?.bold ? 'bold' : 'normal'
+        }"
+        class="readonly">
+        {{ displayValue }}
+      </span>
+
+      <div
+        *ngIf="
+          (viewMode || config.read_only) &&
+          config.templateOptions?.type === 'score' &&
+          (parseScore(config.value) || !config.templateOptions?.danger)
+        "
+        class="rating">
+        <ngb-rating [max]="5" [rate]="config.value" [readonly]="true">
+          <ng-template let-fill="fill" let-index="index">
+            <span *ngIf="fill === 100" class="star full">&#9733;</span>
+            <span *ngIf="fill === 0" class="star">&#9733;</span>
+            <span *ngIf="fill < 100 && fill > 0" class="star">
+              <span [style.width.%]="fill" class="half">&#9733;</span>&#9733;
+            </span>
+          </ng-template>
+        </ngb-rating>
+      </div>
+
+      <div
+        *ngIf="
+          (viewMode || config.read_only) &&
+          config.templateOptions?.type === 'score' &&
+          !parseScore(config.value) &&
+          config.templateOptions?.danger
+        "
+        class="text-danger">
+        {{ config.templateOptions?.danger || '' | translate }}
+      </div>
+    </div>
+  </div>
+
+  <webui-control-error
+    [messages]="{ pattern: config.templateOptions?.patternError }"
+    [control]="formControl"></webui-control-error>
+
+  <div *ngIf="errors && !viewMode && formControl.touched">
+    <div *ngIf="getError()" class="text-danger mt-3">
+      {{ getError() | translate }}
+    </div>
+  </div>
+  <div *ngIf="message">
+    <div *ngIf="message[config.key || '']" class="text-success mt-1">
+      {{ message[config.key || ''] }}
+    </div>
+  </div>
+</div>
+
+<ng-template #inputField>
+  <input
+    #input
+    [attr.id]="key"
+    [attr.name]="key"
+    [attr.placeholder]="
+      getTranslationKey('placeholder')
+        | translate : { Default: config.templateOptions?.placeholder || ' ' }
+    "
+    [attr.type]="
+      config.templateOptions?.type
+        ? (config.templateOptions?.type === 'score' && 'number') ||
+          config.templateOptions?.type
+        : 'text'
+    "
+    [class.addon-input]="config.templateOptions?.addon"
+    [class.not-empty]="formControl.value"
+    [class.password-field]="config.key === 'password'"
+    [class.pl-4]="config.templateOptions?.icon"
+    [email]="config.templateOptions?.type === 'email'"
+    [formControl]="formControl"
+    [readonly]="config.read_only"
+    autocomplete="new-password"
+    class="form-control"
+    pattern="{{ config.templateOptions?.pattern }}"
+    webuiInputFocus />
+  <!-- (focus)="generateList()"
+    (keyup)="filter(key)"
+  /> -->
+
+  <div
+    *ngIf="
+      config.templateOptions?.type === 'email' &&
+      (!errors || !errors[config.key || ''])
+    "
+    class="error-message">
+    Invalid e-mail address
+  </div>
+</ng-template>
+
+<ng-template #addressField>
+  <input
+    #adr
+    (addressChange)="getAddress($event)"
+    [(ngModel)]="address"
+    [attr.id]="key"
+    [attr.name]="key"
+    [ngModelOptions]="{ standalone: true }"
+    autocomplete="none"
+    class="form-control"
+    id="autocomplete"
+    webuiPlaceAutocomplete
+    placeholder="{{
+      'enter_location' | translate : { Default: 'Enter a location' }
+    }}"
+    type="text" />
+</ng-template>
+
+<ng-template #scoreField>
+  <ngb-rating
+    (hover)="hovered = $event"
+    (leave)="hovered = undefined"
+    (rateChange)="hovered = undefined"
+    *ngIf="
+      !viewMode && !config.read_only && config.templateOptions?.type === 'score'
+    "
+    [formControl]="formControl"
+    [max]="5">
+    <ng-template let-fill="fill" let-index="index">
+      <span
+        *ngIf="fill === 100"
+        [style.color]="colors[hovered || formControl.value]"
+        class="star full"
+        >&#9733;</span
+      >
+      <span
+        *ngIf="fill === 0"
+        [class.text-danger]="!hovered && !formControl.value"
+        class="star"
+        >{{ formControl.value ? '&#9733;' : '&#9734;' }}</span
+      >
+      <span
+        *ngIf="fill < 100 && fill > 0"
+        [class.text-danger]="!formControl.value"
+        class="star">
+        <span [style.width.%]="fill" class="half">
+          {{ formControl.value ? '&#9733;' : '&#9734;' }}
+        </span>
+        {{ formControl.value ? '&#9733;' : '&#9734;' }}
+      </span>
+    </ng-template>
+  </ngb-rating>
+
+  <span
+    *ngIf="
+      !viewMode && !config.read_only && config.templateOptions?.type === 'score'
+    "
+    [style.borderColor]="colors[hovered || formControl.value]"
+    [style.color]="colors[hovered || formControl.value]"
+    class="score">
+    <span *ngIf="!hovered && !formControl.value" class="text-danger">
+      {{ config.templateOptions?.noneValue || '' | translate }}
+    </span>
+    <span *ngIf="hovered || formControl.value" class="flex items-center">
+      &nbsp;
+      {{ hovered || formControl.value | number : '1.1-1' }}
+      &nbsp;
+      <webui-fa-icon [icon]="['fas', 'star']"></webui-fa-icon>
+    </span>
+  </span>
+</ng-template>
+
+<ng-template #phoneField>
+  <input
+    #phoneNumber
+    [formControl]="formControl"
+    [options]="{
+      allowDropdown: false,
+      initialCountry: 'ee',
+    }"
+    type="text"
+    webuiIntlTelInput />
+
+  <div
+    *ngIf="
+      !viewMode && (!errors || !errors[config.key || '']) && formControl.touched
+    "
+    class="error-message">
+    {{ 'error.invalid_phone' | translate }}
+  </div>
+</ng-template>
+
+<ng-template #dataListTemplate>
+  <ul class="list">
+    <li *ngFor="let item of dataListMap" class="list__item">
+      <label class="list__item-label">{{ item.label }}</label>
+      <span> - </span>
+      <span class="list__item-value">{{ item.value }}</span>
+    </li>
+  </ul>
+</ng-template>
+
+<ng-template #iconEye>
+  <svg height="17px" viewBox="0 0 511.999 511.999" width="17px">
+    <path
+      d="M508.745,246.041c-4.574-6.257-113.557-153.206-252.748-153.206S7.818,239.784,3.249,246.035
+  c-4.332,5.936-4.332,13.987,0,19.923c4.569,6.257,113.557,153.206,252.748,153.206s248.174-146.95,252.748-153.201
+  C513.083,260.028,513.083,251.971,508.745,246.041z M255.997,385.406c-102.529,0-191.33-97.533-217.617-129.418
+  c26.253-31.913,114.868-129.395,217.617-129.395c102.524,0,191.319,97.516,217.617,129.418
+  C447.361,287.923,358.746,385.406,255.997,385.406z" />
+
+    <path
+      d="M255.997,154.725c-55.842,0-101.275,45.433-101.275,101.275s45.433,101.275,101.275,101.275
+  s101.275-45.433,101.275-101.275S311.839,154.725,255.997,154.725z M255.997,323.516c-37.23,0-67.516-30.287-67.516-67.516
+  s30.287-67.516,67.516-67.516s67.516,30.287,67.516,67.516S293.227,323.516,255.997,323.516z" />
+  </svg>
+</ng-template>

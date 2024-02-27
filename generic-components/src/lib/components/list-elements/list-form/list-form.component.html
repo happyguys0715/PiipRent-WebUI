@@ -1,0 +1,12 @@
+<div class="flex list-cell">
+  <div class="flex relative">
+    <ng-container
+      webuiFormElement
+      [config]="config.form"
+      [group]="group"
+      (event)="eventHandler($event)">
+    </ng-container>
+  </div>
+
+  <span class="text-success f-size-12">{{ value }}</span>
+</div>

@@ -1,0 +1,7 @@
+<div class="header">
+  {{ translationKey | translate : { Default: label } }}
+
+  <button type="button" class="btn" *ngIf="resetButton" (click)="onReset()">
+    <webui-fa-icon icon="times-circle"></webui-fa-icon>
+  </button>
+</div>

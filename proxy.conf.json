@@ -1,0 +1,17 @@
+{
+  "/api": {
+    "target": "https://api.piipaitest.com",
+    "secure": true,
+    "pathRewrite": {
+      "^/api": ""
+    },
+    "changeOrigin": true,
+    "headers": {
+      "Origin": "https://piiprent.piipaitest.com"
+    },
+    "logLevel": "debug"
+  },
+  "/assets": {
+    "target": "/"
+  }
+}

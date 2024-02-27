@@ -1,0 +1,54 @@
+@use 'styles/variables' as *;
+
+:host ::ng-deep {
+  .vacancy-dates {
+    width: 13rem;
+    border-radius: 0.2rem;
+    box-shadow: 0 0 2px 2px rgba($gray, 0.5);
+
+    &-wrapper {
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    .workers {
+      width: 5rem;
+    }
+  }
+
+  .today {
+    border: 1px solid $primary;
+
+    @each $item in $themes {
+      .#{$item}-theme & {
+        border-color: rgba(map-get($theme-colors, $item), 0.5);
+      }
+    }
+  }
+
+  .selected-date {
+    background-color: $primary !important;
+    color: #fff !important;
+  }
+
+  .removed-date,
+  .removed-date.bg-primary {
+    background-color: #fff !important;
+  }
+
+  .ngb-dp-day {
+    display: block;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+
+    .btn-light {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      height: 100%;
+    }
+  }
+}

@@ -1,0 +1,47 @@
+@use 'styles/variables' as *;
+
+$text-color: rgba($gray, 0.4);
+
+.search {
+  &-bar {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+
+    input {
+      width: 100%;
+      padding: 10px 8rem 10px 4rem;
+      border: 1px solid rgba($gray, 0.2);
+      border-radius: 50px;
+      color: $gray;
+      outline: none;
+
+      &:focus {
+        border-color: $gray;
+
+        & ~ .search-icon {
+          fill: $gray;
+        }
+      }
+    }
+  }
+
+  &-icon {
+    position: absolute;
+    left: 16px;
+    width: 32px;
+    height: 18px;
+    padding-right: 14px;
+    border-right: 1px solid rgba($gray, 0.2);
+    fill: $text-color;
+  }
+
+  &-count {
+    position: absolute;
+    right: 1rem;
+    font-size: 14px;
+    line-height: 14px;
+    color: $text-color;
+  }
+}

@@ -1,0 +1,19 @@
+<ng-container [formGroup]="group">
+  <label class="label" [attr.for]="name">
+    {{ translateKey | translate : { Default: label } }}
+  </label>
+  <input
+    [id]="name"
+    required
+    readonly
+    bsDatepicker
+    [bsConfig]="{
+      dateInputFormat: formats.date
+    }"
+    autocomplete="off"
+    class="input"
+    type="text"
+    [name]="name"
+    [formControlName]="controlName"
+    placeholder="" />
+</ng-container>

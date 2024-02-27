@@ -1,0 +1,48 @@
+@use 'styles/variables' as *;
+
+:host {
+  display: block;
+  text-align: center;
+}
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  color: $secondary-color;
+
+  .line {
+    display: block;
+    width: 100%;
+    position: absolute;
+    height: 2px;
+    background-color: rgba($color: $info, $alpha: 0.03);
+    content: '';
+    z-index: 0;
+  }
+
+  .step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    font-family: Roboto;
+    font-size: 16px;
+    line-height: 19px;
+    background-color: $brand-light-color;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    color: inherit;
+    transition: color 0.2s linear, background-color 0.2s linear;
+
+    &.active {
+      color: #fff;
+      background-color: $info;
+    }
+  }
+}

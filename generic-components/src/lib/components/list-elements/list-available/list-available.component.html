@@ -1,0 +1,31 @@
+<div
+  class="shift-wrapper"
+  [ngClass]="[getClass(type.text)]"
+  *ngFor="let type of config.value">
+  <span class="shift-status">{{ type.text }}</span>
+  <webui-info
+    class="ml-1"
+    *ngIf="type.shifts.length"
+    [description]="shifts"
+    [triggersType]="'click'"></webui-info>
+
+  <ng-template #shifts>
+    <ng-container *ngFor="let shift of type.shifts">
+      <div class="shift">
+        <div class="shift-datetime">
+          {{ shift.datetime | dateFormat : 'datetime' }}
+        </div>
+        <span *ngFor="let message of shift.messages">
+          {{ message.status }}&nbsp;<a
+            class="description"
+            *ngIf="message.job"
+            href="{{ '/hr/jobs/' + message.job + '/change' }}"
+            target="_black"
+            >&nbsp;to {{ message.message }}</a
+          >
+        </span>
+      </div>
+    </ng-container>
+  </ng-template>
+  <br />
+</div>

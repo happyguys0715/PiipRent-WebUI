@@ -1,0 +1,76 @@
+.avatar {
+  width: 40px;
+  height: 40px;
+
+  font-size: 14px;
+
+  border-radius: 0.5rem;
+}
+
+.contact-avatar-lg {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+
+  font-size: 32px;
+}
+
+.icon-actions {
+  opacity: 0.3;
+
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+}
+
+.actions-btn {
+  opacity: 0.3;
+
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+}
+
+::ng-deep .page-item {
+  .page-link {
+    border: none !important;
+    color: #909295;
+    font-size: 14px;
+  }
+}
+::ng-deep .page-item.active .page-link {
+  background-color: transparent !important;
+  border: none !important;
+  color: #2f363d !important;
+  font-size: 14px;
+}
+
+:host {
+  .button-more {
+    @apply opacity-50 hover:text-white hover:bg-primary rounded w-6 h-6;
+  }
+
+  .active-row {
+    @apply cursor-pointer;
+
+    &:hover > td {
+      @apply bg-secondary-300;
+    }
+  }
+
+  .head-cell {
+    @apply inline-flex gap-2 items-center justify-center uppercase font-medium cursor-default;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #b2c2d3;
+
+    &:hover {
+      @apply text-primary cursor-pointer;
+    }
+  }
+}

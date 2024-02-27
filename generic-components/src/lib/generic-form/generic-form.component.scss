@@ -1,0 +1,31 @@
+@use 'styles/mixins';
+
+.title {
+  margin-left: 20px;
+  margin-bottom: 10px;
+
+  font-size: 24px;
+  line-height: 26px;
+
+  @include mixins.media-breakpoint-down('md') {
+    margin-bottom: 3px;
+    font-size: 20px;
+    line-height: 24px;
+  }
+}
+
+.form-name {
+  position: absolute;
+  top: 26px;
+  left: 40px;
+
+  font-size: 28px;
+  line-height: 30px;
+
+  color: #4f4f4f;
+
+  @include mixins.media-breakpoint-down('md') {
+    top: 4px;
+    left: 20px;
+  }
+}

@@ -1,0 +1,27 @@
+<div
+  [class.mobile]="isMobileDevice && !config.hideLabel"
+  [class.mb-0]="isMobileDevice && config.label === 'Residency'">
+  <label
+    [hidden]="(isMobileDevice && labelText === ' ') || config.hideLabel"
+    [class.normal]="config.normal"
+    [style.marginBottom.px]="config.marginBottom"
+    *ngIf="!config.main && (config.name ? config.label : true)">
+    {{
+      translationKey
+        | translate : { Default: labelText === ' ' ? '&nbsp;' : labelText }
+    }}
+  </label>
+
+  <ng-container *ngFor="let field of config.children; let last = last">
+    <ng-container
+      webuiFormElement
+      [config]="field"
+      [group]="group"
+      [errors]="errors"
+      [message]="message"
+      [last]="last"
+      (event)="eventHandler($event)"
+      (buttonAction)="buttonActionHandler($event)">
+    </ng-container>
+  </ng-container>
+</div>

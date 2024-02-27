@@ -1,0 +1,29 @@
+$default-color: #c4c4c4;
+$active-color: #f4b616;
+
+.wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: $default-color;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0px 4px 23px rgba(211, 222, 234, 0.25);
+  }
+
+  &:not(:last-child) {
+    margin-right: 15px;
+  }
+
+  &.active {
+    color: $active-color;
+  }
+}

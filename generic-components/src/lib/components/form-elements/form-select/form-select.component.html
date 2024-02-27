@@ -1,0 +1,82 @@
+<div
+  class="form-group"
+  [formGroup]="group"
+  *ngIf="!viewMode && !config.hide && !config.read_only"
+  [ngClass]="['input_type_' + key]">
+  <div class="form-element">
+    <label
+      class="form-element-label"
+      [class.required]="config.templateOptions.required"
+      *ngIf="label && config.templateOptions.label"
+      [attr.for]="key">
+      {{
+        getTranslationKey(translateKey, 'label')
+          | translate : { Default: config.templateOptions.label }
+      }}
+    </label>
+    <webui-info
+      *ngIf="config.templateOptions.description"
+      [description]="
+        getTranslationKey(translateKey, 'description')
+          | translate : { Default: config.templateOptions.description || '' }
+      "></webui-info>
+    <div class="form-element-content edit">
+      <select
+        class="form-control"
+        #select
+        (change)="eventHandler($event)"
+        [formControlName]="key"
+        [attr.id]="key"
+        [attr.name]="key">
+        <option class="text-muted" [value]="null" selected disabled>
+          {{ 'select' | translate : { Default: 'Select' } }}
+        </option>
+        <option
+          *ngFor="let option of config.templateOptions.options"
+          [value]="option.value">
+          {{
+            getOptionTranslationKey(option.key || option.value)
+              | translate : { Default: option.label }
+          }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div *ngIf="errors">
+    <div class="text-danger mt-3" *ngIf="errors[key]">{{ errors[key] }}</div>
+  </div>
+  <div *ngIf="message">
+    <div *ngIf="message[key]" class="text-success mt-1">{{ message[key] }}</div>
+  </div>
+</div>
+
+<div
+  class="form-group form-element"
+  [formGroup]="group"
+  *ngIf="(viewMode || config.read_only) && !config.hide">
+  <label
+    class="form-element-label"
+    *ngIf="label && config.templateOptions.label">
+    {{
+      getTranslationKey(translateKey, 'label')
+        | translate : { Default: config.templateOptions.label }
+    }}:
+  </label>
+  <div
+    class="form-element-content"
+    [ngClass]="textColor"
+    [class.readonly-value]="!textColor && config.read_only">
+    {{ displayValueKey | translate : { Default: displayValue } }}
+  </div>
+  <small class="text-muted" *ngIf="config.templateOptions.description">
+    {{ config.templateOptions.description }}
+  </small>
+  <small
+    class="text-danger"
+    *ngIf="
+      config.templateOptions.errorDescription &&
+      config.templateOptions.errorDescription.value === group.get(key)?.value
+    ">
+    {{ config.templateOptions.errorDescription.error }}
+  </small>
+</div>

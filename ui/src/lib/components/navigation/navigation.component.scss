@@ -1,0 +1,187 @@
+@use 'styles/variables';
+@use 'styles/mixins';
+
+$nested-width: 230px;
+$header-shadow: 0 8px 12px rgba(black, 0.04);
+$nested-shadow: -4px 10px 37px rgba(211, 222, 234, 0.81);
+$header-bg: #eef6ff;
+$border-color: #d3deea;
+
+.site-header {
+  .logo {
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+    padding-right: 0;
+    width: auto;
+    height: 72px;
+
+    @include mixins.media-breakpoint-down('lg') {
+      margin-right: 0;
+    }
+
+    &-img {
+      height: 60px;
+    }
+  }
+
+  .nav__list {
+    display: flex;
+    justify-content: flex-start;
+
+    &--main {
+      max-height: calc(100vh - 72px);
+
+      &.show {
+        display: block;
+        position: absolute;
+        left: 0;
+        max-width: 70vw;
+        max-height: calc(100vh - 72px);
+        overflow: auto;
+        border-radius: 5px;
+        border: 1px solid $border-color;
+        background-color: variables.$white;
+        box-shadow: $nested-shadow;
+        z-index: 10;
+        box-sizing: content-box;
+
+        .nav__item:hover > .nav__list--nested {
+          display: none;
+        }
+
+        .nav__item.opened > .nav__list--nested {
+          position: relative;
+          display: flex;
+          box-shadow: none;
+          border: none;
+          border-top: 1px solid $border-color;
+          border-bottom: 1px solid $border-color;
+          border-radius: 0;
+        }
+
+        & .nav__list--nested {
+          position: relative;
+          height: auto;
+        }
+      }
+    }
+
+    &--nested {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      left: 0;
+      width: $nested-width;
+      max-width: 70vw;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid $border-color;
+      background-color: variables.$white;
+      box-shadow: $nested-shadow;
+      z-index: 10;
+    }
+
+    @include mixins.media-breakpoint-down('xl') {
+      display: none;
+      width: $nested-width;
+      max-width: 70vw;
+    }
+  }
+
+  .nav__item {
+    position: relative;
+
+    &:hover > .nav__list--nested {
+      display: flex;
+      height: auto;
+    }
+  }
+}
+
+.nav__list--main > .nav__item {
+  @include mixins.media-breakpoint-up('xl') {
+    height: 72px;
+  }
+}
+
+.hamburger {
+  display: inline-flex;
+  padding: 0 20px;
+  opacity: 0.6;
+  border-right: 1px solid rgba(variables.$gray, 0.4);
+
+  @include mixins.media-breakpoint-up('xl') {
+    display: none;
+  }
+}
+
+.arrow-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 0.8rem;
+
+  @include mixins.media-breakpoint-up('xl') {
+    display: none;
+  }
+
+  &.rotate {
+    transform: rotate(180deg);
+  }
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  color: variables.$content-color;
+  height: 100%;
+
+  &:hover:not(.disabled),
+  &.active:not(.disabled) {
+    cursor: pointer;
+    color: variables.$primary;
+
+    .circle-indicator {
+      display: inline-flex;
+      position: absolute;
+      left: 0.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    @each $item in variables.$themes {
+      .#{$item}-theme & {
+        color: map-get(variables.$theme-colors, $item);
+      }
+    }
+  }
+
+  @include mixins.media-breakpoint-up('xl') {
+    &.active:not(.disabled) {
+      &.main::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: variables.$primary;
+        display: inline-block;
+        height: 2px;
+
+        @each $item in variables.$themes {
+          .#{$item}-theme & {
+            background-color: map-get(variables.$theme-colors, $item);
+          }
+        }
+      }
+    }
+  }
+
+  &__wrapper {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+}

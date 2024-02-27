@@ -1,0 +1,131 @@
+<div class="list-info-wrapper">
+  <div class="list-info-left">
+    <div class="list-info-image">
+      <img
+        *ngIf="picture"
+        [src]="picture"
+        [class.original]="config.companyPicture"
+        [class.default]="isDefaultImage" />
+      <div *ngIf="contactAvatar" class="contact-avatar">
+        {{ contactAvatar }}
+      </div>
+
+      <webui-fa-icon
+        *ngIf="(picture || contactAvatar) && !hideAvailability"
+        class="list-info__icon"
+        [class.list-info__icon--success]="available"
+        [class.list-info__icon--danger]="!available"
+        [icon]="available ? 'check' : 'times'"></webui-fa-icon>
+    </div>
+  </div>
+
+  <div class="list-info-block">
+    <span *ngIf="job_title">{{ job_title }}</span>
+    <h5 class="list-info-title" [class.position]="position">
+      <span class="title" *ngIf="!getScore(averageScore) && !config.hideTitle">
+        {{ title }}
+        <webui-info
+          *ngIf="description"
+          class="ml-1"
+          [description]="description"></webui-info>
+      </span>
+
+      <span style="font-size: 14px" *ngIf="config.hideTitle">
+        {{ 'average_score.label' | translate }}
+      </span>
+      <span class="title" *ngIf="getScore(averageScore)">
+        <ng-container *ngIf="!config.hideTitle">{{ title }}</ng-container>
+        <span
+          class="score"
+          placement="right-top"
+          [webuiTooltip]="avarage"
+          [style.color]="colors[getScore(averageScore)]"
+          [style.borderColor]="colors[getScore(averageScore)]">
+          {{ averageScore | number : '1.1-1' }}&nbsp;
+          <webui-fa-icon icon="star"></webui-fa-icon>
+        </span>
+      </span>
+      <span
+        class="score text-danger"
+        *ngIf="!getScore(averageScore) && isCandidatePage()"
+        [style.borderColor]="colors[1]">
+        {{ 'no_rating' | translate }}
+      </span>
+    </h5>
+    <p *ngIf="position" class="position">{{ position }}</p>
+    <p class="description" *ngIf="company">{{ company }}</p>
+    <p class="description">{{ address }}</p>
+
+    <div *ngIf="status && status.length" class="list-info-status">
+      <span class="title">{{ 'status.label' | translate }}</span>
+      <div class="list-info-status-wrapper">
+        <span
+          class="badge badge-outline"
+          [ngClass]="[checkClass(stat)]"
+          *ngFor="let stat of statusList">
+          {{ stat.__str__ }}
+        </span>
+        <a class="more" href *ngIf="more" (click)="showMore($event)">
+          {{ status.length - 4 }} {{ 'more' | translate }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #avarage>
+  <div *ngIf="config.value" class="info-block p-1">
+    <ng-container *ngIf="averageScoreDescription.includes.length">
+      <h6 class="info-block__title">
+        {{ 'average_includes' | translate }}
+      </h6>
+      <ul class="info-block__list">
+        <li
+          class="info-block__item"
+          *ngFor="let scoreItem of averageScoreDescription.includes">
+          <ng-container
+            *ngTemplateOutlet="
+              score;
+              context: { name: scoreItem.label, score: scoreItem.score }
+            "></ng-container>
+        </li>
+      </ul>
+    </ng-container>
+
+    <ng-container *ngIf="averageScoreDescription.excludes.length">
+      <h6 class="info-block__title">
+        {{ 'excludes' | translate }}
+      </h6>
+      <ul class="info-block__list">
+        <li
+          class="info-block__item"
+          *ngFor="let scoreItem of averageScoreDescription.excludes">
+          <ng-container
+            *ngTemplateOutlet="
+              score;
+              context: { name: scoreItem.label, score: scoreItem.score }
+            "></ng-container>
+        </li>
+      </ul>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #score let-name="name" let-score="score">
+  <webui-fa-icon
+    class="info-block__icon text-warning"
+    icon="circle"></webui-fa-icon>
+  {{ name }}
+  <ng-container *ngIf="getScore(score)">
+    <span
+      class="info-block__score"
+      [style.color]="colors[getScore(score)]"
+      [style.borderColor]="colors[getScore(score)]">
+      {{ score | number : '1.1-1' }}
+      <webui-fa-icon icon="star"></webui-fa-icon>
+    </span>
+  </ng-container>
+  <span *ngIf="!getScore(score)" class="info-block__score text-danger">
+    {{ 'no_rating' | translate }}
+  </span>
+</ng-template>

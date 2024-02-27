@@ -1,0 +1,84 @@
+@mixin badge {
+  @apply relative px-4 py-1.5 rounded-full text-xs overflow-hidden border border-current;
+
+  &::after {
+    @apply absolute block w-full h-full opacity-10 left-0 top-0 bg-current;
+
+    content: '';
+  }
+}
+
+:host {
+  display: block;
+
+  .danger {
+    @include badge;
+
+    @apply text-danger;
+  }
+
+  .success {
+    @include badge;
+
+    @apply text-success;
+  }
+
+  .warning {
+    @include badge;
+
+    @apply text-warning;
+  }
+}
+
+.dropdown {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.delivered {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 15px;
+  background: #ebfff1;
+  border: 1px solid #5cb87a;
+  border-radius: 100px;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  align-items: center;
+  color: #5cb87a;
+}
+
+.undelivered {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 15px;
+  background: #f9ecea;
+  border: 1px solid rgb(250, 130, 130);
+  border-radius: 100px;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  align-items: center;
+  color: rgb(250, 130, 130);
+}
+.received {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 15px;
+  background: #e2e2e7;
+  border: 1px solid #3e3c63;
+  border-radius: 100px;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  align-items: center;
+  color: #3e3c63;
+}

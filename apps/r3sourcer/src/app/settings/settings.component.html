@@ -1,0 +1,11 @@
+<webui-navigation [user]="user"> </webui-navigation>
+
+<div class="site-page pt-5">
+  <div class="form-page">
+    <div class="form-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+
+<webui-master-guide *ngIf="user.currentRole.is_primary"></webui-master-guide>

@@ -1,0 +1,32 @@
+<label class="control" cdk-overlay-origin>
+  <span *ngIf="label" class="control__label">
+    {{ label | translate }}
+
+    <span *ngIf="required$ | async" class="text-danger inline-block px-1">
+      *
+    </span>
+  </span>
+  <span class="control__input-wrapper">
+    <span *ngIf="prefix" class="control__input-prefix">{{ prefix }}</span>
+
+    <input
+      #input
+      [ngModel]="value"
+      (ngModelChange)="onInput($event)"
+      (blur)="onTouched()"
+      class="control__input"
+      [attr.type]="type" />
+  </span>
+</label>
+
+<span *ngIf="error" class="error">{{ error || '' | translate }}</span>
+
+<ng-container *ngIf="errors$ | async as errors">
+  <span class="error" *ngIf="errors['max']">
+    {{ 'error.maximum-value' | translate : { value: errors['max'].max } }}
+  </span>
+
+  <span class="error" *ngIf="errors['min']">
+    {{ 'error.minimum-value' | translate : { value: errors['min'].min } }}
+  </span>
+</ng-container>

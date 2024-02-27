@@ -1,0 +1,44 @@
+<div class="form-builder">
+  <webui-generic-form
+    [endpoint]="endpoint"
+    [data]="data"
+    [id]="id"
+    [showResponse]="false"
+    (str)="eventForm($event)"
+    (event)="eventHandler($event)">
+    <button *ngIf="!id" type="submit" class="btn btn-primary">
+      {{ 'save' | translate }}
+    </button>
+
+    <div class="mb-3">
+      <a target="_blank" [href]="formLink">{{ formLink }}</a>
+    </div>
+    <div *ngIf="id" class="flex justify-between items-center mt-2">
+      <button
+        type="button"
+        class="btn btn-primary px-4 py-2"
+        (click)="showPreview()">
+        {{ 'preview.label' | translate }}
+      </button>
+      <button type="submit" class="btn btn-primary px-4 py-2">
+        {{ 'save' | translate }}
+      </button>
+    </div>
+  </webui-generic-form>
+</div>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 *ngIf="config" class="modal-title">{{ config.title }}</h5>
+
+        <webui-close-button class="ml-auto"></webui-close-button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <webui-form-builder-form [id]="id" (formConfig)="setFormConfig($event)">
+      </webui-form-builder-form>
+    </div>
+  </div>
+</ng-template>

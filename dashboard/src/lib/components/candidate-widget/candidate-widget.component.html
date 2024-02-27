@@ -1,0 +1,178 @@
+<div class="widget">
+  <div class="widget-header">
+    <h3 class="widget-name flex items-center justify-between w-full gap-8">
+      {{ 'candidate.plural' | translate : { Default: 'Candidates' } }}
+
+      <button
+        *ngIf="selectedCandidates.size"
+        class="fillin-button btn btn-success"
+        (click)="sendJobOffer()">
+        {{ 'send_job_offer' | translate : { Default: 'Send Job Offer' } }}
+      </button>
+
+      <button
+        *ngIf="!selectedCandidates.size"
+        class="btn btn-link filter-button"
+        (click)="toggleFilters()">
+        {{ 'filter.plural' | translate : { Default: 'Candidates' } }}
+        <webui-fa-icon class="ml-2" icon="chevron-down"></webui-fa-icon>
+      </button>
+    </h3>
+  </div>
+
+  <div *ngIf="showFilters" class="filter-wrapper" [class.open]="true">
+    <webui-filter-block
+      [key]="activeList"
+      [config]="filtersOfList"
+      (event)="filterHandler($event)"></webui-filter-block>
+  </div>
+
+  <div
+    *ngIf="!showFilters"
+    class="widget-body list"
+    infinite-scroll
+    [infiniteScrollDistance]="modalScrollDistance"
+    [infiniteScrollThrottle]="modalScrollThrottle"
+    [scrollWindow]="false"
+    (scrolled)="onModalScrollDown()">
+    <ng-container *ngFor="let candidate of candidates">
+      <ng-container
+        *ngTemplateOutlet="
+          item;
+          context: { candidate: candidate }
+        "></ng-container>
+    </ng-container>
+
+    <div
+      *ngIf="!candidates || loading"
+      class="flex items-center justify-center flex-fill">
+      <webui-loader></webui-loader>
+    </div>
+  </div>
+</div>
+
+<ng-template #item let-candidate="candidate">
+  <div
+    class="list-item"
+    [class.selected]="candidate.selected"
+    (click)="selectCandidate(candidate)">
+    <div class="list-item-header">
+      <img
+        *ngIf="candidate.img"
+        [src]="candidate.img"
+        class="w-8 h-8"
+        width="32"
+        height="32" />
+      <div *ngIf="!candidate.img" class="contact-avatar">
+        {{ candidate.contactAvatar }}
+      </div>
+      <b class="name">{{ candidate.name }}</b>
+
+      <div class="ml-auto">
+        <ng-container
+          *ngTemplateOutlet="
+            score;
+            context: { value: candidate.score, right: true }
+          "></ng-container>
+      </div>
+
+      <webui-fa-icon
+        icon="chevron-down"
+        class="extend-btn px-2"
+        (click)="togglePanel(candidate, $event)"></webui-fa-icon>
+
+      <webui-fa-icon
+        icon="check-circle"
+        class="selected-icon text-success"></webui-fa-icon>
+    </div>
+
+    <div class="list-item-content" *ngIf="candidate.extend">
+      <div *ngIf="candidate.state" class="list-item-status">
+        <span class="title">{{
+          'status.label' | translate : { Default: 'Status' }
+        }}</span>
+        <span
+          class="badge badge-outline"
+          [ngClass]="[checkClass(candidate.state)]">
+          {{
+            candidate.state.number
+              | workflowState : candidate.state.__str__ : 'active'
+          }}
+        </span>
+      </div>
+
+      <ng-container *ngIf="candidate.skills && candidate.skills.length">
+        <div class="list-item-group-title">
+          {{ 'skills' | translate : { Default: 'Skills' } }}
+        </div>
+
+        <div *ngFor="let skill of candidate.skills">
+          {{ skill.name }}
+
+          <ng-container
+            *ngTemplateOutlet="
+              score;
+              context: { value: skill.score }
+            "></ng-container>
+        </div>
+      </ng-container>
+
+      <div class="flex justify-between">
+        <div *ngIf="candidate.hourly_rate">
+          <div class="list-item-group-title">
+            {{ 'hourly_rate' | translate : { Default: 'Hourly rate' } }}
+          </div>
+
+          <span [class.text-danger]="candidate.overpriced">
+            ${{ candidate.hourly_rate }}/h
+          </span>
+        </div>
+
+        <div *ngIf="candidate.distance">
+          <div class="list-item-group-title">
+            {{ 'distance' | translate : { Default: 'Distance' } }}
+          </div>
+
+          {{ candidate.distance }} km
+        </div>
+      </div>
+
+      <ng-container *ngIf="candidate.scores">
+        <div class="list-item-group-title">
+          {{ 'scores' | translate : { Default: 'Scores' } }}
+        </div>
+
+        <div *ngFor="let item of candidate.scores">
+          <span>{{ item.name }}</span>
+
+          <ng-container
+            *ngTemplateOutlet="
+              score;
+              context: { value: item.score }
+            "></ng-container>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="candidate.tags && candidate.tags.length">
+        <div class="list-item-group-title">
+          {{ 'tags' | translate : { Default: 'Tags' } }}
+        </div>
+
+        <div class="tags-wrapper">
+          <span class="badge" *ngFor="let tag of candidate.tags">
+            {{ tag.name }}
+          </span>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #score let-value="value" let-right="right">
+  <span class="score inline-flex items-center" [webuiAverageScore]="value">
+    {{ value | averageScore }}
+    <ng-container *ngIf="value">
+      <webui-fa-icon class="ml-1" icon="star"></webui-fa-icon>
+    </ng-container>
+  </span>
+</ng-template>

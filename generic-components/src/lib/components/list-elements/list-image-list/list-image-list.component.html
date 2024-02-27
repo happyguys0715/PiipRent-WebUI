@@ -1,0 +1,16 @@
+<ul class="list">
+  <li [class.preview]="el.preview" *ngFor="let el of images; let index = index">
+    <img
+      class="image"
+      [src]="el.image"
+      (click)="showPreview(index)"
+      title="Click for popup" />
+
+    <webui-close-button
+      class="close"
+      [inDialog]="false"
+      (click)="hidePreview(index)"></webui-close-button>
+  </li>
+</ul>
+
+<div [class.backdrop]="hasOpenPreview"></div>

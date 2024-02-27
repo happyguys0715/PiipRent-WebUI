@@ -1,0 +1,33 @@
+<section class="details">
+  <div class="details__person px-4">
+    <img *ngIf="avatar.src" class="avatar contact-avatar" [src]="avatar.src" />
+
+    <div *ngIf="!avatar.src" class="avatar contact-avatar">
+      {{ avatar.preview }}
+    </div>
+
+    <div>
+      <h5 class="title">{{ timeSheet.candidate.fullName }}</h5>
+
+      <p *ngIf="timeSheet.candidate.email">
+        {{ timeSheet.candidate.email }}
+      </p>
+    </div>
+  </div>
+
+  <div class="details__info">
+    <div *ngFor="let column of info" class="details__info-section">
+      <div *ngFor="let record of column" class="details__info-row">
+        <webui-icon [icon]="record.icon"></webui-icon>
+
+        <div class="field">
+          <b class="label">
+            {{ record.label | translate }}
+          </b>
+
+          <span class="content-text">{{ record.text }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

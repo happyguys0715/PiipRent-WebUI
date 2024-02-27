@@ -1,0 +1,100 @@
+<webui-dynamic-form [config]="details"></webui-dynamic-form>
+
+<div class="buttons" *ngIf="!isEditTimesheet">
+  <button
+    *ngFor="let typeItem of types"
+    class="btn btn-primary"
+    [class.active]="type === typeItem.key"
+    type="button"
+    (click)="setTimesheetType(typeItem.key)">
+    {{ typeItem.translateKey | translate : { Default: typeItem.label } }}
+  </button>
+</div>
+
+<webui-dynamic-form
+  *ngIf="type === timesheetType.Times && !formFilled"
+  [config]="times"
+  [hiddenFields]="hiddenFields"
+  (submitForm)="saveTimes($event)">
+  <div class="footer">
+    <div *ngIf="errors" class="text-danger mb-2">
+      {{ errors['non_field_errors'] }}
+    </div>
+    <button class="btn btn-primary" type="submit">
+      Save
+      <webui-spinner *ngIf="saveProcess"></webui-spinner>
+    </button>
+  </div>
+</webui-dynamic-form>
+
+<webui-dynamic-form
+  *ngIf="type === timesheetType.Times && formFilled"
+  [config]="timesFilled"
+  [hiddenFields]="hiddenFields"
+  (submitForm)="saveTimes($event)"></webui-dynamic-form>
+
+<webui-dynamic-form
+  *ngIf="type === timesheetType.Activity"
+  [config]="skillActivity"
+  [hiddenFields]="hiddenFields"
+  (event)="eventHandler($event)"
+  (submitForm)="saveSkillActivity($event)">
+  <div *ngIf="!formFilled" class="footer">
+    <div *ngIf="errors" class="text-danger mb-2">
+      {{ errors['non_field_errors'] }}
+    </div>
+    <button class="btn btn-primary" type="submit">
+      Save
+      <webui-spinner *ngIf="saveProcess"></webui-spinner>
+    </button>
+  </div>
+</webui-dynamic-form>
+
+<webui-dynamic-form
+  *ngIf="type === timesheetType.Activities && isEditTimesheet"
+  [config]="skillActivities"></webui-dynamic-form>
+
+<ng-container *ngIf="type === timesheetType.Activities && !isEditTimesheet">
+  <table class="table">
+    <tr>
+      <th>{{ 'worktype.label' | translate }}</th>
+      <th>{{ 'amount' | translate }}</th>
+      <th>{{ 'actions' | translate }}</th>
+    </tr>
+
+    <tr *ngFor="let item of skillActivityData">
+      <td>{{ getWorkTypeDetails(item.worktype.id, '__str__') }}</td>
+      <td>
+        {{ item.value }}
+        {{ getWorkTypeDetails(item.worktype.id, 'uom.short_name') }}
+      </td>
+      <td>
+        <button
+          class="btn text-danger"
+          type="button"
+          (click)="deleteSkillActivity(item)">
+          <webui-fa-icon icon="trash"></webui-fa-icon>
+          {{ 'delete' | translate }}
+        </button>
+      </td>
+    </tr>
+  </table>
+
+  <div class="table-footer">
+    <button
+      class="btn btn-primary"
+      type="button"
+      (click)="showSkillActivityForm()">
+      {{ 'add' | translate }}
+    </button>
+  </div>
+</ng-container>
+
+<webui-dynamic-form *ngIf="formFilled" [config]="notes"></webui-dynamic-form>
+
+<div class="footer" *ngIf="formFilled">
+  <button class="btn btn-primary" type="button" (click)="saveTimesheet()">
+    Save
+    <webui-spinner *ngIf="saveProcess"></webui-spinner>
+  </button>
+</div>

@@ -1,0 +1,344 @@
+@use 'styles/variables';
+@use 'styles/mixins';
+
+label {
+  display: flex;
+  align-items: center;
+}
+
+// p {
+//   margin-bottom: 8px;
+// }
+
+.form-info {
+  &-wrapper {
+    position: relative;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    margin-top: -40px;
+    margin-bottom: 10px;
+
+    &.mobile {
+      flex-wrap: nowrap;
+      margin-top: 0;
+    }
+  }
+
+  &-title span {
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  &-left {
+    margin-right: 1rem;
+
+    .mobile & {
+      margin: 0;
+      order: 1;
+    }
+  }
+
+  &-image {
+    @include mixins.image;
+
+    &:hover ~ .form-info-image--preview {
+      display: block;
+    }
+
+    &__wrapper {
+      @include mixins.image-wrapper;
+    }
+
+    &--preview {
+      @include mixins.image-preview;
+
+      &.hide {
+        visibility: hidden;
+      }
+    }
+  }
+
+  .available,
+  .unavailable {
+    position: absolute;
+    right: 0;
+    bottom: 0.1rem;
+
+    padding-top: 1px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 1rem;
+    height: 1rem;
+
+    font-size: 0.7rem;
+
+    border-radius: 50%;
+
+    color: white;
+  }
+
+  .available {
+    background-color: variables.$success;
+  }
+
+  .unavailable {
+    background-color: variables.$danger;
+  }
+
+  &-edit-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(variables.$gray, 0.3);
+
+    i {
+      margin-right: 0.2rem;
+    }
+
+    &:hover,
+    &:hover i {
+      color: variables.$primary;
+
+      @each $item in variables.$themes {
+        .#{$item}-theme & {
+          color: map-get(variables.$theme-colors, $item);
+        }
+      }
+    }
+  }
+
+  &-block {
+    @apply flex flex-col gap-2;
+
+    min-width: 200px;
+
+    margin-right: auto;
+
+    flex-grow: 1;
+
+    .description {
+      font-size: 12px;
+      line-height: 14px;
+
+      .address-hq {
+        margin-left: 8px;
+
+        color: variables.$primary;
+      }
+    }
+
+    .job-title {
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .client-link {
+      font-size: 14px;
+      line-height: 20px;
+
+      color: variables.$primary;
+
+      opacity: 0.8;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &-title {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 4px;
+
+    font-size: 1rem;
+
+    .score {
+      display: inline-flex;
+      align-items: center;
+
+      height: 14px;
+      line-height: 14px;
+
+      margin-top: 3px;
+      margin-left: 4px;
+      padding-left: 4px;
+
+      font-size: 14px;
+      vertical-align: top;
+
+      border-left: 1px solid black;
+    }
+  }
+
+  &-status {
+    display: flex;
+
+    &-wrapper {
+      display: inline-flex;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .badge {
+      line-height: 1.2;
+    }
+
+    .badge.badge-outline {
+      margin-bottom: 0.2rem;
+
+      border-color: variables.$success;
+      color: variables.$success;
+
+      &.danger {
+        color: variables.$danger;
+        border-color: variables.$danger;
+      }
+
+      &.success {
+        color: variables.$success;
+        border-color: variables.$success;
+      }
+
+      &.info {
+        color: variables.$info;
+        border-color: variables.$info;
+      }
+
+      &.warning {
+        color: variables.$warning;
+        border-color: variables.$warning;
+      }
+    }
+
+    .badge:last-child {
+      margin-bottom: 0;
+    }
+
+    .title {
+      margin-right: 11px;
+
+      font-size: 14px;
+      line-height: 22px;
+    }
+  }
+}
+
+// .job {
+//   font-size: 24px;
+//   font-weight: 600;
+// }
+
+.jobsite {
+  color: #828282;
+}
+
+.tags-wrapper {
+  display: flex;
+  align-items: flex-start;
+
+  label {
+    margin-right: 6px;
+  }
+}
+
+.date {
+  margin-top: 60px;
+
+  font-size: 12px;
+  line-height: 20px;
+
+  text-align: right;
+}
+
+.extend-block {
+  padding: 28px;
+  text-align: center;
+  background-color: rgba(40, 163, 252, 0.1);
+  border: solid 1px rgba(40, 163, 252, 0.15);
+
+  p {
+    padding-bottom: 20px;
+    margin-bottom: 0;
+    opacity: 0.7;
+  }
+}
+
+.more {
+  color: variables.$primary;
+
+  @each $item in variables.$themes {
+    .#{$item}-theme & {
+      color: map-get(variables.$theme-colors, $item);
+    }
+  }
+}
+
+.address-field {
+  margin-top: -10px;
+
+  color: #828282;
+
+  .form-group {
+    margin-bottom: 11px;
+  }
+}
+
+.mobile .score {
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.btn.button-save {
+  width: 160px;
+}
+
+.remove-margin {
+  margin-bottom: -10px;
+}
+
+.contact-avatar {
+  @include mixins.image;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+
+  & > *:not(:last-child) {
+    margin-right: 0.5rem;
+  }
+}
+
+.section {
+  &-title {
+    margin-bottom: 4px;
+  }
+}
+
+.map {
+  width: 265px;
+  height: 150px;
+}
+
+:host {
+  ::ng-deep {
+    webui-form-checkbox .form-group {
+      margin-bottom: 8px;
+    }
+  }
+}

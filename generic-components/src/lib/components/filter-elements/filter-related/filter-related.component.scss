@@ -1,0 +1,103 @@
+@use 'styles/variables' as *;
+
+:host {
+  .autocomplete {
+    &-list {
+      margin-left: -0.75rem;
+      margin-right: -0.75rem;
+      width: auto;
+
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        background-color: #e0e0e0;
+      }
+    }
+
+    &-item {
+      padding-top: 0;
+      padding-bottom: 0;
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+
+    &-value {
+      border: 1px solid rgba($gray, 0.2);
+    }
+  }
+
+  .form-element-checkbox {
+    position: relative;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+
+    &::after {
+      position: absolute;
+      left: 0.75rem;
+      bottom: 0;
+      display: block;
+      content: '';
+      background-color: rgba($gray, 0.2);
+      width: calc(100% - 1.5rem);
+      height: 1px;
+    }
+
+    &:hover,
+    &.active {
+      color: var(--primary-color);
+      background-color: $brand-light-color;
+    }
+  }
+
+  ::ng-deep .autocomplete-list {
+    max-height: 144px;
+  }
+}
+
+.content {
+  position: relative;
+
+  ul {
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+
+  .actions {
+    border-bottom: 1px solid $border-color;
+  }
+
+  .form-control {
+    margin-bottom: 0.75rem;
+  }
+}
+
+.spinner-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $content-color;
+  margin-top: 0.75rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.value {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-control {
+  position: absolute;
+  top: 0;
+
+  &:not(.active) {
+    display: none;
+  }
+}

@@ -1,0 +1,12 @@
+<div class="form-group">
+  <div class="form-element">
+    <label [attr.for]="key" class="form-element-label">{{label}}</label>
+
+    <div class="form-element-content" [class.many]="many">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="text-danger mt-3">{{ error }}</div>
+  <div *ngIf="message" class="text-success mt-1">{{ message }}</div>
+</div>

@@ -1,0 +1,46 @@
+$border-color: #d3deea;
+$secondary-color: #7a7a7a;
+$brand-dark-color: #0762c0;
+
+:host {
+  width: 100%;
+  display: block;
+  border-radius: 3px;
+  border: 1px solid $border-color;
+  padding: 12px;
+
+  .title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0;
+
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    color: $secondary-color;
+  }
+
+  .accept {
+    font-size: 12px;
+    line-height: 16px;
+    color: $border-color;
+    margin-top: 2px;
+  }
+
+  ::ng-deep .lead {
+    font-size: inherit;
+    line-height: inherit;
+    color: $brand-dark-color;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .dropzone {
+    width: 100%;
+    border: 1px dashed $border-color;
+    border-radius: 3px;
+  }
+}

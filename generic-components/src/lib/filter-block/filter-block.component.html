@@ -1,0 +1,19 @@
+<div
+  class="filters-block"
+  [class.inline]="inline"
+  [class.in-container]="container">
+  <div class="filters-label">
+    <h5 class="mb-0">{{ 'filters' | translate : { Default: 'Filters' } }}</h5>
+    <span class="reset" (click)="resetAll()">{{
+      'reset_all' | translate : { Default: 'Reset all' }
+    }}</span>
+  </div>
+  <div [class.inline-container]="inline">
+    <ng-container
+      *ngFor="let field of config"
+      webuiFilterElement
+      (event)="changeQuery($event)"
+      [config]="field">
+    </ng-container>
+  </div>
+</div>

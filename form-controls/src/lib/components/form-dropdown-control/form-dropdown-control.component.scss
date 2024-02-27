@@ -1,0 +1,41 @@
+@use 'styles/variables' as *;
+
+:host {
+  display: flex;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  .element {
+    font-size: 16px;
+    line-height: 19px;
+    color: $content-color;
+    padding: 8px 12px;
+
+    &:nth-child(even) {
+      background-color: $brand-light-color;
+    }
+
+    &:hover:not(.empty) {
+      color: $brand-color;
+      cursor: pointer;
+    }
+
+    &.empty {
+      text-align: center;
+    }
+  }
+}
+
+.dropdown {
+  height: 10rem;
+}
+
+.loader {
+  display: block;
+  text-align: center;
+  height: 100%;
+}

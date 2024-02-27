@@ -1,0 +1,24 @@
+<div *ngIf="!config.hide" class="form-group" [formGroup]="group">
+  <div class="form-element">
+    <label
+      class="form-element-label mb-2"
+      *ngIf="config.templateOptions?.label"
+      [class.required]="config.templateOptions?.required"
+      [attr.for]="key">
+      {{
+        config.key || ''
+          | translate : { Default: config.templateOptions?.label }
+      }}:
+    </label>
+
+    <quill-editor
+      [(ngModel)]="htmlText"
+      [ngModelOptions]="{ standalone: true }"
+      placeholder="Enter Text"
+      [modules]="quillConfig"
+      [customOptions]="customOptions"
+      (onSelectionChanged)="onSelectionChanged()"
+      (onContentChanged)="onContentChanged()">
+    </quill-editor>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+@use 'styles/variables' as *;
+
+.select {
+  font-size: 14px;
+  line-height: 16px;
+  height: 40px;
+  padding-right: 3.5rem;
+}
+
+.content {
+  background-color: $white;
+  border: 1px solid $border-color;
+  box-shadow: 2px 8px 20px rgba(2, 52, 105, 0.1);
+  border-radius: 3px;
+  width: 100%;
+  display: block;
+}
+
+.control {
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.control__input {
+  display: inline-flex;
+  align-items: center;
+  min-width: 4rem;
+  background-color: transparent;
+  border: none;
+}
+
+.dropdown {
+  height: 8rem;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  .element {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 16px;
+    line-height: 19px;
+    color: $content-color;
+    padding: 8px 12px;
+
+    &:nth-child(even) {
+      background-color: $brand-light-color;
+    }
+
+    &:hover:not(.empty) {
+      background-color: $brand-color;
+      cursor: pointer;
+    }
+
+    &.empty {
+      text-align: center;
+    }
+  }
+}
+
+.fi {
+  box-shadow: 0 0 0.2rem $content-color;
+}

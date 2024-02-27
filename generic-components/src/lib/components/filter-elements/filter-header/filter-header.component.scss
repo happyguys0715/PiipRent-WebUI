@@ -1,0 +1,9 @@
+:host {
+  .header {
+    @apply flex items-center gap-2 mt-3 mb-2 shrink-0 text-sm uppercase text-gray/[0.5];
+  }
+
+  .btn {
+    @apply text-danger p-0 mb-0;
+  }
+}

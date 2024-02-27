@@ -1,0 +1,11 @@
+<div class="wrapper">
+  <span
+    class="star"
+    [class.active]="star.active"
+    *ngFor="let star of stars$ | async"
+    (click)="changeValue(star.position)">
+    <webui-icon
+      [size]="IconSize.ExtraLarge"
+      [icon]="star.active ? Icon.StarFilled : Icon.Star"></webui-icon>
+  </span>
+</div>

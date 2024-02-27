@@ -1,0 +1,250 @@
+<header
+  #header
+  class="site-header sticky top-0 w-full bg-primary-200 border-b border-primary-300 z-10">
+  <div
+    class="site-header__content flex items-center justify-between w-full max-w-[1440px] px-4 mx-auto">
+    <div
+      class="hamburger hamburger--spring d-xl-none py-3"
+      type="button"
+      *ngIf="pages && pages.length"
+      [ngClass]="{ 'is-active': isCollapsed }"
+      (click)="showNavigation($event)">
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </div>
+
+    <a class="logo mr-4" routerLink="/">
+      <img class="logo-img" *ngIf="logo" [src]="logo" />
+    </a>
+
+    <nav #nav class="order-0 grow" *ngIf="pages && pages.length">
+      <ul
+        class="nav__list nav__list--main w-full"
+        [ngClass]="{ show: isCollapsed }"
+        [ngStyle]="{ 'top.px': isCollapsed ? headerHeight : 0 }">
+        <ng-container *ngFor="let page of pages">
+          <ng-container
+            *ngTemplateOutlet="
+              item;
+              context: { page: page, first: true, height: headerHeight }
+            "></ng-container>
+        </ng-container>
+      </ul>
+    </nav>
+
+    <webui-time
+      *ngIf="user"
+      class="absolute bottom-0 translate-y-full px-4 border border-primary-300 border-t-0 rounded-b right-4"
+      translateKey="local_time"
+      description="Local time"
+      [hidden]="!initTime"
+      (init)="initTime = true"></webui-time>
+
+    <div
+      class="absolute bottom-0 translate-y-full px-4 border border-primary-300 border-t-0 rounded-b left-4 text-sm bg-danger text-white">
+      {{ trialMessage | async }}
+    </div>
+
+    <div class="ml-auto">
+      <webui-overlay-dropdown
+        maxHeight="calc(100% - 5rem)"
+        placement="end"
+        #dropdown
+        *ngIf="user">
+        <div
+          target
+          class="flex items-center gap-4"
+          (click)="dropdown.openDropdown()">
+          <img
+            class="rounded-full w-[50px] h-[50px] object-cover"
+            *ngIf="picture"
+            [src]="picture"
+            width="50"
+            height="50" />
+          <div
+            *ngIf="contactAvatar"
+            class="rounded-full w-[50px] h-[50px] contact-avatar">
+            {{ contactAvatar }}
+          </div>
+
+          <div class="hidden md:flex gap-6 items-center">
+            <div class="grid gap-2">
+              <h4 class="font-medium text-lg text-primary truncate">
+                {{ fullName }}
+              </h4>
+              <p class="text-xs text-gray-300 truncate">
+                {{ getRolePosition(currentRoleObject) | translate }}
+              </p>
+            </div>
+
+            <webui-icon
+              class="text-primary"
+              [icon]="Icon.ArrowDown"
+              [size]="IconSize.Medium"></webui-icon>
+          </div>
+        </div>
+
+        <div content class="-mt-2 -mx-3 overflow-y-auto">
+          <a
+            *ngFor="let role of roles"
+            href="https://{{ role.domain }}"
+            target="_blank"
+            class="flex py-3.5 px-6 items-center gap-4"
+            [class.bg-primary-200]="role.id === currentRole"
+            [class.opacity-40]="role.id !== currentRole"
+            (click)="changeRole(role, $event); dropdown.closeDropdown()">
+            <span
+              class="inline-flex items-center justify-center w-3.5 h-3.5 border border-primary rounded-full shrink-0 before:block before:w-1.5 before:h-1.5 before:rounded-full"
+              [class.before:bg-primary]="role.id === currentRole"></span>
+
+            <img
+              class="rounded-full w-[50px] h-[50px] object-cover"
+              *ngIf="picture"
+              [src]="picture"
+              width="50"
+              height="50" />
+            <div
+              *ngIf="contactAvatar"
+              class="rounded-full w-[50px] h-[50px] contact-avatar">
+              {{ contactAvatar }}
+            </div>
+
+            <div class="grid gap-2">
+              <h4 class="font-medium text-lg text-primary truncate">
+                {{ fullName }}
+              </h4>
+              <p
+                class="text-xs text-gray-300 truncate"
+                [title]="getRolePosition(role) | translate">
+                {{ getRolePosition(role) | translate }}
+              </p>
+            </div>
+          </a>
+
+          <hr class="text-primary-300" />
+
+          <div class="grid px-6 py-5 gap-5 text-center">
+            <a
+              class="uppercase font-medium text-sm text-primary hover:underline hover:cursor-pointer"
+              [routerLink]="this.urlPrefix + '/profile'"
+              *ngIf="userType === 'client' || userType === 'candidate'">
+              {{ 'profile' | translate : { Default: 'Profile' } }}
+            </a>
+
+            <a
+              class="uppercase font-medium text-sm text-primary hover:underline hover:cursor-pointer"
+              (click)="changePassword()">
+              {{ 'change_password' | translate }}
+            </a>
+
+            <a
+              class="uppercase font-medium text-sm text-primary hover:underline hover:cursor-pointer"
+              (click)="onChangeEmail()">
+              {{ 'action.change_email' | translate }}
+            </a>
+
+            <a
+              class="uppercase font-medium text-sm text-primary hover:underline hover:cursor-pointer"
+              (click)="onChangePhoneNumber()">
+              {{ 'action.change_phone_number' | translate }}
+            </a>
+
+            <a
+              *ngIf="user.currentRole.is_primary && isClient()"
+              class="uppercase font-medium text-sm text-primary hover:underline hover:cursor-pointer"
+              (click)="onTransferCompany()">
+              {{ 'action.transfer_to_regular_company' | translate }}
+            </a>
+
+            <button
+              type="button"
+              class="button button--primary"
+              (click)="logOut()">
+              {{ 'log_out' | translate : { Default: 'Log out' } }}
+            </button>
+          </div>
+        </div>
+      </webui-overlay-dropdown>
+    </div>
+    <webui-language-selector
+      [class.ml-auto]="!user"
+      class="md:ml-4"></webui-language-selector>
+  </div>
+</header>
+
+<ng-template #list let-p="pages" let-h="height">
+  <ul *ngIf="!isCollapsed && p.length" class="nav__list--nested">
+    <ng-container *ngFor="let page of p">
+      <ng-container
+        *ngTemplateOutlet="item; context: { page: page }"></ng-container>
+    </ng-container>
+  </ul>
+  <ul *ngIf="isCollapsed && p.length" class="nav__list--nested">
+    <ng-container *ngFor="let page of p">
+      <ng-container
+        *ngTemplateOutlet="item; context: { page: page }"></ng-container>
+    </ng-container>
+  </ul>
+</ng-template>
+
+<ng-template #item let-p="page" let-f="first" let-h="height">
+  <li
+    class="nav__item relative"
+    [class.disabled]="p.disabled"
+    [class.opened]="p.opened">
+    <span class="link__wrapper">
+      <a
+        *ngIf="!p.disabled"
+        [routerLink]="
+          p.url !== '/'
+            ? [checkUrlPrefix(p.url) ? urlPrefix + p.url : p.url]
+            : null
+        "
+        class="link inline-flex items-center py-1.5 px-6 hover:text-primary"
+        [class.main]="f"
+        [class.active]="p.active"
+        [class.gap-2]="!f"
+        [class.pl-2.5]="!f"
+        (click)="clickAction($event, p)">
+        <span
+          *ngIf="!f"
+          class="inline-block w-1.5 h-1.5 bg-primary rounded-full"
+          [class.invisible]="!p.active"
+          [class.visible]="p.active"></span>
+
+        {{ p.translateKey | translate : { Default: p.name } }}
+      </a>
+
+      <span
+        class="link disabled inline-flex items-center py-1.5 px-6"
+        *ngIf="p.disabled"
+        (click)="isCollapsed = false"
+        [attr.title]="getDisableTitle(p.name)">
+        {{ p.translateKey | translate : { Default: p.name } }}
+      </span>
+
+      <span
+        class="arrow-icon text-primary"
+        *ngIf="p.children.length"
+        [class.rotate]="p.opened">
+        <webui-icon
+          [icon]="Icon.ArrowDown"
+          [size]="IconSize.Medium"></webui-icon>
+      </span>
+    </span>
+
+    <ng-container *ngIf="p.children && f">
+      <ng-container
+        *ngTemplateOutlet="
+          list;
+          context: { pages: p.children, height: h }
+        "></ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="p.children && !f">
+      <ng-container
+        *ngTemplateOutlet="list; context: { pages: p.children }"></ng-container>
+    </ng-container>
+  </li>
+</ng-template>

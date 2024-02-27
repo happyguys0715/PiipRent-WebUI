@@ -1,0 +1,41 @@
+// a {
+//   text-decoration: none;
+
+//   &:hover,
+//   &:focus,
+//   &.active {
+//     opacity: 1;
+//     text-decoration: none;
+
+//     &[href] {
+//       @each $item in $themes {
+//         .#{$item}-theme &:not(.disabled) {
+//           color: map-get($theme-colors, $item);
+//         }
+//       }
+//     }
+
+//     &:not([href]) {
+//       color: inherit;
+//     }
+//   }
+
+//   &.disabled {
+//     color: inherit;
+//     cursor: default;
+
+//     &.btn {
+//       pointer-events: unset;
+//     }
+//   }
+// }
+
+.link {
+  &-underline {
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+}

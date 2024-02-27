@@ -1,0 +1,77 @@
+@use 'styles/variables' as *;
+
+:host > .form-group {
+  position: relative;
+  display: block;
+
+  &.target {
+    z-index: 5;
+  }
+}
+
+.time-wrapper {
+  width: 100%;
+}
+
+.time {
+  position: absolute;
+  top: -18px;
+
+  font-size: 12px;
+  line-height: 18px;
+
+  opacity: 0.8;
+
+  &:hover {
+    color: $primary;
+    opacity: 1;
+  }
+
+  .mobile-datepicker ~ &-wrapper {
+    width: 120px;
+  }
+}
+
+:host.mobile-device .form-element-label {
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: none;
+  color: #4f4f4f;
+  opacity: 0.6;
+}
+
+.dates {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  list-style: none;
+  margin-top: -0.5rem;
+
+  .date {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid $primary;
+    border-radius: 20px;
+    transition: background-color 0.2s linear;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+
+    &:hover {
+      background-color: rgba($primary, 0.2);
+    }
+  }
+
+  .action {
+    margin-left: 1rem;
+    padding: 0;
+  }
+}
+
+.input-group {
+  @apply items-center;
+
+  webui-svg-icon {
+    @apply absolute right-0;
+  }
+}

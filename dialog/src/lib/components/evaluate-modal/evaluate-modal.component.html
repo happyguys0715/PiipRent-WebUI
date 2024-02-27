@@ -1,0 +1,86 @@
+<webui-base-modal (dissmisEvent)="dismiss()">
+  <header>
+    <h5 class="modal-title" [class.text-center]="config.signature">
+      <ng-container *ngIf="config.evaluate">
+        {{ 'evaluate.label' | translate : { Default: 'Evaluate' } }}
+      </ng-container>
+
+      <ng-container *ngIf="!config.evaluate">
+        <img
+          *ngIf="config.label.picture"
+          class="avatar"
+          alt="Photo"
+          width="40"
+          height="40"
+          [src]="config.label.picture" />
+
+        <span *ngIf="!config.label.picture" class="contact-avatar avatar">
+          {{ config.label.contactAvatar }}
+        </span>
+
+        {{ config.label.name }}
+      </ng-container>
+    </h5>
+  </header>
+
+  <div *ngIf="!config.evaluate" class="modal-body">
+    <webui-generic-form
+      [endpoint]="config.endpoint"
+      [data]="config.data"
+      [extendData]="config.extendData"
+      [edit]="config.edit"
+      (errorForm)="errorEvent()"
+      (event)="formEvent($event)">
+      <div class="flex">
+        <button class="btn btn-shadow btn-primary button-save ml-lg-auto">
+          {{ 'save' | translate : { Default: 'Save' } }}
+          <webui-spinner *ngIf="saveProcess"></webui-spinner>
+        </button>
+      </div>
+    </webui-generic-form>
+  </div>
+
+  <ng-container *ngIf="config.evaluate">
+    <div class="modal-body text-center">
+      <ng-container *ngIf="config.label.picture">
+        <img
+          [src]="config.label.picture"
+          alt="Photo"
+          style="border-radius: 0.5rem; object-fit: cover"
+          height="100"
+          width="100"
+          class="mx-auto" />
+      </ng-container>
+
+      <ng-container *ngIf="!config.label.picture">
+        <span class="contact-avatar contact-avatar-lg">
+          {{ config.label.contactAvatar }}
+        </span>
+      </ng-container>
+
+      <p class="evaluate-label">{{ config.label.name }}</p>
+      <hr class="ml-auto mr-auto mb-4" width="100" />
+
+      <ngb-rating
+        [max]="5"
+        min="1"
+        [(ngModel)]="config.data['evaluation_score']">
+        <ng-template let-fill="fill" let-index="index">
+          <span *ngIf="fill === 100" class="star star-lg full">&#9733;</span>
+          <span *ngIf="fill === 0" class="star star-lg">
+            {{ config.data['evaluation_score'] ? '&#9733;' : '&#9734;' }}
+          </span>
+        </ng-template>
+      </ngb-rating>
+    </div>
+    <div class="modal-footer justify-center">
+      <button
+        type="button"
+        class="btn btn-shadow btn-primary button-save"
+        (click)="sendEvaluateData(config.endpoint, config.data)">
+        {{ 'save' | translate : { Default: 'Save' } }}
+        <webui-spinner *ngIf="saveProcess"></webui-spinner>
+      </button>
+    </div>
+  </ng-container>
+</webui-base-modal>

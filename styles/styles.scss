@@ -1,0 +1,35 @@
+@import 'mixins';
+
+@import 'hamburgers/_sass/hamburgers/hamburgers.scss';
+@import '@angular/cdk/overlay-prebuilt.css';
+
+:root {
+  --main-font-family: 'Source Sans Pro', sans-serif;
+  --content-color: #333;
+  --primary-color: #28a3fc;
+  --danger-color: #fa5c46;
+  --success-color: #32ba5e;
+  --warning-color: #f58926;
+  --secondary-color: #4f4f4f;
+  --white-color: #f5f5f5;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'base';
+@import 'components/index';
+@import 'typography';
+
+.dropdown-backdrop {
+  background-color: transparent;
+}
+
+html,
+body {
+  height: 100%;
+}
+a.atlwdg-trigger {
+  z-index: 2;
+}

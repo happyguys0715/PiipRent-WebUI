@@ -1,0 +1,38 @@
+@use 'styles/variables' as *;
+
+$content-width: 748px;
+
+.register {
+  max-width: $content-width;
+  margin: 3rem auto;
+  background-color: $white;
+  border: 1px solid $border-color;
+  box-shadow: $brand-shadow;
+  border-radius: 0.25rem;
+
+  &__header {
+    position: relative;
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__header-logo {
+    object-fit: contain;
+    height: 4rem;
+  }
+
+  .link {
+    color: $primary;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    @each $item in $themes {
+      .#{$item}-theme & {
+        color: map-get($theme-colors, $item);
+      }
+    }
+  }
+}

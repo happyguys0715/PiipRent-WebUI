@@ -1,0 +1,165 @@
+@use 'styles/variables';
+@use 'styles/mixins';
+
+@include mixins.media-breakpoint-down('sm') {
+  .form-element.inline {
+    display: flex;
+    align-items: center;
+  }
+
+  .form-element-label.inline {
+    font-size: 16px !important;
+
+    & ~ .form-element-content {
+      width: 120px;
+      margin-left: auto;
+      font-size: 16px;
+    }
+  }
+}
+
+.showAll {
+  max-height: none;
+  height: auto;
+}
+
+.star {
+  position: relative;
+  display: inline-block;
+  font-size: 16px;
+  color: rgba(#bdbdbd, 0.3);
+
+  &.full {
+    color: #ffd042;
+  }
+}
+
+.half {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  color: #ffd042;
+}
+.addon-input {
+  padding: 0 0 0 49px !important;
+
+  border: 1px solid rgba(variables.$gray, 0.2) !important;
+
+  background-color: #fdfdfd;
+
+  &.password-field {
+    padding-right: 45px !important;
+  }
+
+  &:focus,
+  &:hover {
+    border-color: #4f4f4f;
+  }
+}
+
+.addon,
+.password {
+  position: absolute;
+  display: flex;
+
+  height: 100%;
+
+  padding: 14px;
+
+  opacity: 0.2;
+
+  img {
+    width: 16px;
+  }
+}
+
+.addon {
+  padding-right: 10px;
+
+  border-right: 1px solid rgba(#333, 0.6);
+}
+
+button.password {
+  right: 0;
+  padding: 12px 14px;
+  border: none;
+  background-color: transparent;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  svg {
+    fill: variables.$gray;
+  }
+}
+
+.form-control::placeholder {
+  @apply text-sm text-gray opacity-30;
+
+  .redesign & {
+    font-size: 16px;
+    line-height: 1.2;
+    color: variables.$secondary-color;
+    opacity: 1;
+  }
+}
+
+.rating {
+  display: flex;
+  align-items: flex-start;
+
+  color: variables.$primary;
+}
+
+.score {
+  display: inline-block;
+
+  height: 14px;
+  line-height: 14px;
+
+  margin-top: 3px;
+  margin-left: 4px;
+  padding-left: 4px;
+
+  font-size: 14px;
+  vertical-align: top;
+
+  border-left: 1px solid black;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  text-align: left;
+
+  &__item {
+    font-size: 14px;
+
+    &-label {
+      font-weight: 600;
+    }
+
+    &-value {
+      opacity: 0.7;
+    }
+  }
+}
+
+.data-list-trigger {
+  opacity: 0.7;
+  margin-left: 0.5rem;
+  cursor: default;
+  font-style: normal;
+
+  &:hover {
+    color: variables.$primary;
+  }
+}
+
+.error-message {
+  margin-top: 0.025rem;
+  display: none;
+  color: variables.$danger;
+}

@@ -1,0 +1,16 @@
+<header class="header">
+  <img class="logo" [src]="logo" alt="Logo" />
+
+  <webui-close-button
+    class="close close-button"
+    (click)="dismiss()"></webui-close-button>
+</header>
+
+<webui-test-generator
+  [workflowObject]="config.workflowObject"
+  [send]="config.send"
+  [id]="config.testId"
+  [test]="config.test"
+  [skipScore]="config.skipScoreForTest"
+  (sended)="close($event)">
+</webui-test-generator>

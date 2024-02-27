@@ -1,0 +1,41 @@
+.range-buttons label.active {
+  @each $item in $themes {
+    .#{$item}-theme & {
+      color: white;
+      background-color: map-get($theme-colors, $item);
+      border-color: map-get($theme-colors, $item);
+    }
+  }
+}
+
+.header-item {
+  @each $item in $themes {
+    .#{$item}-theme & {
+      color: map-get($theme-colors, $item) !important;
+    }
+  }
+}
+
+.calendar-button.active {
+  @each $item in $themes {
+    .#{$item}-theme & {
+      background-color: map-get($theme-colors, $item) !important;
+    }
+  }
+}
+
+.calendar-item.active {
+  @each $item in $themes {
+    .#{$item}-theme & {
+      background-color: map-get($theme-colors, $item) !important;
+    }
+  }
+
+  .calendar-button:hover {
+    @each $item in $themes {
+      .#{$item}-theme & {
+        background-color: map-get($theme-colors, $item) !important;
+      }
+    }
+  }
+}

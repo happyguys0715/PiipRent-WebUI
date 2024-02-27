@@ -1,0 +1,16 @@
+<webui-flat-dialog [config]="dialogConfig">
+  <div class="text-center" dialog-content>
+    <p class="text-lg">
+      {{ payload['message'] | translate : payload }}
+    </p>
+
+    <div class="flex gap-4 mt-4 justify-between">
+      <button type="button" class="decline-btn" (click)="onDismiss()">
+        {{ payload['decline'] | translate }}
+      </button>
+      <button type="button" class="accept-btn" (click)="onDelete()">
+        {{ payload['accept'] | translate }}
+      </button>
+    </div>
+  </div>
+</webui-flat-dialog>

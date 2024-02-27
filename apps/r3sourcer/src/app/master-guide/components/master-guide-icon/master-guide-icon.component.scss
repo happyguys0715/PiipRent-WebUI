@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.guide__icon {
+  background: white;
+  cursor: pointer;
+  height: 70px;
+
+  &--inactive {
+    cursor: default;
+  }
+}

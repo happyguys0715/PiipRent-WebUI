@@ -1,0 +1,3 @@
+<img *ngIf="src" class="avatar image" [src]="src" [attr.alt]="alt" />
+
+<span *ngIf="!src" class="avatar fallback-image">{{ initials }}</span>

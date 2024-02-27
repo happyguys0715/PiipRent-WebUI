@@ -1,0 +1,43 @@
+<label class="control" cdk-overlay-origin>
+  <span class="control__label">{{ label | translate }}</span>
+  <span class="control__input-wrapper">
+    <input
+      #input
+      [formControl]="control"
+      [attr.placeholder]="placeholder"
+      class="control__input"
+      type="text"
+      (focusin)="openDropdown()" />
+    <webui-icon
+      class="control__input-icon"
+      [class.rotate]="isOpen"
+      [icon]="Icon.ArrowDown"
+      [size]="IconSize.Medium"></webui-icon>
+  </span>
+</label>
+
+<ng-template #content let-payload="payload">
+  <webui-dropdown-content>
+    <cdk-virtual-scroll-viewport class="dropdown" #scroller itemSize="54">
+      <ul class="list" *ngIf="toPayload(payload) | async as data">
+        <ng-container *ngIf="data.results">
+          <ng-container *ngIf="data.results && data.results.length">
+            <li
+              class="element"
+              *ngFor="let option of data.results"
+              (click)="setValue(option)">
+              {{ option.label }}
+            </li>
+          </ng-container>
+          <li class="element empty" *ngIf="data.results.length === 0">
+            {{ 'no_record' | translate }}
+          </li>
+        </ng-container>
+
+        <li *ngIf="data.fetching">
+          <webui-loader class="loader"></webui-loader>
+        </li>
+      </ul>
+    </cdk-virtual-scroll-viewport>
+  </webui-dropdown-content>
+</ng-template>

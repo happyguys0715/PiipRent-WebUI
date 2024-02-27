@@ -1,0 +1,176 @@
+<div class="form-group">
+  <div class="form-group search">
+    <input
+      type="text"
+      class="form-control w-full rounded p-2"
+      [(ngModel)]="search"
+      (keyup)="filter(search)"
+      [placeholder]="'common.search' | translate" />
+    <webui-fa-icon
+      [icon]="['fas', 'search']"
+      class="text-muted search-icon"></webui-fa-icon>
+  </div>
+  <!--<button *ngIf="activeFields && activeFields.length" type="button" class="btn btn-primary my-2" (click)="openActiveFields()">Edit positions</button>-->
+  <ng-container
+    *ngTemplateOutlet="
+      list;
+      context: { list: groups, disabled: false }
+    "></ng-container>
+</div>
+
+<ng-template #list let-l="list" let-d="disabled">
+  <div *ngFor="let item of l">
+    <div
+      *ngIf="item.model_fields && !item.hidden"
+      class="flex justify-center flex-col">
+      <div class="flex items-center p-2 group">
+        <b class="field-name text-muted">{{
+          getTranslateKey(item.name) | translate
+        }}</b>
+        <div class="ml-auto flex items-center flex-wrap gap-3">
+          <button
+            type="button"
+            class="btn btn-sm px-4 py-2"
+            [class.btn-success]="
+              item.id || isActive(item) || disableContactButton(item)
+            "
+            [disabled]="disableContactButton(item)"
+            (click)="toggleActiveState(item)">
+            {{ 'active.label' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm px-4 py-2"
+            [class.btn-success]="
+              item.required || isRequired(item) || disableContactButton(field)
+            "
+            [disabled]="disableRequired(item) || disableContactButton(item)"
+            (click)="toggleRequireProperty(item)">
+            {{ 'required.label' | translate }}
+          </button>
+
+          <!-- <button
+            class="btn btn-collapse"
+            type="button"
+            (click)="item.isCollapsed = !item.isCollapsed"
+          >
+            <fa-icon
+              [icon]="[
+                'fas',
+                item.isCollapsed ? 'plus-square' : 'minus-square'
+              ]"
+              class="icon text-primary"
+              [class.text-primary]="item.isCollapsed"
+              [class.text-muted]="!item.isCollapsed"
+            >
+            </fa-icon>
+          </button> -->
+        </div>
+      </div>
+      <div class="pl-4">
+        <ng-container
+          *ngTemplateOutlet="
+            list;
+            context: {
+              list: item.model_fields,
+              disabled: disableSubfields(item)
+            }
+          "></ng-container>
+      </div>
+    </div>
+    <div *ngIf="item.name && !item.model_fields && !item.hidden">
+      <ng-container
+        *ngTemplateOutlet="
+          field;
+          context: { field: item, disabled: d }
+        "></ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #field let-i="field" let-d="disabled">
+  <div class="flex items-center p-2 field">
+    <span class="field-name">{{ getTranslateKey(i.name) | translate }}</span>
+    <button
+      type="button"
+      class="btn btn-sm ml-auto px-4 py-2"
+      [class.btn-success]="i.id"
+      [disabled]="d || i.disabled"
+      (click)="toggleActiveState(i)">
+      {{ 'active.label' | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm ml-2 px-4 py-2"
+      [class.btn-success]="i.required"
+      [disabled]="d || i.disabled"
+      (click)="toggleRequireProperty(i)">
+      {{ 'required.label' | translate }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">
+          {{ (choosenType && fields[choosenType].label) || modalData.title }}
+        </h5>
+
+        <webui-close-button class="ml-auto"></webui-close-button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <div
+        class="flex flex-col"
+        *ngIf="modalData.type === 'field' && !modalData.id && !choosenType">
+        <span
+          [ngClass]="{ 'badge badge-default my-1 py-2': i !== 1 }"
+          [class.mb-4]="f"
+          style="cursor: pointer"
+          *ngFor="let type of types; let f = first; let i = index"
+          (click)="setType(type)">
+          {{ fields[type].label }}
+        </span>
+      </div>
+      <webui-generic-form
+        *ngIf="
+          (modalData.type === 'field' && choosenType) ||
+          modalData.type === 'group'
+        "
+        [data]="modalData.data"
+        [endpoint]="modalData.endpoint"
+        [id]="modalData.id"
+        (event)="
+          formEvent($event, modalData.container, modalData.edit, modalData.type)
+        ">
+      </webui-generic-form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalActiveFields>
+  <div class="modal-content-wrapper">
+    <div class="modal-body">
+      <div
+        class="flex flex-col"
+        *ngFor="let item of activeFields; let l = last; let f = first">
+        <h4 class="badge badge-primary flex items-center p-2" [class.mb-0]="l">
+          <span class="mr-auto">{{ item.label }}</span>
+          <webui-fa-icon
+            *ngIf="!f"
+            [icon]="['fas', 'chevron-up']"
+            class="icon text-white m-1"
+            (click)="changePosition(item, 'up')"></webui-fa-icon>
+          <webui-fa-icon
+            *ngIf="!l"
+            [icon]="['fas', 'chevron-down']"
+            class="icon text-white m-1 ml-3"
+            (click)="changePosition(item, 'down')"></webui-fa-icon>
+        </h4>
+      </div>
+    </div>
+  </div>
+</ng-template>

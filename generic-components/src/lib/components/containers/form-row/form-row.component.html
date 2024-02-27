@@ -1,0 +1,29 @@
+<ng-container *ngIf="config.showOnMobile ? isMobileDevice : true">
+  <h6 *ngIf="config.label" class="text-primary py-2">
+    {{ label | translate }}
+  </h6>
+  <div
+    [ngClass]="[className]"
+    [class.last]="last"
+    [class.hide-border]="config.hideBorder"
+    [hidden]="isHidden">
+    <ng-container *ngFor="let field of config.children">
+      <div
+        [class.item]="field.type === 'button'"
+        [ngStyle]="{ flex: field.width || 1, 'flex-basis': field.width * 100 }"
+        [hidden]="field.hide"
+        [ngClass]="field.className">
+        <ng-container
+          webuiFormElement
+          [config]="field"
+          [group]="group"
+          [errors]="errors"
+          [formId]="formId"
+          (event)="eventHandler($event)"
+          (buttonAction)="buttonActionHandler($event)"
+          [message]="message">
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>

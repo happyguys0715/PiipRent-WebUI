@@ -1,0 +1,43 @@
+@use 'styles/variables' as *;
+
+span {
+  padding: 2px 12px;
+  margin-right: 0.2rem;
+
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.tags-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+
+  margin-bottom: -0.3rem;
+
+  &.column {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .badge {
+    margin-bottom: 0.3rem;
+
+    &.badge-outline {
+      line-height: 1;
+    }
+  }
+
+  .success {
+    border-color: $success;
+    color: $success;
+  }
+
+  .danger {
+    border-color: $danger;
+    color: $danger;
+  }
+}
+
+.bold {
+  font-weight: bold;
+}

@@ -1,0 +1,42 @@
+<div class="form-group" [formGroup]="group">
+  <div class="form-element">
+    <label class="form-element-label mb-2" *ngIf="label" [attr.for]="key">
+      {{ translateKeyLabel | translate : { Default: label } }}:
+    </label>
+
+    <ng-container *ngIf="images.length">
+      <ul class="list">
+        <li *ngFor="let el of images; let index = index">
+          <img class="preview" [src]="el.image" />
+        </li>
+      </ul>
+    </ng-container>
+
+    <ngx-dropzone
+      #drop
+      class="dropzone"
+      (change)="onSelect($event)"
+      accept="image/jpeg,image/jpg,image/png">
+      <ngx-dropzone-label>
+        <div class="placeholder">
+          <span>{{ 'drop_images' | translate }}</span>
+          <span>{{ 'or' | translate }}</span>
+          <button
+            class="btn btn-primary py-2 px-4"
+            type="button"
+            (click)="drop.showFileSelector()">
+            {{ 'select' | translate }}
+          </button>
+        </div>
+      </ngx-dropzone-label>
+
+      <ngx-dropzone-image-preview
+        [file]="f"
+        *ngFor="let f of files"
+        class="image"
+        [removable]="true"
+        (removed)="onRemove(f)">
+      </ngx-dropzone-image-preview>
+    </ngx-dropzone>
+  </div>
+</div>

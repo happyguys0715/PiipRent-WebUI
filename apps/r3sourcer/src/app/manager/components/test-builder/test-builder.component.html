@@ -1,0 +1,119 @@
+<div class="test-builder">
+  <ng-content></ng-content>
+
+  <div class="test__wrapper">
+    <h5 class="test__title" *ngIf="questions.length">Test</h5>
+
+    <div class="test-list" cdkDropList (cdkDropListDropped)="drop($event)">
+      <div
+        class="test__item test-box"
+        *ngFor="let question of questions; let index = index"
+        cdkDrag>
+        <div class="test__question">
+          <div class="test__actions">
+            <button
+              type="button"
+              class="btn hov-opacity"
+              (click)="deleteQuestion(question.id, questions, index)">
+              <webui-fa-icon icon="trash" class="text-danger"></webui-fa-icon>
+              {{ 'delete' | translate }}
+            </button>
+            <button
+              *ngIf="question.id"
+              type="button"
+              class="btn hov-opacity"
+              (click)="editQuestion(question.config)">
+              <webui-fa-icon
+                icon="pencil-alt"
+                class="text-warning"></webui-fa-icon>
+              {{ 'edit' | translate }}
+            </button>
+          </div>
+
+          <webui-dynamic-form
+            #question
+            [hiddenFields]="question.hiddenFields"
+            [config]="question.config"
+            (submitForm)="saveQuestion($event, index, question.id)">
+          </webui-dynamic-form>
+
+          <div class="images" *ngIf="question.id">
+            <webui-image-uploader
+              [loading]="pictureLoading.get(question.id)"
+              [source]="pictures.get(question.id)"
+              (remove)="onRemovePicture($event, question.id)"
+              (images)="onUpload($event, question.id)"></webui-image-uploader>
+          </div>
+
+          <div
+            class="test__answers"
+            *ngIf="question.id && getType(question.config) !== 1">
+            <div
+              class="test__answer"
+              *ngFor="let answer of answers[question.id]; let index = index">
+              <div class="test__actions flex gap-2">
+                <button
+                  type="button"
+                  class="btn"
+                  (click)="
+                    deleteAnswer(getId(answer), answers[question.id], index)
+                  ">
+                  <webui-fa-icon
+                    icon="trash"
+                    class="text-danger hov-opacity"></webui-fa-icon>
+                </button>
+
+                <button type="button" class="btn" (click)="editAnswer(answer)">
+                  <webui-fa-icon
+                    *ngIf="getId(answer)"
+                    icon="pencil-alt"
+                    class="text-warning hov-opacity"></webui-fa-icon>
+                </button>
+              </div>
+
+              <webui-dynamic-form
+                [config]="answer"
+                (submitForm)="
+                  saveAnswer($event, index, question.id, !!getId(answer))
+                "></webui-dynamic-form>
+            </div>
+
+            <button
+              class="btn btn-secondary align-self-center my-2"
+              *ngIf="
+                testData &&
+                checkCount(
+                  getType(question.config),
+                  answers[question.id].length
+                )
+              "
+              type="button"
+              (click)="
+                addAnswer(true, answers[question.id], null, question.config)
+              ">
+              <webui-fa-icon icon="plus"></webui-fa-icon>
+              {{ 'answer.label' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button
+      class="btn btn-secondary mr-2"
+      *ngIf="testData"
+      type="button"
+      (click)="addQuestion(true)">
+      <webui-fa-icon icon="plus"></webui-fa-icon>
+      {{ 'question.label' | translate }}
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      *ngIf="testData"
+      (click)="showPreview()">
+      {{ 'preview.label' | translate }}
+    </button>
+  </div>
+</div>

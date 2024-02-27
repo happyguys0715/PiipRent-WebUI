@@ -1,0 +1,21 @@
+<div class="filter-element">
+  <webui-filter-header
+    [label]="config.label"
+    [key]="config.key"
+    [resetButton]="!!query"
+    (resetEvent)="resetFilter()"></webui-filter-header>
+
+  <div class="filter-limit-wrapper">
+    <input
+      type="number"
+      class="form-control"
+      *ngFor="let el of inputs; let i = index"
+      [attr.min]="config.min"
+      [attr.placeholder]="
+        getTranslateKey(el.key) | translate : { Default: el.label }
+      "
+      [(ngModel)]="el.data"
+      (blur)="onChange()" />
+    <span class="delimiter">&ndash;</span>
+  </div>
+</div>

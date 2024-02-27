@@ -1,0 +1,6 @@
+<webui-close-button
+  *ngIf="dialogConfig.hasCloseButton"
+  class="absolute top-4 right-4"
+  (click)="dismiss()"></webui-close-button>
+
+<ng-content select="[dialog-content]"></ng-content>

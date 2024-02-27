@@ -1,0 +1,21 @@
+<div class="form-group">
+  <div class="form-element">
+    <label class="form-element-label">
+      {{ label | translate }}
+    </label>
+
+    <div class="flex flex-col items-start gap-3">
+      <div class="map-preview"></div>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="showTracking()"
+        [disabled]="fetching$ | async">
+        {{ buttonLabel | translate }}
+
+        <webui-spinner *ngIf="fetching$ | async"></webui-spinner>
+      </button>
+    </div>
+  </div>
+</div>

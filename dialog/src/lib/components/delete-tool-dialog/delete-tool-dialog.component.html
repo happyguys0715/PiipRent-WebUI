@@ -1,0 +1,63 @@
+<webui-dialog #dialog headerTitle="title.delete_tool">
+  <div dialog-content>
+    <form class="flex flex-col" [formGroup]="form">
+      <div class="flex gap-2 flex-col" formGroupName="info">
+        <div class="flex w-full gap-4">
+          <webui-form-input-control
+            class="flex-1"
+            label="tool_name.label"
+            formControlName="name"></webui-form-input-control>
+
+          <webui-form-input-control
+            class="flex-1"
+            label="rent_price.label"
+            formControlName="rent_price"></webui-form-input-control>
+        </div>
+
+        <div class="flex w-full gap-4">
+          <webui-form-input-control
+            class="flex-1"
+            label="rent_type.label"
+            formControlName="rent_type"></webui-form-input-control>
+
+          <webui-form-input-control
+            class="flex-1"
+            label="street_address.description"
+            formControlName="location"></webui-form-input-control>
+        </div>
+
+        <figure class="p-4 bg-primary-200" *ngIf="config.picture">
+          <img class="w-20" [src]="config.picture" width="80px" />
+        </figure>
+      </div>
+
+      <p
+        class="text-center mt-6"
+        [innerHTML]="
+          'message.confirm_delete_tool'
+            | translate : { message: pattern }
+            | safeHtml
+        "></p>
+
+      <webui-form-input-control
+        class="mt-2"
+        formControlName="text"></webui-form-input-control>
+    </form>
+  </div>
+
+  <div class="flex justify-end w-full gap-4" dialog-footer>
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="onCancel(dialog)">
+      {{ 'action.cancel' | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onDelete(dialog)"
+      [disabled]="form.invalid">
+      {{ 'delete' | translate }}
+    </button>
+  </div>
+</webui-dialog>

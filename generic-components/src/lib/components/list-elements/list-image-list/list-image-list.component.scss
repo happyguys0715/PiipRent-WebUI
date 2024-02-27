@@ -1,0 +1,59 @@
+@use 'styles/variables' as *;
+
+.list {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0;
+  margin: 0;
+}
+
+.preview {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 22;
+
+  .image {
+    width: 50vw;
+    max-width: 50vw;
+    max-height: 100vh;
+    height: auto;
+  }
+
+  .close {
+    display: inline-flex;
+  }
+}
+
+.close {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  display: none;
+}
+
+.image {
+  width: auto;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  background-color: $outline-color;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.backdrop {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(black, 0.5);
+  z-index: 21;
+}

@@ -1,0 +1,197 @@
+@use 'styles/variables' as *;
+
+$image-size: 54px;
+
+.list-info {
+  &-wrapper {
+    position: relative;
+
+    display: flex;
+  }
+
+  &-title {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 4px;
+    font-size: 1rem;
+
+    &.position {
+      padding-top: 6px;
+    }
+
+    .title {
+      font-size: 18px;
+      line-height: 20px;
+      font-weight: 600;
+
+      & > fa-icon {
+        font-size: 10px;
+      }
+    }
+
+    .score {
+      display: inline-flex;
+      align-items: center;
+
+      height: 14px;
+      line-height: 14px;
+
+      margin-top: 3px;
+      margin-left: 4px;
+      padding-left: 4px;
+
+      font-size: 14px;
+      vertical-align: top;
+
+      border-left: 1px solid black;
+    }
+  }
+
+  &-left {
+    margin-right: 1rem;
+  }
+
+  &-image {
+    position: relative;
+
+    img,
+    .contact-avatar {
+      width: $image-size;
+      height: $image-size;
+      border-radius: 0.5rem;
+      object-fit: cover;
+      background-color: #f5f5f5;
+    }
+
+    img.original {
+      object-fit: contain;
+      width: 54px;
+      background-color: transparent;
+    }
+
+    img.default {
+      width: $image-size;
+    }
+  }
+
+  &-edit-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 0.5rem;
+
+    color: rgba($gray, 0.3);
+
+    fa-icon {
+      font-size: 9px;
+      margin-right: 0.2rem;
+    }
+
+    &:hover,
+    &:hover fa-icon {
+      color: $primary;
+
+      @each $item in $themes {
+        .#{$item}-theme & {
+          color: map-get($theme-colors, $item);
+        }
+      }
+    }
+  }
+
+  &-block {
+    margin-right: 0.5rem;
+  }
+
+  &-status {
+    display: flex;
+    margin-top: 1rem;
+
+    &-wrapper {
+      display: inline-flex;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .badge.badge-outline {
+      margin-bottom: 0.2rem;
+
+      border-color: $success;
+      color: $success;
+
+      &.danger {
+        color: $danger;
+        border-color: $danger;
+      }
+
+      &.success {
+        color: $success;
+        border-color: $success;
+      }
+
+      &.info {
+        color: $info;
+        border-color: $info;
+      }
+
+      &.warning {
+        color: $warning;
+        border-color: $warning;
+      }
+    }
+
+    .badge:last-child {
+      margin-bottom: 0;
+    }
+
+    .title {
+      margin-right: 0.2rem;
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    font-size: 0.5rem;
+    color: white;
+
+    &--success {
+      background-color: $success;
+    }
+
+    &--danger {
+      background-color: $danger;
+    }
+  }
+}
+
+.description {
+  margin-bottom: 0;
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.more {
+  color: $primary;
+  text-transform: lowercase;
+
+  @each $item in $themes {
+    .#{$item}-theme & {
+      color: map-get($theme-colors, $item);
+    }
+  }
+}
+
+.position {
+  font-size: 14px;
+  line-height: 16px;
+}

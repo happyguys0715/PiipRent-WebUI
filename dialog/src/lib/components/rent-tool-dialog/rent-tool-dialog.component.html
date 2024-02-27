@@ -1,0 +1,27 @@
+<webui-dialog #dialog headerTitle="title.rent_tool">
+  <div class="flex gap-4" dialog-content>
+    <figure *ngIf="config.picture">
+      <img class="w-full" [src]="config.picture" width="100%" alt="" />
+    </figure>
+
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <h6 class="font-semibold">{{ 'tool_name.label' | translate }}</h6>
+        <span>{{ config.name }}</span>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <h6 class="font-semibold">
+          {{ 'street_address.description' | translate }}
+        </h6>
+        <span>{{ config.location }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div dialog-footer>
+    <button type="button" class="btn btn-primary" (click)="onAccept(dialog)">
+      {{ 'button_yes' | translate }}
+    </button>
+  </div>
+</webui-dialog>

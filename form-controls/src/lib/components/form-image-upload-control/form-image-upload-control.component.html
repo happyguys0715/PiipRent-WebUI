@@ -1,0 +1,28 @@
+<div>
+  <ngx-dropzone
+    class="dropzone"
+    (change)="onSelect($event)"
+    accept="image/jpeg,image/jpg,image/png">
+    <ngx-dropzone-label>
+      <webui-icon
+        [size]="IconSize.ExtraLarge"
+        [icon]="Icon.AddPicture"></webui-icon>
+
+      <p class="title">
+        <span
+          [innerHTML]="
+            'action.upload-or-drag-and-drop-file' | translate | safeHtml
+          ">
+        </span>
+        <span class="accept">PNG, JPG, GIF up to 1 MB</span>
+      </p>
+    </ngx-dropzone-label>
+
+    <ngx-dropzone-image-preview
+      [file]="picture"
+      *ngFor="let picture of pictures$ | async"
+      [removable]="true"
+      (removed)="onRemove(picture)">
+    </ngx-dropzone-image-preview>
+  </ngx-dropzone>
+</div>

@@ -1,0 +1,23 @@
+<div class="filter-element">
+  <webui-filter-header
+    [label]="config.label"
+    [key]="config.key"
+    [resetButton]="!!query"
+    (resetEvent)="resetFilter()"></webui-filter-header>
+
+  <div class="filter-select-wrapper">
+    <div *ngFor="let item of data; let index = index">
+      <label>
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [(ngModel)]="item.checked"
+          name="checked"
+          (ngModelChange)="onChange(index)"
+          hidden />
+        <webui-checkbox [sm]="true" [checked]="item.checked"></webui-checkbox>
+        {{ getTranslateKey(item.key) | translate : { Default: item.label } }}
+      </label>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,135 @@
+version: 2
+
+defaults: &defaults
+  working_directory: /home/circleci/endless_webui
+  docker:
+    - image: circleci/node:16
+
+jobs:
+  dependencies:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - persist_to_workspace:
+          root: /home/circleci
+          paths:
+            - endless_webui
+
+  build-stage:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /home/circleci
+
+      - run: CI=false npm run stage
+
+      - persist_to_workspace:
+          root: /home/circleci
+          paths:
+            - endless_webui/dist
+
+  build-prod:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /home/circleci
+
+      - run: CI=false npm run prod
+
+      - persist_to_workspace:
+          root: /home/circleci
+          paths:
+            - endless_webui/dist
+
+  deploy-stage:
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: /home/circleci
+      - add_ssh_keys:
+          fingerprints:
+            - 'f3:3f:c9:9e:ef:e7:a5:93:58:5f:12:28:31:96:6e:87'
+      - run:
+          name: fix host authenticity for production server
+          command: cp /home/circleci/endless_webui/.circleci/ssh.dev.config ~/.ssh/config
+      - run:
+          name: Deploy Staging Over SSH
+          command: |
+            ls /home/circleci/endless_webui/dist
+            ssh ubuntu@ec2-13-239-31-56.ap-southeast-2.compute.amazonaws.com "cd endless_project/webui-app/ && rm -rf dist/*"
+            scp -r /home/circleci/endless_webui/dist/apps/r3sourcer/* ubuntu@ec2-13-239-31-56.ap-southeast-2.compute.amazonaws.com:endless_project/webui-app/dist
+            ssh ubuntu@ec2-13-239-31-56.ap-southeast-2.compute.amazonaws.com "docker restart endlessproject_nginx_1"
+
+  deploy-prod:
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: /home/circleci
+      - add_ssh_keys:
+          fingerprints:
+            - '72:3e:34:b0:ff:45:10:98:97:92:02:27:c8:84:3a:a2'
+      - run:
+          name: fix host authenticity for production server
+          command: cp /home/circleci/endless_webui/.circleci/ssh.prod.config ~/.ssh/config
+      - run:
+          name: Deploy Production Over SSH
+          command: |
+            ls /home/circleci/endless_webui/dist
+            ssh ubuntu@ec2-13-237-8-87.ap-southeast-2.compute.amazonaws.com "cd endless_project/webui-app/ && rm -rf dist/*"
+            scp -r /home/circleci/endless_webui/dist/apps/r3sourcer/* ubuntu@ec2-13-237-8-87.ap-southeast-2.compute.amazonaws.com:endless_project/webui-app/dist
+            ssh ubuntu@ec2-13-237-8-87.ap-southeast-2.compute.amazonaws.com "docker restart endlessproject_nginx_1"
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - dependencies:
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+      - build-stage:
+          requires:
+            - dependencies
+          filters:
+            branches:
+              only: develop
+      - deploy-stage:
+          requires:
+            - dependencies
+            - build-stage
+          filters:
+            branches:
+              only: develop
+      - build-prod:
+          requires:
+            - dependencies
+          filters:
+            branches:
+              only: master
+      - deploy-prod:
+          requires:
+            - dependencies
+            - build-prod
+          filters:
+            branches:
+              only: master

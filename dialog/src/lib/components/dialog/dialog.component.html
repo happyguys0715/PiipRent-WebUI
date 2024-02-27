@@ -1,0 +1,15 @@
+<div class="modal-header">
+  <ng-content select="[dialog-header]"></ng-content>
+
+  <h4 class="title" *ngIf="headerTitle">{{ headerTitle | translate }}</h4>
+
+  <webui-close-button (click)="dismiss()"></webui-close-button>
+</div>
+
+<div class="modal-body">
+  <ng-content select="[dialog-content]"></ng-content>
+</div>
+
+<div class="modal-footer">
+  <ng-content select="[dialog-footer]"></ng-content>
+</div>

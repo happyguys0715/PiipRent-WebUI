@@ -1,0 +1,117 @@
+.form-control {
+  @apply border border-gray-200;
+
+  &:focus-visible {
+    @apply outline-none;
+  }
+}
+
+.input-group {
+  @apply flex relative;
+}
+
+.control {
+  flex: 1;
+}
+
+.control__label {
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  line-height: 12px;
+  text-transform: uppercase;
+  color: $secondary-color;
+  margin-bottom: 6px;
+
+  @include media-breakpoint-up('lg') {
+    font-size: 12px;
+    line-height: 14px;
+  }
+
+  @include media-breakpoint-down('sm') {
+    &.empty {
+      display: none;
+    }
+  }
+
+  &:not(.empty):before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background-color: $brand-color;
+    border-radius: 50%;
+    margin-right: 6px;
+    display: block;
+  }
+}
+
+.control__input-wrapper {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.control__input {
+  @apply w-full font-medium;
+
+  border-radius: 3px;
+  background-color: $brand-light-color;
+  border: 1px solid $border-color;
+  font-size: 14px;
+  line-height: 16px;
+  font-family: inherit;
+  color: $content-color;
+  padding: 8px 28px 8px 28px;
+  max-height: 34px;
+  max-width: 100%;
+
+  &:last-child {
+    padding-right: 12px;
+  }
+
+  & + .control__input-icon {
+    position: absolute;
+    right: 8px;
+    color: $brand-color;
+    transition: transform 0.2s linear;
+    transform-origin: center;
+    will-change: transform;
+
+    &.rotate {
+      transform: rotateZ(180deg);
+    }
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    color: $brand-color;
+  }
+
+  &-prefix {
+    font-size: 14px;
+    line-height: 16px;
+    color: $brand-color;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0.5rem;
+    font-weight: 500;
+
+    & + input {
+      padding-right: 2rem;
+    }
+  }
+}
+
+.dropdown-wrapper {
+  background-color: #fff;
+  border: 1px solid $border-color;
+  box-shadow: 2px 8px 20px rgba(2, 52, 105, 0.1);
+  border-radius: 3px;
+  width: 100%;
+  display: block;
+}
+
+.form-check {
+  padding-left: 0;
+}

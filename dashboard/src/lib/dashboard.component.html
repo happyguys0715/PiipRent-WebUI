@@ -1,0 +1,122 @@
+<div *ngIf="loading$ | async; else content" class="dashboard loading">
+  <webui-loader></webui-loader>
+</div>
+
+<ng-template #content>
+  <div class="dashboard" *ngIf="grid$ | async as grid">
+    <ng-container
+      *ngTemplateOutlet="column; context: { gridElement: grid }"></ng-container>
+  </div>
+</ng-template>
+
+<webui-dashboard-menu
+  *ngIf="widgetList"
+  [widgets]="widgetList"
+  (changed)="updateUserWidgets($event)">
+</webui-dashboard-menu>
+
+<ng-template #column let-gridElement="gridElement">
+  <div
+    class="flex flex-col gap-4"
+    [class.moving]="moving$ | async"
+    [id]="getId(gridElement) || 'main-list'"
+    cdkDropList
+    [cdkDropListData]="gridElement.elements"
+    [cdkDropListConnectedTo]="getlistsId()"
+    (cdkDropListDropped)="drop($event)">
+    <div
+      cdkDrag
+      [cdkDragDisabled]="!isMove(el)"
+      *ngFor="let el of gridElement.elements"
+      (cdkDragStarted)="onDragStarted()"
+      class="grow">
+      <ng-container *ngIf="el.type === GridElementType.Row">
+        <ng-container
+          *ngTemplateOutlet="row; context: { gridElement: el }"></ng-container>
+      </ng-container>
+
+      <ng-container
+        *ngIf="el.type === GridElementType.Widget && el.widget.config.active">
+        <ng-container
+          *ngTemplateOutlet="
+            widgetWrapper;
+            context: { widget: el.widget }
+          "></ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #row let-gridElement="gridElement">
+  <div
+    class="flex flex-col sm:flex-row gap-4 flex-wrap"
+    [id]="getId(gridElement)"
+    [class.moving]="moving$ | async"
+    cdkDropList
+    [cdkDropListData]="gridElement.elements"
+    [cdkDropListConnectedTo]="getlistsId()"
+    (cdkDropListDropped)="drop($event)">
+    <div
+      cdkDrag
+      [cdkDragDisabled]="!isMove(el)"
+      *ngFor="let el of gridElement.elements"
+      [ngStyle]="getColumnWidth(el)"
+      [hidden]="!isActive(el)"
+      class="grow"
+      (cdkDragStarted)="onDragStarted()">
+      <ng-container *ngIf="el.type === GridElementType.Column">
+        <ng-container
+          *ngTemplateOutlet="
+            column;
+            context: { gridElement: el }
+          "></ng-container>
+      </ng-container>
+
+      <ng-container
+        *ngIf="el.type === GridElementType.Widget && el.widget.config.active">
+        <ng-container
+          *ngTemplateOutlet="
+            widgetWrapper;
+            context: { widget: el.widget }
+          "></ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #widgetWrapper let-widget="widget">
+  <div class="relative group h-full">
+    <div
+      class="widget-edit-btn group-hover:visible invisible"
+      [class.active]="widget.tooltip"
+      [webuiTooltip]="actions"
+      trigger="click"
+      #t="[webuiTooltip]"
+      [class.hidden]="moving$ | async"
+      placement="left-top"
+      (click)="toggleActions(t, widget)">
+      <webui-fa-icon class="text-sm" icon="ellipsis-h"></webui-fa-icon>
+    </div>
+
+    <ng-container webuiWidget [config]="widget"></ng-container>
+
+    <ng-template #actions>
+      <div class="flex flex-col gap-2">
+        <button
+          type="button"
+          class="flex gap-2 items-center p-2 text-sm opacity-70 hover:opacity-100"
+          (click)="moveWidget(t, widget)">
+          <webui-fa-icon icon="arrows-alt"></webui-fa-icon>
+          {{ 'move' | translate }}
+        </button>
+        <button
+          type="button"
+          class="flex gap-2 items-center p-2 text-sm opacity-70 hover:opacity-100"
+          (click)="removeWidget(t, widget)">
+          <webui-fa-icon class="text-danger" icon="trash"></webui-fa-icon>
+          {{ 'remove' | translate }}
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</ng-template>

@@ -1,0 +1,34 @@
+<div *ngIf="config" class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <th
+          [class.last]="last"
+          *ngFor="let label of config.head; let last = last">
+          {{ label | translate }}
+        </th>
+        <th class="actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of config.rows">
+        <td [class.last]="last" *ngFor="let cell of row.cells; let last = last">
+          {{ cell.content }}
+        </td>
+        <td class="actions">
+          <button type="button" class="btn text-success" (click)="onEdit(row)">
+            <webui-icon
+              [icon]="Icon.Edit"
+              [size]="IconSize.Medium"></webui-icon>
+          </button>
+
+          <button type="button" class="btn text-danger" (click)="onDelete(row)">
+            <webui-icon
+              [icon]="Icon.Delete"
+              [size]="IconSize.Medium"></webui-icon>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

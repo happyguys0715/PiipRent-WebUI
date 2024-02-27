@@ -1,0 +1,12 @@
+<webui-dynamic-form
+  [config]="meta"
+  (event)="checkedObjects($event)"></webui-dynamic-form>
+
+<div class="buttons">
+  <button type="button" class="btn btn-primary pr-3" (click)="sendData()">
+    {{ 'submit' | translate }}
+  </button>
+  <button type="button" class="btn btn-default" (click)="back()">
+    {{ 'action.cancel' | translate }}
+  </button>
+</div>

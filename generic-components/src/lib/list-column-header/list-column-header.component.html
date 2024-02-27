@@ -1,0 +1,34 @@
+<ng-container *ngIf="hasMultipleNames">
+  <ng-container *ngFor="let item of multipleNamesData; let last = last">
+    <a
+      href="#"
+      class="label"
+      [class.disabled]="!item.sort"
+      (click)="onSort($event, item)">
+      {{ item.label + '.label' | translate }}
+      <ng-container *ngIf="item.icon$ | async as icon">
+        <webui-fa-icon
+          *ngIf="item.sort"
+          class="icon"
+          [icon]="icon"></webui-fa-icon>
+      </ng-container>
+    </a>
+    <span *ngIf="!last">&nbsp;/&nbsp;</span>
+  </ng-container>
+</ng-container>
+
+<ng-container *ngIf="!hasMultipleNames">
+  <a
+    href="#"
+    class="label"
+    [class.disabled]="!config.sort"
+    (click)="onSort($event, config)">
+    {{ translationKey | translate : { Default: config.label || ' ' } }}
+    <ng-container *ngIf="icon$ | async as icon">
+      <webui-fa-icon
+        *ngIf="config.sort"
+        class="icon"
+        [icon]="icon"></webui-fa-icon>
+    </ng-container>
+  </a>
+</ng-container>

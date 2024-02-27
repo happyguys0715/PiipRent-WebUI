@@ -1,0 +1,13 @@
+@use 'styles/mixins';
+
+:host {
+  margin-top: 72px;
+}
+
+.buttons {
+  padding: 1rem 40px 0;
+
+  @include mixins.media-breakpoint-down('md') {
+    padding: 1rem 20px 0;
+  }
+}

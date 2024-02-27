@@ -1,0 +1,130 @@
+<webui-base-modal
+  modalClass="approve-signature-modal"
+  (dissmisEvent)="dismiss()">
+  <header class="header">
+    <webui-user-avatar
+      [source]="config.label.avatar"
+      [fullName]="config.label.fullName"></webui-user-avatar>
+
+    <div class="header-group">
+      <h4 class="title">
+        {{ 'approve_timesheet' | translate : { Default: 'Approve timesheet' } }}
+      </h4>
+
+      <p class="name">for {{ config.label.fullName }}</p>
+    </div>
+  </header>
+
+  <div class="modal-body">
+    <div class="signature-step">
+      <div class="group">
+        <h5 class="group-title">
+          {{ model.data.shift_started_at | dateFormat : 'DD MMM YYYY' }}
+        </h5>
+
+        <div class="group-content">
+          <div class="record">
+            <span class="record-title">
+              {{ 'shift_start_end' | translate }}
+            </span>
+
+            <span class="record-value">
+              {{
+                model.data.shift_started_at
+                  | dateFormat : 'HH:mm' : model.data.time_zone
+              }}
+              -
+              {{
+                model.data.shift_ended_at
+                  | dateFormat : 'HH:mm' : model.data.time_zone
+              }}
+            </span>
+          </div>
+
+          <div class="record">
+            <span class="record-title"> {{ 'break' | translate }} </span>
+
+            <span class="record-value">
+              {{
+                model.data.break_started_at
+                  | dateFormat : 'HH:mm' : model.data.time_zone
+              }}
+              -
+              {{
+                model.data.break_ended_at
+                  | dateFormat : 'HH:mm' : model.data.time_zone
+              }}
+            </span>
+          </div>
+
+          <div class="record">
+            <span class="record-title text-success">
+              {{ 'total_time.label' | translate }}
+            </span>
+
+            <span *ngIf="model.totalTime" class="record-value text-success">
+              {{ model.totalTime }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="group">
+        <webui-evaluate-field
+          [evaluated]="config.evaluated"
+          [evaluatedScore]="
+            config.data.evaluation_score
+          "></webui-evaluate-field>
+      </div>
+
+      <div class="group">
+        <h5 class="group-title">
+          {{ 'signature' | translate : { Default: 'Signature' } }}
+        </h5>
+
+        <webui-signature
+          #signatureCanvas
+          (signature)="updateSignature($event)"></webui-signature>
+
+        <button
+          type="button"
+          class="btn clear-button"
+          (click)="signatureCanvas.clear()">
+          {{ 'clear' | translate : { Default: 'Clear' } }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer" [class.signature-step-footer]="config.signature">
+    <button
+      type="button"
+      class="btn clear-button"
+      (click)="signatureCanvas.clear()">
+      {{ 'clear' | translate : { Default: 'Clear' } }}
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-shadow btn-success"
+      (click)="config.sendSignature()">
+      {{ 'action.approve' | translate }}
+      <webui-spinner *ngIf="saveProcess"></webui-spinner>
+    </button>
+  </div>
+</webui-base-modal>
+
+<ng-template
+  #line
+  let-label="label"
+  let-value="value"
+  let-total="totalTime"
+  let-muted="muted"
+  let-key="key">
+  <div class="record time-line" [class.text-success]="total">
+    <span class="label" [class.description]="muted">
+      {{ key | translate : { Default: label } }}:
+    </span>
+    <span>{{ value }}</span>
+  </div>
+</ng-template>

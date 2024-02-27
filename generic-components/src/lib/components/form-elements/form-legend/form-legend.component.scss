@@ -1,0 +1,19 @@
+.list {
+  margin-left: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.form-element-content {
+  max-height: none;
+  height: auto;
+}
+
+.variable {
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

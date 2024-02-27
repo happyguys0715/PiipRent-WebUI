@@ -1,0 +1,51 @@
+.info-block {
+  padding: 12px 16px;
+  font-size: 12px;
+  text-align: left;
+
+  &__title {
+    margin-bottom: 4px;
+    font-size: inherit;
+    line-height: 16px;
+    font-weight: 500;
+  }
+
+  &__list {
+    margin: 0;
+    margin-bottom: 10px;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    padding-left: 16px;
+    line-height: 15px;
+    color: rgba($gray, 0.7);
+
+    &:not(:last-child) {
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  &__icon {
+    position: relative;
+    top: -1px;
+    margin-right: 0.25rem;
+    font-size: 6px;
+    color: $primary;
+
+    @each $item in $themes {
+      .#{$item}-theme & {
+        color: map-get($theme-colors, $item);
+      }
+    }
+  }
+
+  &__score {
+    margin-left: 0.25rem;
+
+    fa-icon {
+      font-size: 8px;
+    }
+  }
+}

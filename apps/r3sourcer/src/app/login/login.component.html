@@ -1,0 +1,105 @@
+<ng-container *ngIf="!token">
+  <webui-navigation></webui-navigation>
+
+  <div class="flex flex-col gap-4 w-full md:my-auto">
+    <div class="bg-white max-w-[400px] mx-auto shadow-card rounded w-full">
+      <div class="pt-7 pb-6 text-center">
+        <img
+          class="inline-block h-auto max-h-[80px]"
+          src="{{ settings.logo || '/assets/img/logo.svg' }}"
+          alt=""
+          height="80" />
+      </div>
+
+      <div class="h-[1px] bg-black opacity-5"></div>
+
+      <div class="login-form p-5 flex flex-col gap-6">
+        <div class="flex flex-col gap-1 items-center">
+          <h5 class="text-[32px] leading-tight text-secondary-200 text-center">
+            {{ 'login.title' | translate }}
+          </h5>
+          <p class="text-sm text-gray opacity-50 text-center">
+            {{ 'login.subtitle' | translate }}
+          </p>
+        </div>
+
+        <div class="max-w-[280px] mx-auto w-full">
+          <webui-generic-form
+            [endpoint]="endpoint"
+            [data]="data"
+            [errors]="error"
+            [checkUsername]="true"
+            [showResponse]="true"
+            (redirect)="redirectHandler()"
+            (responseForm)="responseHandler($event)"
+            (errorForm)="errorHandler()"
+            (event)="formEvent($event)">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+              <label class="inline-flex items-center gap-2 group mb-0">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [(ngModel)]="rememberMe"
+                  hidden />
+                <webui-checkbox [checked]="rememberMe"></webui-checkbox>
+                <span
+                  class="group-hover:opacity-100 text-gray opacity-30 hover:opacity-100 text-sm">
+                  {{ 'login.remember_me' | translate }}
+                </span>
+              </label>
+
+              <a
+                class="text-gray opacity-30 hover:opacity-100 text-sm"
+                href=""
+                (click)="openResetForm()">
+                {{ 'login.forgot_password' | translate }}
+              </a>
+            </div>
+
+            <webui-button
+              class="font-semibold w-full mt-7"
+              type="submit"
+              [shadow]="true"
+              [processing]="loginProcess">
+              {{ 'login.login' | translate }}
+            </webui-button>
+          </webui-generic-form>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center">
+      <a class="text-primary" routerLink="/registration">
+        {{ 'login.register' | translate }}
+      </a>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="token">
+  <webui-site-loader></webui-site-loader>
+</ng-container>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ 'password.reset' | translate }}</h5>
+
+        <webui-close-button class="ml-auto"></webui-close-button>
+      </div>
+    </div>
+    <div class="p-3">
+      <webui-generic-form
+        [showResponse]="true"
+        [showToastr]="false"
+        endpoint="/core/contacts/forgot_password/">
+        <div class="flex items-center">
+          <button type="submit" class="btn btn-primary ml-auto">
+            {{ 'reset' | translate }}
+          </button>
+        </div>
+      </webui-generic-form>
+    </div>
+  </div>
+</ng-template>

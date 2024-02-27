@@ -1,0 +1,29 @@
+<webui-base-modal (dissmisEvent)="dismiss()">
+  <google-map [zoom]="13" [center]="mapCenter">
+    <map-marker
+      *ngFor="let marker of markers"
+      [icon]="marker.iconUrl"
+      #mapMarker="mapMarker"
+      [position]="marker.position"
+      (mapClick)="open(marker, mapMarker)">
+    </map-marker>
+
+    <map-info-window>
+      <div *ngIf="activeMarker" class="grid gap-2">
+        <p class="mb-0 text-base">
+          <strong>{{ activeMarker.name }}</strong>
+        </p>
+        <p class="mb-0">{{ activeMarker.description }}</p>
+        <button
+          *ngIf="activeMarker.id"
+          type="button"
+          class="btn"
+          [class.btn-primary]="!activeMarker.selected"
+          [class.btn-success]="activeMarker.selected"
+          (click)="modalData.markerClick(activeMarker)">
+          {{ activeMarker.selected ? 'Selected' : 'Select' }}
+        </button>
+      </div>
+    </map-info-window>
+  </google-map>
+</webui-base-modal>

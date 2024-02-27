@@ -1,0 +1,29 @@
+@use 'styles/variables' as *;
+
+.avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 0.25rem;
+
+  &.large {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+.image {
+  background-color: #fff;
+  object-fit: cover;
+  object-position: center;
+}
+
+.fallback-image {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(to bottom, $primary, #f2fcfe);
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 600;
+}

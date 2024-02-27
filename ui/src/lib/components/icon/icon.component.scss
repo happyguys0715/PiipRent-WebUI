@@ -1,0 +1,28 @@
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+span {
+  display: inline-flex;
+}
+
+svg {
+  width: 16px;
+  height: 16px;
+
+  .size-lg & {
+    width: 24px;
+    height: 24px;
+  }
+
+  .size-md & {
+    width: 20px;
+    height: 20px;
+  }
+
+  .size-xl & {
+    width: 30px;
+    height: 30px;
+  }
+}

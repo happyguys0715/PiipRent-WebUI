@@ -1,0 +1,91 @@
+<webui-dashboard-widget [label]="widgetLabel">
+  <ng-container header>
+    <div
+      class="btn-group range-buttons flex"
+      btnRadioGroup
+      [formControl]="dateRangeTypeControl">
+      <webui-range-button
+        class="flex-1"
+        *ngFor="let option of dateRangeList"
+        [active]="dateRangeTypeControl.value === option"
+        [dateRange]="option"
+        [key]="getLabel(option).key"
+        [label]="getLabel(option).value"></webui-range-button>
+    </div>
+
+    <form
+      *ngIf="hasForm$ | async"
+      action=""
+      class="form"
+      (ngSubmit)="onRangeFormSubmit()">
+      <webui-range-field
+        [group]="rangeForm"
+        class="form__item form__field"
+        label="From"
+        translateKey="from"
+        name="from"
+        controlName="from"></webui-range-field>
+
+      <webui-range-field
+        [group]="rangeForm"
+        class="form__item form__field"
+        label="To"
+        translateKey="to"
+        name="to"
+        controlName="to"></webui-range-field>
+
+      <button
+        class="form__item form__button btn btn-primary"
+        type="submit"
+        [disabled]="loading$ | async">
+        {{ 'submit' | translate }}
+      </button>
+    </form>
+  </ng-container>
+
+  <div class="body" body>
+    <table class="table" body *ngIf="data$ | async as data">
+      <thead>
+        <tr>
+          <th>{{ 'activity' | translate }}</th>
+          <th>{{ 'unapproved_work' | translate }}</th>
+          <th>{{ 'approved_work' | translate }}</th>
+          <th>{{ 'earned' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let activity of data.activities">
+          <td *ngIf="activity.key">
+            {{ activity.key | translate : { Default: activity.label } }}
+          </td>
+          <td *ngIf="!activity.key">{{ activity.label }}</td>
+          <td>
+            {{ activity.unapproved }}
+            <span class="description">{{ activity.uom }}</span>
+          </td>
+          <td>
+            {{ activity.amount }}
+            <span class="description">{{ activity.uom }}</span>
+          </td>
+          <td>{{ activity.earned | currency : data.currency }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>
+            {{ 'filter.date.label' | translate }}:
+            {{ data.shifts }}
+          </td>
+          <td colspan="3">
+            <b class="inline-flex gap-4 flex-wrap">
+              <span class="after:content-[':']">{{ 'total' | translate }}</span>
+              {{ data.total | currency : data.currency }}
+            </b>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <webui-loader *ngIf="loading$ | async" class="loader"></webui-loader>
+  </div>
+</webui-dashboard-widget>

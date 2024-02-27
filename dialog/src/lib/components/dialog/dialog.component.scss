@@ -1,0 +1,41 @@
+@use 'styles/mixins';
+
+$text-color: #2f363d;
+$header-background-color: #eef6ff;
+$header-border-color: #d3deea;
+
+:host {
+  font-family: 'Roboto', sans-serif;
+  color: $text-color;
+
+  .modal-header {
+    @apply p-3.5 pl-8 flex flex-wrap gap-4 justify-between;
+
+    background-color: $header-background-color;
+    border-bottom-color: $header-border-color;
+
+    @include mixins.media-breakpoint-down('md') {
+      padding: 12px 15px;
+    }
+  }
+
+  .title {
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 500;
+    margin-bottom: 0;
+
+    @include mixins.media-breakpoint-down('md') {
+      font-size: 20px;
+      line-height: 23px;
+    }
+  }
+
+  .modal-body:empty {
+    display: none;
+  }
+
+  .modal-footer:empty {
+    display: none;
+  }
+}

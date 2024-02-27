@@ -1,0 +1,49 @@
+<div class="form-group">
+  <label *ngIf="label && config.templateOptions.label" [attr.for]="key">{{
+    config.templateOptions.label
+  }}</label>
+  <ng-container
+    *ngFor="let field of metadata"
+    webuiFormElement
+    [config]="field"
+    [group]="selfGroup"
+    [errors]="errors"
+    (event)="eventHandler($event)"
+    (buttonAction)="eventHandler($event)"
+    [message]="message">
+  </ng-container>
+</div>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">{{ modalData.title }}</h5>
+
+        <webui-close-button class="close ml-2"></webui-close-button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="modalData.type !== 'delete'">
+        <webui-generic-form
+          [endpoint]="modalData.endpoint"
+          [id]="modalData.id"
+          (event)="formEvent($event)">
+          <button type="submit" class="btn btn-primary">
+            {{ 'save' | translate }}
+          </button>
+        </webui-generic-form>
+      </div>
+      <div *ngIf="modalData.type === 'delete'">
+        {{ 'are_you_sure' | translate }}
+      </div>
+    </div>
+
+    <div *ngIf="modalData.type === 'delete'" class="modal-footer">
+      <button type="button" class="btn btn-danger" (click)="deleteElement()">
+        {{ 'delete' | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>

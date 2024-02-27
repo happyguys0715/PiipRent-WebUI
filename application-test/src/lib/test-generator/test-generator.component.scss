@@ -1,0 +1,118 @@
+@use 'styles/variables';
+@use 'styles/mixins';
+
+.header {
+  padding-top: 20px;
+  padding-left: 12px;
+  padding-right: 12px;
+  text-align: center;
+
+  .title {
+    font-size: 20px;
+    line-height: 23px;
+    margin-bottom: 30px;
+    font-weight: 500;
+    font-family: Roboto;
+
+    @include mixins.media-breakpoint-up('md') {
+      font-size: 24px;
+      line-height: 28px;
+      margin-bottom: 25px;
+    }
+  }
+
+  .stepper {
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.content {
+  padding: 0 0.75rem;
+  text-align: center;
+
+  .question {
+    font-size: 14px;
+    line-height: 16px;
+    color: variables.$secondary-color;
+    margin-bottom: 15px;
+
+    @include mixins.media-breakpoint-up('md') {
+      font-size: 16px;
+      line-height: 19px;
+    }
+  }
+
+  .images {
+    display: flex;
+    justify-content: center;
+
+    .image {
+      height: 120px;
+      width: auto;
+      object-fit: contain;
+      background-color: variables.$brand-light-color;
+    }
+  }
+}
+
+.form {
+  margin-top: 1.5rem;
+
+  @include mixins.media-breakpoint-up('sm') {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+.footer {
+  border-top: 1px solid variables.$border-color;
+  min-height: 104px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  margin-left: -0.75rem;
+  margin-right: -0.75rem;
+
+  button {
+    width: 100%;
+    min-width: 132px;
+    max-width: 210px;
+    margin: 0 0.75rem;
+
+    @include mixins.media-breakpoint-up('sm') {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+  }
+}
+
+.checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: -20px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include mixins.media-breakpoint-up('sm') {
+    width: 80%;
+  }
+
+  & > * {
+    width: 50%;
+    margin-bottom: 12px;
+  }
+}
+
+.text {
+  text-align: left;
+}
+
+.loader {
+  display: block;
+  text-align: center;
+  height: 100%;
+}

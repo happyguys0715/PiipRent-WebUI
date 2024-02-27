@@ -1,0 +1,75 @@
+<div
+  class="flex items-center"
+  *webuiHasPermission="{ action: 'post', endpoint: convertedEndpoint }"
+  [class.list-buttons]="first">
+  <div
+    class="flex items-center flex-wrap ml-sm-auto gap-2"
+    *ngIf="buttons && buttons.length">
+    <ng-container *ngFor="let button of buttons">
+      <a
+        class="btn btn-primary btn-shadow datatable-button first"
+        routerLink="add"
+        *ngIf="
+          first &&
+          !inForm &&
+          button.action === 'add_object' &&
+          hasPermission('post')
+        ">
+        <span class="button-icon"></span>
+
+        {{ button.label | translate }}
+      </a>
+
+      <button
+        *ngIf="!first || inForm || button.action !== 'add_object'"
+        class="btn btn-primary btn-shadow datatable-button"
+        [attr.title]="getButtonConfig(button).title"
+        (click)="onAction(button.action)"
+        [disabled]="getButtonConfig(button).disabled">
+        {{ button.label | translate }}
+      </button>
+    </ng-container>
+  </div>
+
+  <div class="flex items-center ml-sm-auto w-full" *ngIf="!buttons">
+    <a
+      class="btn btn-primary btn-shadow datatable-button first text-white"
+      routerLink="add"
+      webuiSubscriptionRequired
+      *ngIf="first && !inForm && hasPermission('post')">
+      <span class="button-icon"></span>
+
+      <span>
+        {{ 'add_new' | translate : { Default: 'Add new' } }}
+
+        <span class="lowercase">
+          {{ instanceLabel | translate }}
+        </span>
+      </span>
+    </a>
+
+    <button
+      *ngIf="(!first || inForm) && hasPermission('post')"
+      class="datatable-button ml-auto"
+      (click)="onAction('add_object')">
+      <span class="button-icon"></span>
+
+      <span>
+        {{ 'add_new' | translate : { Default: 'Add new' } }}
+
+        <span class="lowercase">
+          {{ instanceLabel | translate }}
+        </span>
+      </span>
+    </button>
+  </div>
+
+  <button
+    class="btn btn-primary btn-shadow datatable-button hidden-sm-down ml-2"
+    *ngIf="!first && !poped"
+    (click)="onAction('poped_table')">
+    <webui-fa-icon
+      icon="window-restore"
+      class="text-white icon"></webui-fa-icon>
+  </button>
+</div>

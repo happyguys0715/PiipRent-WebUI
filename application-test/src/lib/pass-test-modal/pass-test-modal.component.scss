@@ -1,0 +1,24 @@
+@use 'styles/variables' as *;
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 104px;
+  border-bottom: 1px solid $border-color;
+  position: relative;
+  width: 100%;
+}
+
+.logo {
+  height: 62px;
+  object-fit: contain;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 14px;
+  z-index: 1;
+}

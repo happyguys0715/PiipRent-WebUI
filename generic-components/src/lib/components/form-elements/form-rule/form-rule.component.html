@@ -1,0 +1,246 @@
+<div class="form-group">
+  <label *ngIf="label && config.templateOptions.label">
+    {{ config.templateOptions.label }}
+  </label>
+
+  <div class="grid rounded border border-primary-300 p-4 gap-4">
+    <div class="grid gap-2">
+      <h5>Active states</h5>
+      <p class="text-secondary">
+        Choose which state can be next. Current state must be active as well
+      </p>
+
+      <ng-container *ngIf="activeStates$ | async as rule; else loader">
+        <ng-container
+          *ngTemplateOutlet="states; context: { rule }"></ng-container>
+      </ng-container>
+
+      Rule:
+      <div class="rounded border border-primary bg-primary-200 p-4">
+        {{ group.get(this.key)?.value?.['active'] | json }}
+      </div>
+    </div>
+
+    <hr class="text-secondary" />
+
+    <div class="grid gap-2">
+      <h5>Required states condition</h5>
+      <p class="text-secondary">
+        This condition must be true to activate current state
+      </p>
+
+      <ng-container *ngIf="requiredStates$ | async as rule; else loader">
+        <ng-container
+          *ngTemplateOutlet="statesRule; context: { rule }"></ng-container>
+      </ng-container>
+
+      Rule:
+      <div class="rounded border border-primary bg-primary-200 p-4">
+        {{ group.get(this.key)?.value?.['required_states'] | json }}
+      </div>
+    </div>
+
+    <hr class="text-secondary" />
+
+    <div class="grid gap-2">
+      <h5>Required functions condition</h5>
+      <p class="text-secondary">
+        This condition must be true to activate current state
+      </p>
+
+      <ng-container *ngIf="requiredFunctions$ | async as rule; else loader">
+        <ng-container
+          *ngTemplateOutlet="functionsRule; context: { rule }"></ng-container>
+      </ng-container>
+
+      Rule:
+      <div class="rounded border border-primary bg-primary-200 p-4">
+        {{ group.get(this.key)?.value?.['required_functions'] | json }}
+      </div>
+    </div>
+  </div>
+
+  <small class="text-muted" *ngIf="config.templateOptions.description">
+    {{ config.templateOptions.description }}
+  </small>
+  <div *ngIf="errors">
+    <div class="text-danger mt-3" *ngIf="errors[key]">{{ errors[key] }}</div>
+  </div>
+  <div *ngIf="message">
+    <div class="text-success mt-1" *ngIf="message[key]">{{ message[key] }}</div>
+  </div>
+</div>
+
+<ng-template #states let-rule="rule">
+  <ng-container *ngFor="let row of rule.items; let last = last">
+    <div class="flex gap-2 flex-wrap">
+      <div
+        class="flex items-center rounded border border-gray-300 gap-2 pl-2 text-gray-300 opacity-40 hover:opacity-100 transition-opacity"
+        *ngFor="let node of row.items"
+        [class.active-node]="row.isActive(node.number)">
+        {{
+          node.nameBefore | translate : { Default: node.nameBeforeActivation }
+        }}
+
+        <button
+          type="button"
+          [class.active-button]="row.isActive(node.number)"
+          class="w-6 h-6 inline-flex items-center justify-center border-l border-gray-300"
+          (click)="row.toggleItem(node.number)">
+          <webui-svg-icon
+            *ngIf="!row.isActive(node.number)"
+            icon="plus"
+            size="sm"></webui-svg-icon>
+          <webui-svg-icon
+            *ngIf="row.isActive(node.number)"
+            icon="close"
+            size="sm"></webui-svg-icon>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #statesRule let-rule="rule">
+  <ng-container *ngFor="let row of rule.items; let last = last">
+    <div
+      class="flex items-center gap-2 flex-wrap border border-primary-300 flex-wrap p-2">
+      <ng-container *ngFor="let node of row.items; let last = last">
+        <div
+          class="flex items-center rounded border border-gray-300 gap-2 pl-2 text-gray-300 opacity-40 hover:opacity-100 transition-opacity"
+          [class.active-node]="row.isActive(node.number)">
+          {{
+            node.nameBefore | translate : { Default: node.nameBeforeActivation }
+          }}
+
+          <button
+            type="button"
+            [class.active-button]="row.isActive(node.number)"
+            class="w-6 h-6 inline-flex items-center justify-center border-l border-gray-300"
+            (click)="row.toggleItem(node.number)">
+            <webui-svg-icon
+              *ngIf="!row.isActive(node.number)"
+              icon="plus"
+              size="sm"></webui-svg-icon>
+            <webui-svg-icon
+              *ngIf="row.isActive(node.number)"
+              icon="close"
+              size="sm"></webui-svg-icon>
+          </button>
+        </div>
+
+        <div *ngIf="!last" class="inline-flex gap-1 items-center">
+          <button
+            type="button"
+            *ngIf="row.condition$ | async as condition"
+            [class.text-primary]="condition === 'or'"
+            (click)="row.setCondition('or')">
+            {{ 'or' | translate }}
+          </button>
+          <button
+            type="button"
+            *ngIf="row.condition$ | async as condition"
+            [class.text-primary]="condition === 'and'"
+            (click)="row.setCondition('and')">
+            {{ 'and' | translate }}
+          </button>
+        </div>
+      </ng-container>
+    </div>
+    <div *ngIf="!last" class="inline-flex gap-1 items-center">
+      <button
+        type="button"
+        *ngIf="rule.condition$ | async as condition"
+        [class.text-primary]="condition === 'or'"
+        (click)="rule.setCondition('or')">
+        {{ 'or' | translate }}
+      </button>
+      <button
+        type="button"
+        *ngIf="rule.condition$ | async as condition"
+        [class.text-primary]="condition === 'and'"
+        (click)="rule.setCondition('and')">
+        {{ 'and' | translate }}
+      </button>
+    </div>
+
+    <div *ngIf="last">
+      <button type="button" class="btn btn-primary" (click)="rule.addRule()">
+        {{ 'action.add_row' | translate }}
+      </button>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #functionsRule let-rule="rule">
+  <ng-container *ngFor="let row of rule.items; let last = last">
+    <div
+      class="flex items-center gap-2 flex-wrap border border-primary-300 flex-wrap p-2">
+      <ng-container *ngFor="let node of row.items; let last = last">
+        <div
+          class="flex items-center rounded border border-gray-300 gap-2 pl-2 text-gray-300 opacity-40 hover:opacity-100 transition-opacity"
+          [class.active-node]="row.isActive(node)">
+          {{ node | translate }}
+
+          <button
+            type="button"
+            [class.active-button]="row.isActive(node)"
+            class="w-6 h-6 inline-flex items-center justify-center border-l border-gray-300"
+            (click)="row.toggleItem(node)">
+            <webui-svg-icon
+              *ngIf="!row.isActive(node)"
+              icon="plus"
+              size="sm"></webui-svg-icon>
+            <webui-svg-icon
+              *ngIf="row.isActive(node)"
+              icon="close"
+              size="sm"></webui-svg-icon>
+          </button>
+        </div>
+
+        <div *ngIf="!last" class="inline-flex gap-1 items-center">
+          <button
+            type="button"
+            *ngIf="row.condition$ | async as condition"
+            [class.text-primary]="condition === 'or'"
+            (click)="row.setCondition('or')">
+            {{ 'or' | translate }}
+          </button>
+          <button
+            type="button"
+            *ngIf="row.condition$ | async as condition"
+            [class.text-primary]="condition === 'and'"
+            (click)="row.setCondition('and')">
+            {{ 'and' | translate }}
+          </button>
+        </div>
+      </ng-container>
+    </div>
+    <div *ngIf="!last" class="inline-flex gap-1 items-center">
+      <button
+        type="button"
+        *ngIf="rule.condition$ | async as condition"
+        [class.text-primary]="condition === 'or'"
+        (click)="rule.setCondition('or')">
+        {{ 'or' | translate }}
+      </button>
+      <button
+        type="button"
+        *ngIf="rule.condition$ | async as condition"
+        [class.text-primary]="condition === 'and'"
+        (click)="rule.setCondition('and')">
+        {{ 'and' | translate }}
+      </button>
+    </div>
+
+    <div *ngIf="last">
+      <button type="button" class="btn btn-primary" (click)="rule.addRule()">
+        {{ 'action.add_row' | translate }}
+      </button>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #loader>
+  <webui-loader></webui-loader>
+</ng-template>

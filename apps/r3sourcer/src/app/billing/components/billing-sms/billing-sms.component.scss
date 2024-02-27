@@ -1,0 +1,27 @@
+@use 'styles/variables' as *;
+
+.balance {
+  font-family: 'Roboto';
+  font-size: 20px;
+  font-weight: 500;
+  color: $content-color;
+}
+
+.switch {
+  font-family: 'Roboto';
+  font-size: 18px;
+  color: $border-color;
+
+  .active {
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .on.active {
+    color: $success;
+  }
+
+  .off.active {
+    color: $danger;
+  }
+}

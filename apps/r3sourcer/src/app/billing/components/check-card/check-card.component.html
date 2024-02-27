@@ -1,0 +1,48 @@
+<div class="group">
+  <div class="group__content">
+    <h5 class="group__label mt-4 mb-0">
+      {{ 'enter_payment_information.label' | translate }}
+    </h5>
+
+    <div
+      *ngIf="cardInformation?.payment_information_submited && !newCard"
+      class="flex items-center gap-3">
+      <p *ngIf="cardInformation?.card_number_last4" class="description mb-0">
+        **** **** **** {{ cardInformation?.card_number_last4 }}
+      </p>
+
+      <button class="btn btn-primary px-4 py-2" (click)="showCardForm()">
+        {{ 'action.add_new_cc' | translate }}
+      </button>
+
+      <button
+        *ngIf="cardInformation?.payment_information_submited"
+        class="btn btn-primary px-4 py-2"
+        (click)="onRemoveCC()">
+        {{ 'action.remove_cc' | translate }}
+      </button>
+    </div>
+
+    <form
+      (submit)="checkCard($event)"
+      class="mr-3"
+      [hidden]="cardInformation?.payment_information_submited && !newCard">
+      <div class="form-row grow mr-3" [class.submited]="saving">
+        <div id="card-element"></div>
+        <div id="card-errors" class="pt-2 text-danger" role="alert">
+          {{ error }}
+        </div>
+      </div>
+
+      <button class="btn btn-primary align-self-start mt-2">
+        {{ 'action.save_cc' | translate }}
+      </button>
+      <button
+        *ngIf="cardInformation?.payment_information_submited"
+        class="btn btn-default align-self-start mt-1 ml-2"
+        (click)="newCard = false">
+        {{ 'action.cancel' | translate }}
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+<ng-container *ngIf="clock$ | async as clock">
+  {{ translateKey | translate : { Default: description } }}
+  {{ clock.time }}
+
+  <div *ngIf="clock.differentTimezone" class="f-size-12 text-danger">
+    {{ differMessage }}
+  </div>
+</ng-container>

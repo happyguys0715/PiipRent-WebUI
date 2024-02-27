@@ -1,0 +1,114 @@
+<webui-base-modal
+  modalClass="approve-signature-modal"
+  (dissmisEvent)="dismiss()">
+  <header class="header">
+    <webui-user-avatar
+      [source]="config.label.avatar"
+      [fullName]="config.label.fullName"></webui-user-avatar>
+
+    <h3 class="title">
+      <span>{{
+        'approve_timesheet' | translate : { Default: 'Approve timesheet' }
+      }}</span>
+      <span class="subtitle">
+        for {{ config.label.fullName }} <small>({{ shiftDate }})</small>
+      </span>
+    </h3>
+  </header>
+
+  <div class="modal-body">
+    <div [class.steps]="isMobile()" [class.signature-step]="isSignatureStep">
+      <div class="content-info">
+        <div [hidden]="!config.timesheetData" class="form-wrapper">
+          <webui-generic-form
+            [needData]="false"
+            [form]="config.form"
+            [endpoint]="config.changeEndpoint"
+            [metadataQuery]="config.metadataQuery"
+            [changeMetadata]="config.changeMetadata"
+            [data]="config.timesheetData"
+            [extendData]="config.extendData"
+            [edit]="config.edit"
+            (event)="this.config.evaluateEvent($event, modal.close)">
+            <button #sendFormButton type="submit" [hidden]="true"></button>
+          </webui-generic-form>
+        </div>
+
+        <webui-evaluate-field
+          [evaluated]="config.evaluated"
+          [evaluatedScore]="
+            config.data.evaluation_score
+          "></webui-evaluate-field>
+      </div>
+
+      <div class="flex justify-center items-center flex-col">
+        <div [hidden]="!config.signature" class="signature-content">
+          <webui-back-link
+            *ngIf="isMobile()"
+            label="Back to times"
+            key="back"
+            (backEvent)="isSignatureStep = false">
+          </webui-back-link>
+
+          <h3 class="group-title signature-title flex items-center w-full">
+            {{ 'signature' | translate : { Default: 'Signature' } }}
+            <button
+              *ngIf="config.signature"
+              type="button"
+              class="btn btn-link text-danger ml-auto pr-0 py-0 only-mobile"
+              (click)="signatureCanvas.clear()">
+              {{ 'clear' | translate : { Default: 'Clear area' } }}
+            </button>
+          </h3>
+          <webui-signature
+            #signatureCanvas
+            [supervisorSignature]="config.supervisor_signature"
+            (signature)="updateSignature($event)"></webui-signature>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" [class.signature-step-footer]="config.signature">
+      <button
+        *ngIf="config.signature"
+        type="button"
+        class="btn clear-button"
+        [class.signature-step]="isSignatureStep"
+        (click)="signatureCanvas.clear()">
+        {{ 'clear' | translate : { Default: 'Clear' } }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-shadow btn-success"
+        *ngIf="isMobile() ? isSignatureStep : true"
+        (click)="config.sendSignature(sendFormButton)">
+        {{ 'action.approve' | translate }}
+        <webui-spinner *ngIf="saveProcess"></webui-spinner>
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-shadow btn-primary next-button"
+        *ngIf="isMobile() ? !isSignatureStep : false"
+        (click)="isSignatureStep = true">
+        {{ 'next' | translate : { Default: 'Next' } }}
+
+        <!-- Arrow -->
+        <svg
+          class="ml-1"
+          width="16"
+          height="11"
+          viewBox="0 0 16 11"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M11.1816 10.5377C11.0345 10.5377 10.8138 10.5377 10.7402 10.3906C10.5195 10.1699 10.5195 9.80213 10.7402 9.58144L14.639 5.68265C14.8597 5.46196 14.8597 5.09415 14.639 4.87346L10.7402 0.974695C10.5195 0.754009 10.5195 0.386195 10.7402 0.16551C10.9609 -0.0551759 11.3287 -0.0551759 11.5494 0.16551L15.4482 4.0643C16.1838 4.79992 16.1838 5.82978 15.4482 6.5654L11.5494 10.4642C11.5494 10.5377 11.4023 10.5377 11.1816 10.5377Z"
+            fill="white" />
+          <path
+            d="M14.7124 5.82983H0.588497C0.220688 5.82983 0 5.60913 0 5.24132C0 4.87351 0.220688 4.65283 0.588497 4.65283H14.7124C15.0802 4.65283 15.3009 4.87351 15.3009 5.24132C15.3009 5.60913 15.0802 5.82983 14.7124 5.82983Z"
+            fill="white" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</webui-base-modal>

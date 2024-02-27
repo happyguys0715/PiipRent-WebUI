@@ -1,0 +1,85 @@
+<ng-container *ngIf="config; else loader">
+  <section class="form p-8">
+    <ng-container *ngTemplateOutlet="stepper"></ng-container>
+
+    <ng-container *ngIf="step$ | async as step">
+      <webui-dynamic-form
+        [formBuilder]="true"
+        [config]="step.metadata"
+        [form]="form"
+        [errors]="error"
+        [formId]="formId"
+        [hiddenFields]="hiddenFields">
+      </webui-dynamic-form>
+
+      <div class="flex flex-col gap-6 items-center">
+        <div class="flex gap-6 flex-wrap">
+          <button
+            type="button"
+            class="button-secondary button-secondary--without-shadow min-w-[210px]"
+            (click)="back()">
+            {{ step.position === 0 ? 'close' : ('back' | translate) }}
+          </button>
+
+          <button
+            *ngIf="!isLastStep(step)"
+            class="button-primary min-w-[210px]"
+            [disabled]="invalid$ | async"
+            (click)="next()">
+            {{ 'next_step' | translate }}
+          </button>
+
+          <button
+            *ngIf="isLastStep(step)"
+            type="submit"
+            class="button-primary min-w-[210px]"
+            [disabled]="form.invalid || (saving$ | async)"
+            (click)="submitForm()">
+            {{ 'registration.register' | translate }}
+
+            <webui-spinner *ngIf="saving$ | async"></webui-spinner>
+          </button>
+        </div>
+
+        <p>
+          {{ 'registration.already_account' | translate }}
+
+          <a routerLink="/login" class="link">
+            {{ 'registration.login_here' | translate }}
+          </a>
+        </p>
+      </div>
+    </ng-container>
+  </section>
+</ng-container>
+
+<ng-template #loader>
+  <div class="form__loader">
+    <webui-loader></webui-loader>
+  </div>
+</ng-template>
+
+<ng-template #stepper>
+  <div *ngIf="step$ | async as currentStep" class="form__stepper-wrapper">
+    <ul class="form__stepper">
+      <li
+        class="form__step"
+        [class.form__step--active]="isActive(index)"
+        [class.form__step--complete]="isComplete(index)"
+        *ngFor="let step of steps; let index = index">
+        <span class="form__step-index">
+          <ng-container *ngIf="!isComplete(index)">
+            {{ index + 1 }}
+          </ng-container>
+
+          <webui-fa-icon *ngIf="isComplete(index)" icon="check"></webui-fa-icon>
+        </span>
+        <span class="form__step-title">
+          {{ step.title | translate }}
+        </span>
+      </li>
+    </ul>
+
+    <div class="form__stepper-progress"></div>
+  </div>
+</ng-template>

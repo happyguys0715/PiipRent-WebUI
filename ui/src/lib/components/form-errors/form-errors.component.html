@@ -1,0 +1,10 @@
+<ul *ngIf="errorList$ | async; let list" class="mt-1 mb-3 list-unstyled">
+  <li class="text-danger" *ngFor="let text of list">{{ text }}</li>
+</ul>
+
+<div *ngIf="objectExistError$ | async; let error" class="mt-1 mb-3">
+  <span class="text-danger">{{ error.description }}</span> <br />
+  <a *ngIf="error.href && error.title" [routerLink]="[error.href]">
+    {{ error.title }}
+  </a>
+</div>

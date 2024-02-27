@@ -1,0 +1,198 @@
+.autocomplete {
+  @apply border border-gray-200;
+
+  position: absolute;
+  top: 1.4rem;
+
+  left: 0;
+
+  width: 100%;
+
+  margin-top: 5px;
+  margin-bottom: 20px;
+  padding: 0.75rem;
+
+  border-radius: 4px;
+
+  background-color: white;
+  box-shadow: 0 0 12px rgba($gray, 0.15);
+  z-index: 30;
+  min-width: 230px;
+
+  .registration-form & {
+    top: 2.8rem;
+  }
+
+  .form-element & input {
+    @each $item in $themes {
+      .#{$item}-theme &:hover,
+      .#{$item}-theme &:focus {
+        border-color: map-get($theme-colors, $item);
+      }
+    }
+  }
+
+  &-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 22px;
+
+    min-height: 22px;
+
+    .redesign & {
+      font-size: 16px;
+      line-height: 1.2;
+      height: auto;
+      min-height: auto;
+      border: 1px solid $border-color;
+      border-radius: 0.25rem;
+      background-color: $brand-light-color;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      padding-left: 0.75rem;
+    }
+
+    &.placeholder {
+      font-size: 12px;
+
+      .redesign & {
+        font-size: 16px;
+        line-height: 1.2;
+        color: $secondary-color;
+      }
+    }
+
+    .filter-related & {
+      height: auto;
+
+      min-height: auto;
+    }
+
+    padding-left: 0;
+    border: none;
+    border-bottom: 1px solid rgba($gray, 0.2);
+
+    // background-color: #fefefe;
+    background-color: transparent;
+
+    overflow: hidden;
+    cursor: default;
+
+    i {
+      font-size: 14px;
+    }
+
+    .filter-wrapper & {
+      border-radius: 50px;
+    }
+
+    &.active {
+      border-color: $gray;
+    }
+
+    // .form-element &.form-control {
+    //   padding: 0;
+    // }
+  }
+
+  &-list {
+    width: 100%;
+    max-height: 180px;
+
+    overflow-y: auto;
+
+    z-index: 20;
+  }
+
+  &-item {
+    padding: 0.5rem 0;
+    margin-bottom: 1px;
+
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    border-bottom: 1px solid rgba($gray, 0.08);
+
+    label {
+      margin-bottom: 0;
+
+      cursor: pointer;
+    }
+
+    // &:hover {
+    //   cursor: pointer;
+    // }
+
+    .form-element &:hover {
+      color: $gray;
+      width: 100%;
+      background-color: #eee;
+    }
+  }
+
+  &-preloader {
+    @apply bg-gray-200;
+
+    padding: 0.2rem;
+
+    text-align: center;
+  }
+}
+
+.autocomplete-dropdown {
+  @apply border border-gray-200;
+
+  padding: 0.5rem 0.75rem 0;
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 0 12px rgba($gray, 0.15);
+  // width: 100%;
+  // max-width: 230px;
+  display: grid;
+  gap: 0.5rem;
+
+  &-input {
+    border: none;
+    border-bottom: 1px solid $gray;
+
+    @each $item in $themes {
+      .#{$item}-theme &:hover,
+      .#{$item}-theme &:focus {
+        border-color: map-get($theme-colors, $item);
+      }
+    }
+  }
+
+  &-list {
+    max-height: 180px;
+    overflow-y: auto;
+    margin-bottom: 0.5rem;
+
+    @include scrollbar;
+  }
+
+  &-item {
+    padding: 0.75rem 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1rem;
+    color: $gray;
+    margin-bottom: 1px;
+
+    &:not(:last-child) {
+      box-shadow: 0 0 0 1px rgba($gray, 0.04);
+    }
+
+    &:hover {
+      cursor: pointer;
+      background-color: rgba($gray, 0.04);
+    }
+  }
+
+  &-preloader {
+    padding: 0.25rem;
+    text-align: center;
+  }
+}

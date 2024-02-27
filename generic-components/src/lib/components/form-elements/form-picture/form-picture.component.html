@@ -1,0 +1,236 @@
+<div class="form-group" *ngIf="!config.hide">
+  <div class="form-element" [class.custom]="config.custom">
+    <label
+      class="form-element-label"
+      [class.required]="config.templateOptions.required"
+      [hidden]="config.custom"
+      *ngIf="
+        label &&
+        config.templateOptions.label &&
+        config.key !== 'contact.picture'
+      ">
+      {{
+        getTranslationKey('label')
+          | translate : { Default: config.templateOptions.label }
+      }}:
+    </label>
+    <webui-info
+      *ngIf="config.templateOptions.description"
+      [description]="
+        getTranslationKey('description')
+          | translate : { Default: config.templateOptions.description || '' }
+      "></webui-info>
+    <input
+      #picture
+      accept="image/*,application/pdf"
+      [attr.type]="'file'"
+      [hidden]="true"
+      [attr.id]="key"
+      (change)="fileChangeEvent($event)"
+      [attr.name]="key" />
+    <ng-container
+      *ngIf="config.key === 'contact.picture' && !config.candidateForm">
+      <ng-container *ngTemplateOutlet="pictureView"></ng-container>
+    </ng-container>
+
+    <ng-container
+      *ngIf="config.key !== 'contact.picture' || config.candidateForm">
+      <div class="form-element-picture">
+        <img
+          *ngIf="value && config.templateOptions.file === false"
+          class="image-preview"
+          [class.start]="config.templateOptions.start"
+          [src]="value"
+          alt="image" />
+
+        <img
+          *ngIf="value && config.templateOptions.file === false"
+          class="image-profile"
+          [class.signature]="config.templateOptions.signature"
+          [class.origin]="config.companyContact"
+          [src]="value"
+          alt="image"
+          width="200"
+          height="200" />
+        <div
+          *ngIf="contactAvatar && !fileName && !value"
+          class="contact-avatar">
+          {{ contactAvatar }}
+        </div>
+
+        <ng-container
+          *ngIf="(link || value) && config.templateOptions?.file === undefined">
+          <a class="document" [href]="link || value" target="_blank">
+            <webui-fa-icon
+              [icon]="['fas', 'file']"
+              class="file-icon"></webui-fa-icon>
+            <webui-fa-icon
+              [icon]="['fas', 'download']"
+              class="download-icon"></webui-fa-icon>
+            {{ 'download' | translate }}
+          </a>
+          <a *ngIf="!viewMode" class="link" href="" (click)="upload($event)">
+            {{ 'upload_file' | translate }}
+          </a>
+        </ng-container>
+
+        <span *ngIf="!value && !contactAvatar && !link && viewMode">-</span>
+        <span
+          *ngIf="
+            !link &&
+            !value &&
+            !viewMode &&
+            !config.read_only &&
+            config.templateOptions?.file === undefined
+          "
+          class="link ml-0 mr-auto"
+          (click)="upload()">
+          {{ 'upload_file' | translate : { Default: 'Upload new file' } }}
+        </span>
+        <div
+          *ngIf="
+            !viewMode &&
+            !config.read_only &&
+            config.templateOptions.file === false
+          "
+          class="flex items-center flex-wrap mt-1">
+          <div class="btn-group flex-wrap">
+            <button
+              type="button"
+              class="btn btn-default"
+              (click)="upload()"
+              title="Choose a file">
+              <webui-fa-icon icon="upload"></webui-fa-icon>
+            </button>
+            <button
+              type="button"
+              class="btn btn-default"
+              (click)="open()"
+              title="Take a photo">
+              <webui-fa-icon icon="camera"></webui-fa-icon>
+            </button>
+            <button
+              *ngIf="value"
+              type="button"
+              class="btn btn-default"
+              (click)="removeImage()"
+              title="Remove">
+              <webui-fa-icon icon="trash"></webui-fa-icon>
+            </button>
+            <button
+              *ngIf="
+                (fileName || isRemoved) && config.candidateForm && !sizeError
+              "
+              type="button"
+              class="btn btn-default"
+              (click)="patchPicture()"
+              title="Update">
+              <webui-fa-icon icon="check"></webui-fa-icon>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="mt-1"
+          style="overflow: hidden; text-overflow: ellipsis; max-width: 180px"
+          *ngIf="fileName && !config.read_only && !config.view">
+          <i class="text-muted"
+            >{{ 'file' | translate : { Default: 'File' } }}:</i
+          >
+          {{ fileName }}
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div *ngIf="errors">
+    <div class="text-danger mt-3" *ngIf="errors[key]">{{ errors[key] }}</div>
+  </div>
+  <div class="text-danger mt-3 text-left" *ngIf="sizeError">
+    {{ 'file_size' | translate : { Default: 'File size is too large!' } }}
+    <br />
+    {{
+      'max_size'
+        | translate : { Default: 'Maximum allowed file size is 10 Mb.' }
+    }}
+  </div>
+  <div *ngIf="message">
+    <div *ngIf="message[key]" class="text-success mt-1">{{ message[key] }}</div>
+  </div>
+</div>
+
+<ng-template #modal let-c="close">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      {{
+        getTranslationKey('label_photo')
+          | translate : { Default: config.templateOptions.label_photo }
+      }}
+    </h5>
+
+    <webui-close-button class="ml-auto"></webui-close-button>
+  </div>
+
+  <div
+    class="modal-body picture flex justify-around flex-wrap"
+    style="overflow: auto">
+    <webcam
+      [width]="300"
+      [height]="200"
+      class="flex items-center"
+      [captureImageData]="true"
+      [trigger]="capture$"
+      (imageCapture)="onImageCapture($event)">
+    </webcam>
+
+    <div class="photo flex justify-center items-center mt-3 mt-sm-0">
+      <span *ngIf="!photoExist" class="text-white">
+        {{ 'photo' | translate : { Default: 'Photo' } }}
+      </span>
+      <img *ngIf="photoExist" [src]="this.base64" alt="" />
+    </div>
+  </div>
+
+  <div class="modal-footer justify-start">
+    <button
+      *ngIf="photoExist"
+      type="button"
+      class="btn btn-success"
+      (click)="save(c)">
+      {{ 'save' | translate : { Default: 'Save' } }}
+    </button>
+    <button type="button" class="btn btn-primary" (click)="getPhoto()">
+      {{
+        photoExist
+          ? ('try_again' | translate : { Default: 'Try again' })
+          : (getTranslationKey('label_photo')
+              | translate : { Default: config.templateOptions.label_photo }) ||
+            ('take_a_photo' | translate : { Default: 'Take a photo' })
+      }}
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="c()">
+      {{ 'cancel' | translate : { Default: 'Cancel' } }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #pictureView>
+  <div class="picture">
+    <div class="image" #dropzone>
+      <webui-fa-icon *ngIf="!value" icon="user"></webui-fa-icon>
+      <img *ngIf="value" [src]="value" alt="" />
+    </div>
+
+    <button
+      class="button-secondary button-secondary--without-shadow"
+      type="button"
+      (click)="upload()">
+      {{ 'add_photo' | translate : { Default: 'Add photo' } }}
+    </button>
+    <button
+      class="button-secondary button-secondary--without-shadow"
+      type="button"
+      (click)="open()">
+      {{ 'use_camera' | translate : { Default: 'Use camera' } }}
+    </button>
+  </div>
+</ng-template>

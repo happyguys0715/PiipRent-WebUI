@@ -1,0 +1,174 @@
+<webui-dialog [headerTitle]="title">
+  <div class="content" dialog-content>
+    <webui-timesheet-details-preview
+      [timeSheet]="timeSheet"></webui-timesheet-details-preview>
+
+    <form
+      *ngIf="formGroup"
+      [formGroup]="formGroup"
+      class="form"
+      (ngSubmit)="submitForm()">
+      <ng-container *ngIf="hasActivities">
+        <div class="form-tabs">
+          <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab">
+            <li
+              [ngbNavItem]="tabs.time"
+              [class.disabled]="timesDisabled"
+              [disabled]="timesDisabled">
+              <a
+                ngbNavLink
+                [title]="'message.timesheet_time_description' | translate">
+                {{ 'time' | translate }}
+              </a>
+              <ng-template ngbNavContent>
+                <p class="description mb-4">
+                  {{ 'message.timesheet_time_description' | translate }}
+                </p>
+
+                <header class="times__header">
+                  <h4 class="section-title">{{ 'time' | translate }}</h4>
+
+                  <span class="total-time">{{ timeSheet.totalTime }}</span>
+                </header>
+
+                <div class="form-row">
+                  <webui-form-datepicker-control
+                    formControlName="shiftStartedAt"
+                    [type]="DatepickerType.DateTime"
+                    [initialValue]="timeSheet.startedAt"
+                    [timezone]="timeSheet.timezone"
+                    [label]="
+                      'start_time' | translate
+                    "></webui-form-datepicker-control>
+
+                  <webui-form-datepicker-control
+                    formControlName="shiftEndedAt"
+                    [initialValue]="timeSheet.endedAt"
+                    [timezone]="timeSheet.timezone"
+                    [type]="DatepickerType.DateTime"
+                    [label]="
+                      'end_time' | translate
+                    "></webui-form-datepicker-control>
+                </div>
+
+                <div class="form-row">
+                  <webui-form-datepicker-control
+                    formControlName="break"
+                    [initialValue]="timeSheet.startedAt"
+                    [timerFrom]="timeSheet.breakStartedAt"
+                    [timerTo]="timeSheet.breakEndedAt"
+                    [type]="DatepickerType.Timer"
+                    [label]="
+                      'break_time' | translate
+                    "></webui-form-datepicker-control>
+
+                  <span>&nbsp;</span>
+                </div>
+              </ng-template>
+            </li>
+
+            <li
+              [ngbNavItem]="tabs.activity"
+              [class.disabled]="activitiesDisabled"
+              [disabled]="activitiesDisabled">
+              <a
+                ngbNavLink
+                [title]="'message.timesheet_activity_description' | translate">
+                {{ 'piecework_or_combined' | translate }}
+              </a>
+              <ng-template ngbNavContent>
+                <p class="description mb-4">
+                  {{ 'message.timesheet_activity_description' | translate }}
+                </p>
+
+                <div class="section-title">
+                  <button
+                    class="inline-flex items-center"
+                    type="button"
+                    [disabled]="!hasActivities"
+                    (click)="addActivityControl()">
+                    {{ 'activity' | translate }}
+
+                    <span class="plus-button">
+                      <webui-icon
+                        [icon]="Icon.Plus"
+                        [size]="IconSize.Large"></webui-icon>
+                    </span>
+                  </button>
+                </div>
+
+                <div
+                  [formGroup]="activity"
+                  *ngFor="let activity of activitiesForm; let index = index">
+                  <div class="form-row">
+                    <webui-form-dropdown-control
+                      formControlName="worktype"
+                      [url]="activityEndpoint"
+                      [label]="'your_activity' | translate"
+                      [params]="activityParams"
+                      [optionFilter]="
+                        activityOptionFilter
+                      "></webui-form-dropdown-control>
+
+                    <button
+                      *ngIf="timeSheet.status !== 7"
+                      type="button"
+                      class="delete-button"
+                      (click)="removeActivity(activity, index)">
+                      <webui-icon [icon]="Icon.Delete"></webui-icon>
+                    </button>
+                  </div>
+
+                  <div class="form-row w-32">
+                    <webui-form-input-control
+                      *ngIf="activity.get('value')"
+                      [label]="'amount' | translate"
+                      [prefix]="getAmountPrefix(activity)"
+                      type="number"
+                      formControlName="value"></webui-form-input-control>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+          </ul>
+        </div>
+
+        <div [ngbNavOutlet]="nav" class="mt-4"></div>
+      </ng-container>
+
+      <div *ngIf="!hasActivities" class="activities-empty">
+        <webui-loader class="loader"></webui-loader>
+      </div>
+
+      <section class="section">
+        <header class="header">
+          <h4 class="section-title">{{ 'notes.label' | translate }}</h4>
+        </header>
+
+        <webui-form-textarea formControlName="note"></webui-form-textarea>
+      </section>
+
+      <section class="section">
+        <header class="header">
+          <h4 class="section-title">{{ 'files.label' | translate }}</h4>
+        </header>
+
+        <webui-form-image-upload-control
+          formControlName="pictures"></webui-form-image-upload-control>
+      </section>
+
+      <footer class="footer" *ngIf="timeSheet.status !== 7 && hasActivities">
+        <webui-form-errors [formId]="formId"></webui-form-errors>
+
+        <button
+          class="btn submit-btn"
+          [disabled]="formInvalid || (processing$ | async)"
+          type="submit">
+          {{ 'submit' | translate }}
+
+          <webui-spinner *ngIf="processing$ | async"></webui-spinner>
+        </button>
+      </footer>
+    </form>
+  </div>
+</webui-dialog>

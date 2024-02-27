@@ -1,0 +1,255 @@
+<div *ngIf="!this.config.hide && !this.dropdown && !loading" class="timeline">
+  <ng-container *ngFor="let state of options$ | async; let last = last">
+    <ng-container
+      *ngTemplateOutlet="
+        stateElement;
+        context: { state: state, last: last }
+      "></ng-container>
+  </ng-container>
+
+  <button
+    type="button"
+    class="btn btn-outline-info w-6 h-6"
+    (click)="onRefresh()">
+    <webui-fa-icon icon="redo"></webui-fa-icon>
+  </button>
+</div>
+
+<div class="flex justify-center" *ngIf="loading && !this.dropdown">
+  <webui-loader></webui-loader>
+</div>
+
+<div *ngIf="this.dropdown" class="timeline timeline-select-wrapper">
+  <span>{{ 'filter.status' | translate }}:</span>
+
+  <select
+    class="timeline-element badge badge-outline timeline-select"
+    [ngClass]="{
+      'need-requirements': getState()?.state === 0,
+      allowed: getState()?.state === 1,
+      active: getState()?.state === 2,
+      visited: getState()?.state === 3,
+      'not-allowed': getState()?.state === 4
+    }"
+    [formControl]="currentState">
+    <option
+      *ngFor="let option of dropdownOptions$ | async"
+      [ngValue]="option.id">
+      <span>
+        {{ option.translateKey | translate : { Default: option.label } }}
+      </span>
+    </option>
+  </select>
+
+  <webui-info
+    *ngIf="getState()?.state === 0"
+    triggersType="click"
+    [description]="requirements"></webui-info>
+  <button
+    type="button"
+    class="btn btn-outline-success w-6 h-6"
+    *ngIf="getState()?.state === 1"
+    [class.active]="saveProcess"
+    (click)="open(getState())">
+    <webui-fa-icon icon="check" *ngIf="!saveProcess"></webui-fa-icon>
+    <webui-spinner *ngIf="saveProcess" [sm]="true"></webui-spinner>
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-outline-info w-6 h-6"
+    (click)="onRefresh()">
+    <webui-fa-icon icon="redo" *ngIf="!loading"></webui-fa-icon>
+    <webui-spinner *ngIf="loading" [sm]="true"></webui-spinner>
+  </button>
+</div>
+
+<ng-template #stateModal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header">
+      <h5 class="modal-title">{{ modalData.title }}</h5>
+
+      <webui-close-button class="ml-auto"></webui-close-button>
+    </div>
+
+    <div class="modal-body timeline" *ngIf="modalData">
+      <ng-container
+        *ngIf="
+          (modalData.tests || modalData.substates) && !modalData.setActive
+        ">
+        <div class="state-info">
+          <div *ngIf="modalData.substates">
+            <h5 class="state-info-label">Substates</h5>
+
+            <span
+              *ngFor="let substate of modalData.substates"
+              (click)="open(substate)">
+              <ng-container
+                *ngTemplateOutlet="
+                  stateTemplate;
+                  context: { state: substate }
+                "></ng-container>
+            </span>
+          </div>
+
+          <div class="state-tests">
+            <h5 class="state-info-label">
+              {{ 'acceptance_tests.label' | translate }}
+            </h5>
+
+            <table class="table table-sm">
+              <tr>
+                <th>Name</th>
+                <th>Score</th>
+                <th>&nbsp;</th>
+              </tr>
+
+              <tr *ngFor="let test of modalData.tests">
+                <td>{{ test.acceptance_test.name }}</td>
+                <td>{{ test.score }}</td>
+                <td>
+                  <a
+                    href=""
+                    *ngIf="!test.score"
+                    (click)="fillinTest($event, test.acceptance_test.id)">
+                    Fill in
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="footer">
+          <button
+            *ngIf="modalData.workflowObject && this.advancedSeving"
+            class="btn btn-sm btn-primary"
+            (click)="modalData.setActive = true">
+            Update
+          </button>
+
+          <span *ngIf="modalData.state.total_score">
+            Total Score: {{ modalData.state.total_score }}
+          </span>
+        </div>
+      </ng-container>
+
+      <div
+        *ngIf="
+          (!modalData.tests && !modalData.substates) || modalData.setActive
+        ">
+        <webui-generic-form
+          [mode]="FormMode.Edit"
+          [endpoint]="workflowObjectEndpoint"
+          [id]="modalData.id"
+          [data]="stateData"
+          (event)="sendEventHandler($event)"
+          (errorForm)="formError()">
+          <button type="submit" class="btn btn-primary">
+            {{ 'save' | translate }}
+            <webui-spinner *ngIf="saveProcess"></webui-spinner>
+          </button>
+        </webui-generic-form>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #stateElement let-state="state" let-l="last">
+  <div
+    class="timeline-element-wrapper"
+    style="position: relative"
+    (click)="open(state)">
+    <ng-container
+      *ngTemplateOutlet="
+        stateTemplate;
+        context: { state: state }
+      "></ng-container>
+
+    <svg
+      class="arrow"
+      *ngIf="!l"
+      width="5"
+      height="8"
+      viewBox="0 0 5 8"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M0 0L3 3L6 0"
+        transform="translate(1 7) rotate(-90)"
+        stroke="#1BD168" />
+    </svg>
+  </div>
+</ng-template>
+
+<ng-template #stateTemplate let-state="state">
+  <div
+    class="timeline-element badge badge-outline"
+    [ngClass]="{
+      'need-requirements': state.state === 0,
+      allowed: state.state === 1,
+      active: state.state === 2,
+      visited: state.state === 3,
+      'not-allowed': state.state === 4,
+      save: state.saveProcess
+    }">
+    <span *ngIf="state.state === 2">
+      {{ state.translateKey | translate : { Default: state.label } }}
+    </span>
+    <span *ngIf="state.state !== 2 && state.state !== 0">
+      {{ state.translateKey | translate : { Default: state.label } }}
+    </span>
+    <span
+      *ngIf="state.state === 0"
+      placement="bottom"
+      [webuiTooltip]="requirements">
+      {{ state.translateKey | translate : { Default: state.label } }}
+    </span>
+
+    <span *ngIf="calculateProgress(state)" class="state-progress">
+      {{ calculateProgress(state) }}
+    </span>
+
+    <webui-spinner *ngIf="state.saveProcess" [sm]="true"></webui-spinner>
+  </div>
+
+  <ng-template #requirements>
+    <div class="info-block">
+      <h6 class="info-block__title">
+        To activate this state, fill in the required fields:
+      </h6>
+      <ul class="info-block__list">
+        <li class="info-block__item" *ngFor="let option of state.requirements">
+          <webui-fa-icon class="info-block__icon" icon="circle"></webui-fa-icon>
+          {{ option }}
+        </li>
+      </ul>
+    </div>
+  </ng-template>
+</ng-template>
+
+<ng-template #requirements>
+  <div class="info-block">
+    <h6 class="info-block__title">
+      To activate this state, fill in the required fields:
+    </h6>
+    <ul class="info-block__list">
+      <li
+        class="info-block__item"
+        *ngFor="let option of getState()?.requirements">
+        <webui-fa-icon class="info-block__icon" icon="circle"></webui-fa-icon>
+        {{ option }}
+
+        <a
+          *ngIf="verifyPhone(option)"
+          class="text-primary"
+          href="#"
+          (click)="editContact($event)">
+          Edit contact
+        </a>
+      </li>
+    </ul>
+  </div>
+</ng-template>

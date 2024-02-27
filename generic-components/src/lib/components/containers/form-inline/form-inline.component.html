@@ -1,0 +1,13 @@
+<div class="flex gap-4 mt-5">
+  <ng-container *ngFor="let field of config.children">
+    <ng-container
+      webuiFormElement
+      [config]="field"
+      [group]="group"
+      [errors]="errors"
+      [formId]="formId"
+      (event)="eventHandler($event)"
+      (buttonAction)="buttonActionHandler($event)"
+      [message]="message"></ng-container>
+  </ng-container>
+</div>

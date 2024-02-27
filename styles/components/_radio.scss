@@ -1,0 +1,57 @@
+@use 'sass:math';
+
+$diameter: 14px;
+
+input:checked ~ .radio-circle {
+  border-color: $primary;
+
+  @each $item in $themes {
+    .#{$item}-theme & {
+      border-color: map-get($theme-colors, $item);
+    }
+  }
+
+  .inner {
+    visibility: visible;
+  }
+}
+
+.radio-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: $diameter;
+  height: $diameter;
+
+  margin-right: 9px;
+
+  border: 1px solid #828282;
+  border-radius: 50%;
+
+  &.sm {
+    position: relative;
+    top: -1px;
+    $diameter: 12px;
+
+    width: $diameter;
+    height: $diameter;
+  }
+
+  .inner {
+    visibility: hidden;
+
+    width: math.div($diameter, 2) - 1;
+    height: math.div($diameter, 2) - 1;
+
+    border-radius: 50%;
+
+    background-color: $primary;
+
+    @each $item in $themes {
+      .#{$item}-theme & {
+        background-color: map-get($theme-colors, $item);
+      }
+    }
+  }
+}

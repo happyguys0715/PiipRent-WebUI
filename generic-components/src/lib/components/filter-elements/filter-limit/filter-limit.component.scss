@@ -1,0 +1,21 @@
+.filter-limit-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  input {
+    width: 45%;
+  }
+
+  input:first-child {
+    order: 1;
+  }
+
+  input:nth-child(2) {
+    order: 3;
+  }
+
+  .delimiter {
+    order: 2;
+  }
+}

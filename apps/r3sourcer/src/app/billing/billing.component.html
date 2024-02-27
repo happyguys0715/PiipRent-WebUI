@@ -1,0 +1,40 @@
+<webui-navigation [user]="user"> </webui-navigation>
+
+<div class="site-page">
+  <div class="form-page billing__page">
+    <div class="lg:order-1">
+      <div class="billing__section">
+        <webui-check-card
+          [cardInformation]="checkInformation"
+          (cardChange)="onCardChange()"
+          (removeCC)="onRemoveCC()"></webui-check-card>
+
+        <hr class="divider" />
+
+        <webui-billing-plan
+          [plans]="plans"
+          [currentPlan]="currentPlan"
+          [workerCount]="(currentPlan && currentPlan.worker_count) || 1"
+          [currency]="currency"
+          [cardInformation]="checkInformation"
+          [hasSubscriptions]="hasSubscriptions"
+          (changed)="selectPlan($event)"
+          (cancelingPlan)="cancelPlan()"></webui-billing-plan>
+
+        <hr class="divider" />
+
+        <webui-billing-sms
+          [currency]="currency"
+          [cardExist]="
+            checkInformation?.payment_information_submited
+          "></webui-billing-sms>
+      </div>
+    </div>
+
+    <div class="billing__section">
+      <webui-billing-lists></webui-billing-lists>
+    </div>
+  </div>
+</div>
+
+<webui-master-guide *ngIf="user.currentRole.is_primary"></webui-master-guide>

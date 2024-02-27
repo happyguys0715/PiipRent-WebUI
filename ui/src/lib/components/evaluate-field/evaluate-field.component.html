@@ -1,0 +1,20 @@
+<h4 class="title">
+  {{ 'evaluate.label' | translate : { Default: 'Evaluation' } }}
+</h4>
+
+<ngb-rating
+  min="1"
+  [max]="5"
+  [(ngModel)]="score"
+  [rate]="score"
+  [readonly]="evaluated"
+  (hover)="hovered = $event"
+  (leave)="hovered = undefined"
+  (rateChange)="hovered = undefined">
+  <ng-template let-fill="fill" let-index="index">
+    <span *ngIf="fill === 100" class="star star-lg full">&#9733;</span>
+    <span *ngIf="fill === 0" class="star star-lg">
+      {{ score ? '&#9733;' : '&#9734;' }}
+    </span>
+  </ng-template>
+</ngb-rating>

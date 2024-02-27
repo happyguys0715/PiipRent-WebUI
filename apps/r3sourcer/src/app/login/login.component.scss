@@ -1,0 +1,17 @@
+:host {
+  @apply flex flex-col flex-grow gap-4 md:gap-0 mb-8;
+
+  .login {
+    &-form {
+      ::ng-deep input {
+        height: 40px;
+
+        border-radius: 100px;
+      }
+
+      form {
+        margin: 0 !important;
+      }
+    }
+  }
+}

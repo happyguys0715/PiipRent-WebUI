@@ -1,0 +1,106 @@
+$font-family-base: 'Source Sans Pro', sans-serif;
+
+// Color variables
+$primary: #28a3fc;
+$success: #32ba5e;
+$danger: #fa5c46;
+$info: #28a3fc;
+$gray: #2f363d;
+$white: #fdfdfd;
+$warning: #f58926;
+$indigo: #3f51b5;
+$teal: #009688;
+$brown: #795548;
+$secondary: #dee2e6;
+
+$grid-gutter-width: 1.5rem;
+$spacer: 5rem;
+$gutters: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
+);
+
+// Theme color
+$themes: ('default', 'labour', 'indigo', 'teal', 'brown');
+$theme-colors: (
+  'primary': $primary,
+  'success': $success,
+  'danger': $danger,
+  'info': $info,
+  'default': $primary,
+  'warning': $warning,
+  'labour': $warning,
+  'indigo': $indigo,
+  'teal': $teal,
+  'brown': $brown,
+  'secondary': $gray,
+  'light': '#fefefe',
+  'dark': '#333',
+);
+$enable-dark-mode: false;
+
+// Shadow
+$basic-shadow: 0 0 16px 0 rgba($gray, 0.2);
+
+//Hamburger
+$hamburger-padding-x: 0.4rem;
+$hamburger-padding-y: 0.8rem;
+$hamburger-layer-width: 25px;
+$hamburger-layer-height: 3px;
+$hamburger-layer-spacing: 5px;
+$hamburger-layer-color: #000000;
+
+$container-box-shadow: $basic-shadow;
+
+// Link
+$link-color: inherit;
+$link-hover-color: $primary;
+$link-hover-decoration: none;
+
+// Buttons
+$btn-font-size: 14px;
+$btn-line-height: 18px;
+
+// Forms
+$input-border-color: rgba($gray, 0.2);
+$form-check-input-gutter: 0;
+$input-font-size: 14px;
+$input-line-height: 16px;
+$input-border-radius: 0;
+$input-focus-box-shadow: none;
+$form-select-focus-box-shadow: none;
+
+// Popover
+$zindex-popover: 1;
+$popover-body-padding-y: 0.25rem;
+$popover-body-padding-x: 0.25rem;
+
+// Lists
+$list-group-border-radius: 0;
+
+$headline-color: #4f4f4f;
+$outline-color: rgba($gray, 0.1);
+
+// Button
+$btn-disabled-opacity: 0.5;
+
+// Table
+
+$table-border-width: 0;
+
+// Redesign
+
+$brand-color: #51a1f5;
+$brand-light-color: #eef6ff;
+$brand-dark-color: #0762c0;
+$border-color: #d3deea;
+$secondary-color: #7a7a7a;
+$content-color: #2f363d;
+$brand-danger: #df4242;
+$brand-shadow: 0px 4px 23px rgba(211, 222, 234, 0.25);
+
+$modal-sm: 400px;

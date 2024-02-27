@@ -1,0 +1,7 @@
+@use 'styles/variables' as *;
+
+:host {
+  font-size: 14px;
+  background-color: #fff;
+  color: rgba($gray, 0.8);
+}

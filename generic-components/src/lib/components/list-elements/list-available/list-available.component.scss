@@ -1,0 +1,42 @@
+@use 'styles/variables' as *;
+
+.shift {
+  display: flex;
+  flex-wrap: wrap;
+
+  &-wrapper {
+    height: 21px;
+  }
+
+  &-datetime {
+    min-width: 130px;
+  }
+}
+
+.success {
+  color: $success;
+
+  .shift-datetime {
+    color: $success;
+  }
+}
+
+.success-blur {
+  color: rgba($success, 0.5);
+
+  .shift-datetime {
+    color: $success;
+  }
+}
+
+.danger {
+  color: $danger;
+
+  .shift-datetime {
+    color: $danger;
+  }
+}
+
+.description .shift-datetime {
+  opacity: 0.5;
+}

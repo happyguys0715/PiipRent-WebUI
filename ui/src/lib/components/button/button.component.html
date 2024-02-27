@@ -1,0 +1,9 @@
+<button
+  [class.shadow]="shadow"
+  [ngClass]="classes"
+  [type]="type"
+  [disabled]="disabled || processing">
+  <ng-content></ng-content>
+
+  <webui-spinner *ngIf="processing"></webui-spinner>
+</button>

@@ -1,0 +1,790 @@
+<div class="widget">
+  <div class="widget-header calendar-header">
+    <h3 class="widget-name">
+      {{ 'calendar' | translate : { Default: 'Calendar' } }}
+    </h3>
+
+    <div
+      *ngIf="calendarType !== 2"
+      class="btn-group range-buttons"
+      btnRadioGroup
+      [formControl]="currentRange">
+      <label [btnRadio]="range.Month" role="button">
+        {{ 'month' | translate : { Default: 'Month' } }}
+      </label>
+      <label [btnRadio]="range.Week" role="button">
+        {{ 'week' | translate : { Default: 'Week' } }}
+      </label>
+      <label [btnRadio]="range.Day" role="button">
+        {{ 'day' | translate : { Default: 'Day' } }}
+      </label>
+    </div>
+
+    <div class="range-title-wrapper">
+      <button type="button" class="prev" (click)="changeRange(false)">
+        <webui-fa-icon [icon]="['fas', 'chevron-left']"></webui-fa-icon>
+      </button>
+
+      <button type="button" class="next" (click)="changeRange(true)">
+        <webui-fa-icon [icon]="['fas', 'chevron-right']"></webui-fa-icon>
+      </button>
+
+      <webui-overlay-dropdown #dropdown placement="end">
+        <div class="relative flex items-center" target>
+          <span class="range-title" (click)="dropdown.openDropdown()">
+            {{ rangeTitle }}
+          </span>
+
+          <webui-fa-icon
+            class="px-2 calendar-icon"
+            icon="chevron-down"
+            (click)="dropdown.openDropdown()"></webui-fa-icon>
+        </div>
+
+        <webui-datepicker
+          content
+          *ngIf="dropdown.isOpen"
+          [date]="currentDate"
+          [type]="rangeForDropdown"
+          (update)="setDate($event); dropdown.closeDropdown()"
+          [range]="customRange"></webui-datepicker>
+      </webui-overlay-dropdown>
+    </div>
+  </div>
+
+  <div class="widget-body">
+    <div class="filters filters-inline">
+      <webui-filter-related
+        *ngIf="calendarType === 0"
+        (event)="changeQuery($event)"
+        [config]="filters.client">
+      </webui-filter-related>
+      <webui-filter-related
+        *ngIf="calendarType === 0"
+        (event)="changeQuery($event)"
+        [config]="filters.candidate">
+      </webui-filter-related>
+
+      <div class="filter-element">
+        <webui-filter-header
+          label="Info layers"
+          key="info_layers"></webui-filter-header>
+
+        <div class="filter-related">
+          <div
+            class="flex justify-center items-center autocomplete-filter"
+            style="position: relative">
+            <webui-overlay-dropdown
+              #filterDropdown
+              size="full"
+              (opened)="(status.hideAutocomplete === false)"
+              (closed)="(status.hideAutocomplete === true)">
+              <div
+                target
+                class="form-control autocomplete-value"
+                (click)="filterDropdown.openDropdown()">
+                <div style="overflow: hidden; white-space: nowrap">
+                  {{ status.displayValue(status.data) }}
+                  {{ 'layers' | translate : { Default: 'layers' } }}
+                </div>
+                <webui-fa-icon
+                  [icon]="
+                    status.hideAutocomplete ? 'chevron-down' : 'chevron-up'
+                  "
+                  class="text-md-white ml-2"></webui-fa-icon>
+              </div>
+
+              <div content>
+                <div class="autocomplete-dropdown-list">
+                  <ul>
+                    <li
+                      class="autocomplete-dropdown-item"
+                      *ngFor="let item of statusFilterData">
+                      <ng-container
+                        *ngTemplateOutlet="
+                          statusItem;
+                          context: {
+                            type: item.type,
+                            label: item.label,
+                            className: item.color
+                          }
+                        ">
+                      </ng-container>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </webui-overlay-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calendar noselect">
+      <div
+        class="loader"
+        [class.backdrop]="calendarData"
+        *ngIf="loading$ | async">
+        <webui-loader></webui-loader>
+      </div>
+      <ng-container *ngIf="isMonthRange && calendarData">
+        <ng-container *ngTemplateOutlet="monthCalendar"></ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="isWeekRange && calendarData">
+        <ng-container *ngTemplateOutlet="weekCalendar"></ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="isDayRange && calendarData">
+        <ng-container *ngTemplateOutlet="dayCalendar"></ng-container>
+      </ng-container>
+
+      <footer class="calendar-footer">
+        <div class="counters">
+          <ng-container *ngFor="let layer of timesheetCounter; let last = last">
+            <div
+              class="counter"
+              [class.last]="last"
+              *ngIf="layer.count || status.data[layer.type]">
+              <span
+                class="count"
+                [title]="layer.text + '/' + currentRange.value">
+                <webui-fa-icon
+                  [icon]="['fas', calendarType === 2 ? 'file' : 'circle']"
+                  [ngClass]="layer.cssClass"
+                  [ngStyle]="{
+                    fontSize: calendarType === 2 ? '16px' : '8px'
+                  }"></webui-fa-icon>
+                {{ layer.count }}
+              </span>
+              <br />
+              <span class="count-description">
+                {{ layer.text.replace(' ', '_') | lowercase | translate }} /
+                {{ currentRange.value | translate }}
+              </span>
+            </div>
+          </ng-container>
+        </div>
+
+        <ng-container *ngIf="canCreateJob">
+          <span
+            class="f-size-12 hov-opacity ml-auto"
+            (click)="clearSelectedDates()">
+            {{
+              'reset_dates' | translate : { Default: 'Reset selected dates' }
+            }}
+          </span>
+
+          <button
+            webuiSubscriptionRequired
+            type="button"
+            class="btn btn-primary job-btn ml-3"
+            (click)="addJob()">
+            {{ 'create_job' | translate : { Default: 'Create Job' } }}
+          </button>
+        </ng-container>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<ng-template
+  #statusItem
+  let-type="type"
+  let-display="label"
+  let-className="className">
+  <label class="flex items-center mb-0 gap-2">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      [(ngModel)]="status.data[type]"
+      (ngModelChange)="updateLayers()"
+      hidden />
+    <webui-checkbox
+      [sm]="true"
+      [checked]="status.data[type]"
+      [className]="className"></webui-checkbox>
+    {{ display | lowercase | translate }}
+  </label>
+</ng-template>
+
+<ng-template #monthCalendar>
+  <div class="grid-row">
+    <span
+      class="grid-item header-item"
+      *ngFor="let day of calendarData?.header">
+      {{ day }}
+    </span>
+  </div>
+  <div class="grid-row" *ngFor="let week of calendarData?.body">
+    <ng-container *ngFor="let day of week; let i = index">
+      <span
+        class="grid-item month-day"
+        [class.not-active-date]="!day.currentMonth"
+        [class.date-selected]="isSelected(day.date)"
+        *ngIf="!day.tooltip && calendarType !== 2"
+        webuiSelectDate
+        [class.holiday]="day.holiday"
+        [attr.title]="day.holiday"
+        [disable]="!(isManager() || canClientCreateJob())"
+        [date]="day.date">
+        <span class="date" [class.current-date]="day.today">
+          {{ day.label }}
+        </span>
+      </span>
+
+      <span
+        class="grid-item month-day"
+        [class.holiday]="day.holiday"
+        [class.available]="day.available === true"
+        [class.unavailable]="day.available === false"
+        [class.not-active-date]="!day.currentMonth"
+        [webuiTooltip]="availabilityTooltip"
+        #tooltip="[webuiTooltip]"
+        trigger="click"
+        [attr.title]="day.holiday"
+        (shown)="onTooltipShown($event)"
+        (hidden)="onHideTooltip()"
+        [placement]="getPlacement(i, week.length)"
+        *ngIf="!day.tooltip && calendarType === 2">
+        <span class="date" [class.current-date]="day.today">
+          {{ day.label }}
+        </span>
+
+        <ng-template #availabilityTooltip>
+          <div class="shift-tooltip">
+            <!-- <h5 class="text-center mb-4">
+              {{
+                day.availableId
+                  ? ('update' | translate : { Default: 'Update' })
+                  : ('confirm' | translate : { Default: 'Confirm' })
+              }}
+            </h5> -->
+            <div class="flex items-center justify-between">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-3"
+                (click)="setAvailability($event, day, true); tooltip.close()">
+                {{ 'available.label' | translate : { Default: 'Available' } }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                (click)="setAvailability($event, day, false); tooltip.close()">
+                {{
+                  'unavailable.label' | translate : { Default: 'Unavailable' }
+                }}
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </span>
+
+      <span
+        class="grid-item month-day"
+        [class.holiday]="day.holiday"
+        [class.date-selected]="isSelected(day.date)"
+        [class.not-active-date]="!day.currentMonth"
+        webuiSelectDate
+        [date]="day.date"
+        [disable]="!(isManager() || canClientCreateJob())"
+        *ngIf="day.tooltip"
+        [class.active]="day.isOpen"
+        trigger="click"
+        [attr.title]="day.holiday"
+        hasCloseButton
+        [webuiTooltip]="monthTooltip"
+        [placement]="getPlacement(i, week.length)"
+        (shown)="getShiftData(day); onTooltipShown($event)"
+        (hidden)="day.isOpen = false; onHideTooltip()">
+        <span class="date" [class.current-date]="day.today">
+          {{ day.label }}
+        </span>
+
+        <div class="shift-groups">
+          <div *ngIf="day.tooltip.count[1]" class="badge badge-success">
+            {{ day.tooltip.count[1] }}
+          </div>
+          <div *ngIf="day.tooltip[0].length" class="badge badge-danger">
+            {{ getUnfulfilledCount(day.tooltip[0]) }}
+          </div>
+          <div *ngIf="day.tooltip.count[2]" class="badge badge-warning">
+            {{ day.tooltip.count[2] }}
+          </div>
+          <div *ngIf="day.tooltip[3].length">
+            <webui-fa-icon
+              [icon]="['fas', 'file']"
+              class="text-primary"></webui-fa-icon>
+          </div>
+          <div *ngIf="day.tooltip[4].length">
+            <webui-fa-icon
+              [icon]="['fas', 'file']"
+              class="text-warning"></webui-fa-icon>
+          </div>
+          <div *ngIf="day.tooltip[5].length">
+            <webui-fa-icon
+              [icon]="['fas', 'file']"
+              class="text-success"></webui-fa-icon>
+          </div>
+
+          <webui-fa-icon
+            [icon]="['fas', 'envelope']"
+            class="text-secondary"
+            *ngIf="day.jobOffers && day.jobOffers.length"></webui-fa-icon>
+        </div>
+
+        <ng-template #monthTooltip>
+          <webui-loader *ngIf="day.loading"></webui-loader>
+
+          <div
+            *ngIf="!day.loading"
+            class="shift-tooltip flex flex-col gap-4 empty:hidden">
+            <ng-container
+              *ngTemplateOutlet="
+                shiftGroup;
+                context: {
+                  shifts: day.tooltip[1],
+                  className: 'success',
+                  name: 'fulfilled',
+                  status: 'accepted',
+                  month: true
+                }
+              ">
+            </ng-container>
+            <ng-container
+              *ngTemplateOutlet="
+                shiftGroup;
+                context: {
+                  shifts: day.tooltip[0],
+                  className: 'danger',
+                  name: 'unfulfilled',
+                  status: 'cancelled',
+                  month: true
+                }
+              ">
+            </ng-container>
+            <ng-container
+              *ngTemplateOutlet="
+                shiftGroup;
+                context: {
+                  shifts: day.tooltip[2],
+                  className: 'warning',
+                  name: 'pending',
+                  status: 'undefined',
+                  month: true
+                }
+              ">
+            </ng-container>
+            <ng-container
+              *ngTemplateOutlet="
+                shiftGroup;
+                context: {
+                  shifts: day.tooltip[3],
+                  className: 'primary',
+                  name: 'open',
+                  month: true
+                }
+              ">
+            </ng-container>
+            <ng-container
+              *ngTemplateOutlet="
+                shiftGroup;
+                context: {
+                  shifts: day.tooltip[4],
+                  className: 'warning',
+                  name: 'filled',
+                  month: true
+                }
+              ">
+            </ng-container>
+            <ng-container
+              *ngTemplateOutlet="
+                shiftGroup;
+                context: {
+                  shifts: day.tooltip[5],
+                  className: 'success',
+                  name: 'approved',
+                  month: true
+                }
+              ">
+            </ng-container>
+          </div>
+
+          <div
+            class="shift-tooltip"
+            *ngIf="day.jobOffers && day.jobOffers.length">
+            <ng-container *ngFor="let jobOffer of day.jobOffers">
+              <div class="flex flex-col items-start gap-2">
+                <span class="p-1 rounded bg-gray-300 text-white">
+                  {{ 'start' | translate : { Default: 'Start' } }} -
+                  {{ jobOffer.time }}
+                </span>
+
+                <ng-container
+                  *ngTemplateOutlet="
+                    shiftItem;
+                    context: { shift: jobOffer }
+                  "></ng-container>
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    class="btn app-button app-button__size-m app-button__success"
+                    (click)="acceptJobOffer(jobOffer.jobOffer.id)">
+                    <webui-fa-icon icon="check-circle"></webui-fa-icon>
+                    <span>
+                      {{ 'accept' | translate : { Default: 'Accept' } }}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn app-button app-button__size-m app-button__danger"
+                    (click)="declineJobOffer(jobOffer.jobOffer.id)">
+                    <webui-fa-icon icon="times-circle"></webui-fa-icon>
+                    <span>
+                      {{ 'decline' | translate : { Default: 'Decline' } }}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </ng-template>
+      </span>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #weekCalendar>
+  <div class="grid-row">
+    <div class="times"></div>
+    <span
+      class="grid-item header-item"
+      *ngFor="let day of calendarData?.header">
+      {{ day }}
+    </span>
+  </div>
+  <div class="grid-row grid-body">
+    <div
+      [ngClass]="['calendar-line', line.class]"
+      [style.top.px]="line.top"
+      *ngFor="let line of calendarData?.body.lines"></div>
+    <div class="times">
+      <ng-container *ngTemplateOutlet="times"></ng-container>
+    </div>
+    <span
+      class="grid-item week-item"
+      webuiSelectDate
+      [class.date-selected]="isSelected(day.date)"
+      [date]="day.date"
+      [disable]="!(isManager() || canClientCreateJob())"
+      *ngFor="let day of calendarData?.body">
+      <ng-container *ngFor="let shift of day.data; let index = index">
+        <div
+          class="shift-item"
+          [class.active]="activeShift === shift.shift.id"
+          webuiCalendarTooltip
+          [active]="activeShift === shift.shift.id"
+          [ngStyle]="shift.timesheet"
+          [style.margin-left.px]="index * 8"
+          (showed)="getShiftDataWeekCalendar(shift)"
+          (click)="selectJob($event, shift)">
+          <div [ngClass]="['border', getColor(shift.is_fulfilled)]"></div>
+
+          <div class="content" *ngIf="shift.loading">
+            <webui-loader></webui-loader>
+          </div>
+
+          <div *ngIf="!shift.loading" class="content">
+            <div class="flex justify-between mr-2">
+              <span [ngClass]="['badge', getColor(shift.is_fulfilled)]">
+                {{ 'start' | translate : { Default: 'Start' } }} -
+                {{ shift.time }}
+              </span>
+            </div>
+
+            <div class="flex mr-2">
+              <ng-container
+                *ngTemplateOutlet="
+                  shiftItem;
+                  context: {
+                    shift: shift,
+                    status: getStatus(shift.is_fulfilled)
+                  }
+                ">
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </span>
+  </div>
+</ng-template>
+
+<ng-template #times>
+  <span
+    class="times-item"
+    [class.time-selected]="
+      isSelectedTime(time.time) && isSelected(calendarData?.date)
+    "
+    [style.top.px]="time.top"
+    [style.bottom.px]="time.bottom"
+    *ngFor="let time of calendarTimes"
+    (click)="selectTime(time.time)">
+    {{ time.time }}
+  </span>
+</ng-template>
+
+<ng-template #dayCalendar>
+  <div class="grid-row">
+    <div class="times"></div>
+    <span
+      class="grid-item header-item"
+      *ngFor="let day of calendarData?.header">
+      {{ day }}
+    </span>
+  </div>
+  <div class="grid-row grid-body">
+    <div
+      [ngClass]="['calendar-line', line.class]"
+      [style.top.px]="line.top"
+      *ngFor="let line of calendarData?.body.lines"></div>
+    <div class="times">
+      <ng-container *ngTemplateOutlet="times"></ng-container>
+    </div>
+    <span
+      class="grid-item day-item"
+      webuiSelectDate
+      [class.date-selected]="isSelected(calendarData?.date)"
+      [date]="calendarData?.date"
+      [disable]="!(isManager() || canClientCreateJob())">
+      <ng-container
+        *ngFor="let shift of calendarData?.body.data; let index = index">
+        <div
+          class="shift-item preview"
+          [class.active]="activeShift === shift.shift.id"
+          [active]="activeShift === shift.shift.id"
+          webuiCalendarTooltip
+          [ngStyle]="shift.timesheet"
+          [style.margin-left.px]="index * 120 + index * 8"
+          (showed)="getShiftDataWeekCalendar(shift)"
+          (click)="selectJob($event, shift)">
+          <div [ngClass]="['border', getColor(shift.is_fulfilled)]"></div>
+
+          <div class="content" *ngIf="shift.loading">
+            <webui-loader></webui-loader>
+          </div>
+
+          <div class="content" *ngIf="!shift.loading">
+            <div class="flex justify-between mr-2">
+              <span [ngClass]="['badge', getColor(shift.is_fulfilled)]">
+                {{ 'start' | translate : { Default: 'Start' } }} -
+                {{ shift.time }}
+              </span>
+            </div>
+
+            <div class="flex mr-2">
+              <ng-container
+                *ngTemplateOutlet="
+                  shiftItem;
+                  context: {
+                    shift: shift,
+                    status: getStatus(shift.is_fulfilled)
+                  }
+                ">
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="white-shadow"></div>
+        </div>
+      </ng-container>
+      <div
+        class="grid-item"
+        style="min-width: 130px"
+        [style.margin-left.px]="
+          calendarData?.body.data.length * 120 +
+          calendarData?.body.data.length * 8
+        "></div>
+    </span>
+  </div>
+</ng-template>
+
+<ng-template
+  #shiftGroup
+  let-shifts="shifts"
+  let-className="className"
+  let-name="name"
+  let-status="status">
+  <div *ngIf="shifts.length">
+    <p *ngIf="status" class="shift-tooltip-title">
+      <span class="mr-1" [ngClass]="'badge badge-' + className">
+        {{
+          status === 'cancelled' ? shifts.length : getShiftCount(shifts, status)
+        }}
+      </span>
+      {{ name | translate }}
+    </p>
+
+    <div
+      class="flex gap-2 mb-4"
+      [class.flex-col]="!status"
+      [class.items-start]="!status"
+      [class.mb-4]="!last"
+      *ngFor="let shift of shifts; let last = last">
+      <webui-fa-icon
+        *ngIf="status"
+        class="text-[6px]"
+        icon="circle"
+        [ngClass]="'text-' + className"></webui-fa-icon>
+
+      <span
+        class="p-1 rounded text-white"
+        [ngClass]="[getColor(shift.timesheetStatus)]"
+        *ngIf="!status">
+        {{ 'start' | translate : { Default: 'Start' } }} - {{ shift.time }}
+      </span>
+
+      <ng-container
+        *ngTemplateOutlet="
+          shiftItem;
+          context: { shift: shift, status: status }
+        "></ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #shiftItem let-shift="shift" let-status="status">
+  <div>
+    <a
+      *ngIf="shift.position"
+      [routerLink]="shift.job_link && shift.job_link(role)">
+      {{ shift.position | apiTranslate | async }}
+    </a>
+    <br />
+    <a
+      [routerLink]="shift.job_link && shift.jobsite_link(role)"
+      class="shift-jobsite">
+      {{ shift.jobsite }}
+    </a>
+    <br />
+    <span *ngIf="shift.shift">
+      {{ 'workers.label' | translate : { Default: 'Workers' } }}:
+      {{
+        status === 'cancelled'
+          ? getUnfulfilledCount([shift])
+          : getShiftCandidateCount(shift.candidates[status], shift.shift.id)
+      }}
+    </span>
+    <div
+      *ngIf="
+        status &&
+        (shift.candidates[status].length ||
+          shift.candidates[getStatus(1)].length)
+      "
+      class="shift-candidates">
+      <span
+        class="mr-1"
+        *ngIf="
+          !(
+            status === 'cancelled' &&
+            getShiftCandidateCount(
+              shift.candidates['cancelled'],
+              shift.shift.id
+            ) === 0
+          )
+        ">
+        {{ 'candidate' | translate : { Default: 'Candidate' } }}&nbsp;({{
+          getShiftCandidateCount(shift.candidates[status], shift.shift.id)
+        }}):
+      </span>
+      <div>
+        <div *ngFor="let candidate of shift.candidates[status]">
+          <ng-container *ngIf="candidate.shift_id === shift.shift.id">
+            <webui-fa-icon
+              *ngIf="getStatus(0) === status"
+              [icon]="['fas', 'times']"
+              class="candidate-icon text-danger">
+            </webui-fa-icon>
+            <webui-fa-icon
+              *ngIf="getStatus(1) === status"
+              [icon]="['fas', 'check']"
+              class="candidate-icon text-success">
+            </webui-fa-icon>
+            <webui-fa-icon
+              *ngIf="getStatus(2) === status"
+              [icon]="['fas', 'minus-circle']"
+              class="candidate-icon text-warning">
+            </webui-fa-icon>
+            <a
+              class="ml-1"
+              *ngIf="isManager()"
+              [routerLink]="getCandidateLink(candidate.id)">
+              {{ candidate.name }}
+            </a>
+            <span class="ml-1" *ngIf="!isManager()">{{ candidate.name }}</span>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="hasActions" class="shift-action-wrapper">
+    <button
+      webuiSubscriptionRequired
+      class="shift-action"
+      type="button"
+      (click)="extendJob(shift)">
+      {{ 'extend' | translate : { Default: 'Extend' } }}
+    </button>
+    <button
+      webuiSubscriptionRequired
+      class="shift-action"
+      *ngIf="fillinAccess(shift)"
+      type="button"
+      (click)="fillInJob(shift)">
+      {{ 'fill_in.label' | translate : { Default: 'Fill in' } }}
+    </button>
+    <button
+      webuiSubscriptionRequired
+      class="shift-action"
+      [class.bg-success]="activeShift === shift.shift.id"
+      *ngIf="fillinAccess(shift) && isManager()"
+      type="button"
+      (click)="selectJob($event, shift)">
+      {{ 'fill' | translate : { Default: 'Fill' } }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modalInfo.label }}</h5>
+
+        <webui-close-button class="ml-auto"></webui-close-button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <webui-generic-form
+        [endpoint]="modalInfo.endpoint"
+        [data]="modalInfo.data"
+        [mode]="modalInfo.mode"
+        [edit]="modalInfo.edit"
+        (event)="formEvent($event)"
+        (errorForm)="formError()">
+        <div class="text-center">
+          <button
+            webuiSubscriptionRequired
+            type="submit"
+            class="btn btn-primary btn-shadow px-4 py-2"
+            [disabled]="saveProcess || extendFormInvalid || jobChecking">
+            <span>{{ 'save' | translate }}</span>
+            <webui-spinner *ngIf="saveProcess"></webui-spinner>
+          </button>
+        </div>
+      </webui-generic-form>
+    </div>
+  </div>
+</ng-template>

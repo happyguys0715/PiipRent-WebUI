@@ -1,0 +1,53 @@
+<div class="filter-element datepicker-element">
+  <webui-filter-header
+    [label]="config.label"
+    [key]="config.key"
+    [resetButton]="hasQuery$ | async"
+    (resetEvent)="resetFilter()"></webui-filter-header>
+  <div [formGroup]="form" class="filter-date-wrapper">
+    <ul class="list-inline dates my-1">
+      <li class="dates-item" *ngFor="let item of config.list">
+        <a href="#" (click)="selectQuery(item, $event)">
+          {{ getTranslateKey(item.key) | translate : { Default: item.label } }}
+        </a>
+      </li>
+    </ul>
+
+    <ng-container *ngFor="let item of controls">
+      <webui-overlay-dropdown #dropdown>
+        <div class="input-group datepicker" target>
+          <input
+            type="text"
+            class="form-control"
+            [readOnly]
+            [formControlName]="item.key"
+            (click)="dropdown.openDropdown()" />
+
+          <div class="placeholder">
+            {{ item.key | translate }}
+          </div>
+
+          <webui-close-button
+            *ngIf="form.controls[item.key].value"
+            [sm]="true"
+            class="close-button"
+            [inDialog]="false"
+            (click)="clearInput(item.key)"></webui-close-button>
+
+          <button type="button" class="icon" (click)="dropdown.openDropdown()">
+            <webui-svg-icon icon="calendar" size="sm"></webui-svg-icon>
+          </button>
+        </div>
+
+        <div content>
+          <webui-datepicker
+            [date]="item.date"
+            [type]="type"
+            (update)="
+              setDate(item, $event); dropdown.closeDropdown()
+            "></webui-datepicker>
+        </div>
+      </webui-overlay-dropdown>
+    </ng-container>
+  </div>
+</div>

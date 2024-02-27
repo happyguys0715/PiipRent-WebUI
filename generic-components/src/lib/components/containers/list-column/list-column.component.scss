@@ -1,0 +1,12 @@
+:host {
+  // @apply flex flex-col gap-2 empty:hidden;
+  @apply flex flex-wrap gap-2 empty:hidden;
+
+  &.empty {
+    @apply hidden;
+  }
+
+  &.padding {
+    @apply p-2;
+  }
+}

@@ -1,0 +1,130 @@
+<div #filterBlock class="filter-wrapper" [class.open]="hasFilters$ | async">
+  <webui-filter-block
+    [key]="config.list"
+    [config]="filtersOfList"
+    (event)="filterHandler($event)"></webui-filter-block>
+</div>
+
+<div class="map" *ngIf="markers">
+  <google-map
+    [options]="options"
+    [center]="currentPosition.position"
+    (mapInitialized)="onMapInitialized($event)"
+    width="100%"
+    height="100%">
+    <map-marker
+      [position]="item.position"
+      [icon]="icons[item.type].path"
+      *ngFor="let item of markers"
+      #marker="mapMarker"
+      (mapClick)="openInfo(item, marker)"></map-marker>
+
+    <map-info-window>
+      <strong>{{ currentMarker?.name || '' | translate }}</strong>
+      <br />
+      <p *ngIf="currentMarker?.contact">{{ currentMarker?.__str__ }}</p>
+      <p *ngIf="currentMarker?.contact">
+        {{ currentMarker?.contact?.name }}
+        {{ currentMarker?.contact?.phone_mobile }}
+      </p>
+    </map-info-window>
+  </google-map>
+  <div id="menu" #mapTypeBtnGrp>
+    <div class="dropdown">
+      <button
+        id="mapButton"
+        class="dropbtn"
+        (click)="onMapType($event)"
+        [ngClass]="{ bold: isMapBold == true }">
+        Map
+      </button>
+      <div class="dropdown-content" id="mapDropdown" *ngIf="isMapBtnDrop">
+        <label for="terrainChk">
+          <input
+            type="checkbox"
+            id="terrainChk"
+            [checked]="mapTypeForMapBtn == 'terrain'"
+            data-map-type="terrain"
+            (click)="onMapTypeOption($event)"
+            hidden />
+          <webui-checkbox
+            [sm]="true"
+            [checked]="mapTypeForMapBtn == 'terrain'"
+            class="map-option-check">
+          </webui-checkbox>
+          Terrain
+        </label>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button
+        id="satelliteButton"
+        class="dropbtn"
+        (click)="onMapType($event)"
+        [ngClass]="{ bold: isMapBold == false }">
+        Satellite
+      </button>
+      <div
+        class="dropdown-content"
+        id="satelliteDropdown"
+        *ngIf="isSatBtnDrop"
+        style="right: 0">
+        <label for="hybridChk">
+          <input
+            type="checkbox"
+            id="hybridChk"
+            [checked]="mapTypeForSatBtn == 'hybrid'"
+            data-map-type="hybrid"
+            (click)="onMapTypeOption($event)"
+            hidden />
+          <webui-checkbox
+            [sm]="true"
+            [checked]="mapTypeForSatBtn == 'hybrid'"
+            class="map-option-check">
+          </webui-checkbox>
+          Labels
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button
+  *ngIf="markers"
+  type="button"
+  class="btn filter-button"
+  [ngStyle]="{
+    backgroundColor: openFilter ? '#28a3fc' : '#fdfdfd',
+    color: openFilter ? '#fdfdfd' : 'rgba(0, 0, 0, 0.5)'
+  }"
+  type="button"
+  class="btn filter-button"
+  (click)="onToggle()">
+  <webui-svg-icon icon="filter"></webui-svg-icon>
+</button>
+
+<button
+  *ngIf="!(loading$ | async)"
+  type="button"
+  [ngStyle]="{
+    backgroundColor: showLegend ? '#28a3fc' : '#fdfdfd',
+    color: showLegend ? '#fdfdfd' : 'rgba(0, 0, 0, 0.5)'
+  }"
+  class="btn legend-button"
+  (click)="onLegendToggle()">
+  <webui-svg-icon icon="map-symbol"></webui-svg-icon>
+</button>
+
+<div *ngIf="markers && showLegend" class="legend">
+  <ng-container *ngFor="let type of types">
+    <div *ngIf="icons[type].exist" class="item">
+      <img [src]="icons[type].path" />
+      {{ icons[type].translateKey | translate }}
+    </div>
+  </ng-container>
+</div>
+
+<div class="map-preloader" *ngIf="loading$ | async">
+  <webui-loader></webui-loader>
+</div>

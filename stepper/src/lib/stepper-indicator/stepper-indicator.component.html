@@ -1,0 +1,12 @@
+<ng-container *ngIf="steps$ | async as steps">
+  <div
+    *ngIf="steps.length > 1"
+    class="wrapper"
+    [ngStyle]="{ 'maxWidth.px': steps.length * 48 }">
+    <span class="step" [class.active]="step.active" *ngFor="let step of steps">
+      {{ step.label }}
+    </span>
+
+    <div class="line" [ngStyle]="linearGradient"></div>
+  </div>
+</ng-container>

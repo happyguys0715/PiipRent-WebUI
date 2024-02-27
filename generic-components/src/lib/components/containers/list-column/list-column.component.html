@@ -1,0 +1,9 @@
+<ng-container
+  *ngFor="let field of config; let last = last"
+  webuiListElement
+  [last]="last"
+  [config]="field"
+  [length]="config.length"
+  (event)="eventHandler($event)"
+  (buttonAction)="buttonHandler($event)">
+</ng-container>

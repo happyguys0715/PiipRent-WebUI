@@ -1,0 +1,51 @@
+.load-more {
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+  border: none;
+
+  opacity: 0.8;
+
+  background-color: $success;
+  box-shadow: 3px 3px 7px rgba(51, 51, 51, 0.2);
+
+  &-wrapper {
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:focus,
+  &:active {
+    outline: none;
+  }
+
+  fa-icon {
+    position: relative;
+    top: 0px;
+
+    animation-name: loadmore;
+    animation-duration: 1.3s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+}
+
+@keyframes loadmore {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    top: 2.5px;
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

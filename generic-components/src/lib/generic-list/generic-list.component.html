@@ -1,0 +1,60 @@
+<div class="datatable-wrapper">
+  <webui-dynamic-list
+    *ngIf="isTableReady; else loader"
+    [inForm]="inForm"
+    [config]="tables[0].metadata"
+    [data]="tables[0].data"
+    [loading]="isLoading"
+    [first]="tables[0].first"
+    [id]="tables[0].id"
+    [active]="tables[0].active"
+    [limit]="tables[0].limit"
+    [offset]="tables[0].offset"
+    [sorted]="tables[0].sorted"
+    [innerTables]="tables[0].innerTables"
+    [minimized]="tables[0].minimized"
+    [maximize]="tables[0].maximize"
+    [endpoint]="tables[0].endpoint"
+    [parentEndpoint]="tables[0].parentEndpoint"
+    [actionData]="tables[0].actionData"
+    [supportData]="supportData"
+    [responseField]="responseField"
+    [paginated]="paginated"
+    [actions]="actions"
+    [delay]="delay"
+    [allowPermissions]="allowPermissions"
+    [metadataQuery]="metadataQuery"
+    [addMetadataQuery]="addMetadataQuery"
+    [editEndpoint]="editEndpoint"
+    [addData]="tables[0].addData"
+    [disableActions]="disableActions"
+    [inlineFilters]="inlineFilters"
+    [actionProcess]="tables[0].actionProcess"
+    [uploadAll]="tables[0].uploadAll"
+    [hasButtonInAction]="hasButtonInAction"
+    (checkedObjects)="checkedHandler($event)"
+    (list)="listHandler($event)"
+    (event)="eventHandler($event)">
+    <ng-content></ng-content>
+
+    <div class="list-actions">
+      <div class="load-more-wrapper">
+        <button
+          class="load-more"
+          *ngIf="hasLoadMoreButton"
+          (click)="loadMoreHandler()">
+          <webui-fa-icon icon="chevron-down" class="text-white"></webui-fa-icon>
+        </button>
+      </div>
+
+      <ng-container *ngTemplateOutlet="loader"></ng-container>
+    </div>
+  </webui-dynamic-list>
+</div>
+
+<ng-template #loader>
+  <div class="flex justify-center">
+    <webui-loader
+      *ngIf="!tables[0].data || isLoading || isLoadingMoreItems"></webui-loader>
+  </div>
+</ng-template>

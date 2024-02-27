@@ -1,0 +1,43 @@
+@use 'styles/variables' as *;
+
+.option {
+  display: inline-flex;
+  align-items: center;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 19px;
+  transition: all 0.2s ease-in-out;
+  font-family: Roboto;
+  width: 100%;
+  color: $secondary-color;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px $brand-color;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+  color: transparent;
+  transition: all 0.2s ease-in-out;
+  border: none;
+}
+
+input {
+  display: none;
+}
+
+input:checked + .checkbox {
+  background-color: $brand-color;
+  color: #fff;
+  box-shadow: 0 0 0 1px transparent;
+}

@@ -1,0 +1,30 @@
+<section>
+  <header class="header">
+    <h6 class="headline-4 title">
+      {{ translationKey | translate : { Default: config.name } }}
+    </h6>
+
+    <button
+      class="btn btn-primary py-2 px-4"
+      type="button"
+      (click)="updateIsCollapsed()">
+      <ng-container *ngIf="isCollapsed">
+        {{ 'expand' | translate : { Default: 'Expand' } }}
+      </ng-container>
+      <ng-container *ngIf="!isCollapsed">
+        {{ 'collapse' | translate : { Default: 'Collapse' } }}
+      </ng-container>
+    </button>
+  </header>
+
+  <ng-container
+    *ngFor="let field of config.children"
+    webuiFormElement
+    [config]="field"
+    [group]="group"
+    [errors]="errors"
+    (event)="eventHandler($event)"
+    (buttonAction)="buttonActionHandler($event)"
+    [message]="message">
+  </ng-container>
+</section>

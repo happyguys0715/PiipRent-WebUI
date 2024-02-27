@@ -1,0 +1,15 @@
+<div class="modal-content-wrapper {{ modalClass }}">
+  <div class="modal-header-wrapper">
+    <div class="modal-header">
+      <ng-container *ngIf="title">{{ title }}</ng-container>
+
+      <ng-content select="header"></ng-content>
+
+      <webui-close-button
+        class="close ml-auto"
+        (click)="dismiss()"></webui-close-button>
+    </div>
+  </div>
+
+  <ng-content></ng-content>
+</div>

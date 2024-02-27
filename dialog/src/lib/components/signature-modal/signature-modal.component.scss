@@ -1,0 +1,29 @@
+.modal-body {
+  display: flex;
+  justify-content: center;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 16px;
+  line-height: 20px;
+  margin: 0;
+}
+
+.clear-button {
+  width: 140px;
+  border-radius: 100px;
+  border: 1px solid #e0e0e0;
+  color: #4f4f4f;
+  background-color: #f9f9f9;
+}
+
+.btn-success {
+  width: 203px;
+}

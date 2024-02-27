@@ -1,0 +1,27 @@
+<div class="menu">
+  <h5 class="menu__title">
+    {{ 'dashboard' | translate : { Default: 'Dashboard' } }}
+  </h5>
+
+  <ul class="menu__list" [formGroup]="form">
+    <li class="menu__list-item" *ngFor="let item of widgets">
+      <label class="form-element-checkbox">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [name]="item.widgetId"
+          hidden
+          [formControlName]="item.widgetId" />
+
+        <webui-checkbox [checked]="getFieldValue(item.widgetId)" [sm]="true">
+        </webui-checkbox>
+
+        {{ item.translateKey | translate : { Default: item.name } }}
+      </label>
+    </li>
+  </ul>
+
+  <div class="menu__mark">
+    <webui-fa-icon icon="chevron-right"></webui-fa-icon>
+  </div>
+</div>

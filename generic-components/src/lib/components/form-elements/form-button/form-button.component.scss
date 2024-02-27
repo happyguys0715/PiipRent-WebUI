@@ -1,0 +1,232 @@
+@use 'styles/variables' as *;
+
+:host {
+  @apply empty:hidden;
+}
+
+.btn {
+  gap: 0.5rem;
+  opacity: 0.7;
+
+  &:hover,
+  &:active,
+  &:focus {
+    opacity: 1;
+  }
+}
+
+button {
+  &.list {
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  &.inverse {
+    border-radius: 0;
+    background-color: #fff;
+
+    &.text-success:hover,
+    &.text-success:active {
+      color: white !important;
+      background-color: $success;
+
+      svg path {
+        fill: white;
+      }
+    }
+
+    &.text-danger:hover,
+    &.text-danger:active {
+      color: white !important;
+      background-color: $danger;
+
+      svg path {
+        fill: white;
+      }
+    }
+  }
+}
+
+.line {
+  display: flex;
+
+  label {
+    min-width: 50px;
+
+    font-weight: normal;
+
+    opacity: 0.5;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+button.btn-link {
+  padding: 0;
+
+  font-size: 14px;
+  line-height: 16px;
+
+  text-decoration: none;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.5;
+  }
+}
+
+.postfix {
+  position: relative;
+  top: -2px;
+
+  opacity: 0.5;
+}
+
+.custom-link {
+  color: $primary;
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.image-wrapper {
+  position: relative;
+
+  width: 100%;
+
+  cursor: pointer;
+
+  white-space: initial;
+
+  &:hover {
+    .backdrop {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .backdrop-danger {
+      display: none;
+    }
+  }
+
+  .backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    height: 100%;
+    width: 100%;
+    border-radius: 0.5rem;
+    text-align: center;
+    padding: 0.5rem;
+    background-color: rgba($primary, 0.7);
+    color: white;
+    z-index: 1;
+
+    &-danger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      background-color: rgba($danger, 0.7);
+      z-index: 1;
+    }
+
+    span {
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+
+      text-align: center;
+    }
+  }
+
+  img {
+    height: 70px;
+    width: 100px;
+    object-fit: cover;
+  }
+
+  .tracking-mobile {
+    display: none;
+
+    button {
+      width: 100%;
+
+      text-align: left;
+    }
+
+    .mobile-image {
+      width: 123px;
+      height: 40px;
+    }
+  }
+}
+
+.success-btn,
+.danger-btn,
+.warning-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 94px;
+  height: 28px;
+
+  margin-bottom: 6px;
+
+  text-align: center;
+  font-size: 14px !important;
+  line-height: 18px;
+
+  color: $gray;
+  box-shadow: 0px 1px 5px rgba(43, 46, 51, 0.2);
+  background-color: #fff;
+}
+
+.success-btn {
+  &:hover,
+  &:active {
+    background-color: rgba($success, 0.2);
+    box-shadow: 0px 1px 5px rgba($success, 0.9);
+  }
+
+  fa-icon {
+    color: $success;
+  }
+}
+
+.danger-btn {
+  &:hover,
+  &:active {
+    background-color: rgba($danger, 0.2);
+    box-shadow: 0px 1px 5px rgba($danger, 0.9);
+  }
+
+  fa-icon {
+    color: $danger;
+  }
+}
+
+.warning-btn {
+  &:hover,
+  &:active {
+    background-color: rgba($warning, 0.2);
+    box-shadow: 0px 1px 5px rgba($warning, 0.9);
+  }
+
+  fa-icon {
+    color: $warning;
+  }
+}
+
+svg {
+  margin-right: 2px;
+}

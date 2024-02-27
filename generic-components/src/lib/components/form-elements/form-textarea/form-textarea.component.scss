@@ -1,0 +1,7 @@
+@use 'styles/variables' as *;
+
+.message-text {
+  padding: 14px 16px;
+
+  background-color: rgba($gray, 0.06);
+}

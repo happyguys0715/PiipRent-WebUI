@@ -1,0 +1,27 @@
+<label class="control" cdk-overlay-origin (click)="openDropdown()">
+  <span class="control__input-wrapper">
+    <span class="control__input">
+      <span [ngClass]="getIconClass(control.value)"></span>
+    </span>
+    <webui-icon
+      class="control__input-icon text-primary"
+      [class.rotate]="isOpen"
+      [icon]="Icon.ArrowDown"
+      [size]="IconSize.Medium"></webui-icon>
+  </span>
+</label>
+
+<ng-template #content let-payload="payload">
+  <div class="content">
+    <cdk-virtual-scroll-viewport class="dropdown" #scroller itemSize="54">
+      <ul class="list">
+        <li
+          class="element"
+          *ngFor="let lang of languages"
+          (click)="setLanguage(lang)">
+          <span [ngClass]="getIconClass(lang)"></span>
+        </li>
+      </ul>
+    </cdk-virtual-scroll-viewport>
+  </div>
+</ng-template>

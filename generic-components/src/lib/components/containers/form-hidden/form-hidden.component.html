@@ -1,0 +1,13 @@
+<div class="row" [hidden]="config.hide" style="display: block">
+  <div class="col-12 col-md" *ngFor="let field of config.children">
+    <ng-container
+      webuiFormElement
+      [config]="field"
+      [group]="group"
+      [errors]="errors"
+      (event)="eventHandler($event)"
+      (buttonAction)="buttonActionHandler($event)"
+      [message]="message">
+    </ng-container>
+  </div>
+</div>

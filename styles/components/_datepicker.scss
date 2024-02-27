@@ -1,0 +1,50 @@
+.ngb-dp-week {
+  .btn-primary,
+  .outside,
+  .btn-secondary,
+  .btn-light {
+    border-radius: 50%;
+
+    padding: 7px;
+
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .btn-light {
+    background-color: #fff;
+  }
+
+  .btn-light:hover {
+    color: #212529;
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+  }
+
+  .btn-secondary {
+    color: $gray;
+  }
+
+  .outside {
+    opacity: 0.2;
+  }
+}
+
+.ngb-dp-weekday {
+  font-size: 10px;
+  font-style: normal;
+  line-height: 12px;
+
+  color: $gray !important;
+  opacity: 0.6;
+}
+
+.ngb-dp-month-name {
+  height: auto !important;
+
+  font-size: 16px !important;
+  line-height: 1;
+
+  color: black;
+  opacity: 0.8;
+}

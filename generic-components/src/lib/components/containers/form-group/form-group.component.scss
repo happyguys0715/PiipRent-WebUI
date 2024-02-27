@@ -1,0 +1,32 @@
+@use 'styles/variables' as *;
+
+.mobile {
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 14px;
+  line-height: 18px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  opacity: 0.3;
+  color: $gray;
+
+  .mobile & {
+    margin-bottom: 0;
+
+    opacity: 0.5;
+  }
+}
+
+.normal {
+  margin-bottom: 0;
+
+  font-weight: 400;
+  opacity: 1;
+
+  color: rgba($gray, 0.3);
+}

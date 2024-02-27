@@ -1,0 +1,24 @@
+<div class="filter-element">
+  <webui-filter-header
+    [label]="config.label"
+    [key]="config.key"
+    [resetButton]="!!query"
+    (resetEvent)="resetFilter()"></webui-filter-header>
+
+  <div>
+    <label class="form-element-checkbox">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        hidden
+        #checkbox
+        (ngModelChange)="toggleRange($event)"
+        [(ngModel)]="toggle" />
+      <webui-checkbox [sm]="true" [checked]="toggle"></webui-checkbox>
+      {{ 'search_by_distance' | translate : { Default: 'Search by distance' } }}
+    </label>
+    <div class="px-2 my-3" [hidden]="!toggle">
+      <div id="slider"></div>
+    </div>
+  </div>
+</div>

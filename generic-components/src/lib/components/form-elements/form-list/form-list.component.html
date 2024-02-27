@@ -1,0 +1,115 @@
+<ng-container *ngIf="!this.config.hide">
+  <header class="header">
+    <div class="header__content">
+      <h4 class="headline-4 title mb-0">
+        {{
+          labelTranslateKey
+            | translate : { Default: config.templateOptions?.label }
+        }}
+      </h4>
+      <p class="description mb-0" *ngIf="config.help">
+        {{ helpTranslateKey | translate : { Default: config.help } }}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      webuiSubscriptionRequired
+      class="btn btn-primary py-2 px-4"
+      *ngIf="hasAddButton && !config.templateOptions?.hasButtonInAction"
+      (click)="addObject()">
+      {{
+        config.templateOptions?.add_label || ''
+          | translate : { Default: '+ Add' } || 'Add'
+      }}
+    </button>
+  </header>
+
+  <div>
+    <div class="form" *ngIf="hasAddForm">
+      <webui-generic-form
+        class="block"
+        [delay]="config.delay"
+        [endpoint]="addFormConfig.endpoint"
+        [data]="addFormConfig.data"
+        [metadataQuery]="config.add_metadata_query"
+        (event)="formEvent($event)">
+        <div class="flex">
+          <button
+            webuiSubscriptionRequired
+            type="submit"
+            class="btn btn-primary ml-auto px-4 py-2"
+            [disabled]="saveProcess$ | async">
+            {{ 'add_note' | translate }}
+            <webui-spinner *ngIf="saveProcess$ | async"></webui-spinner>
+          </button>
+        </div>
+      </webui-generic-form>
+    </div>
+
+    <webui-generic-list
+      [endpoint]="config.endpoint"
+      [editEndpoint]="config.edit_endpoint"
+      [query]="query"
+      [inForm]="true"
+      [data]="config.data"
+      [inlineFilters]="config.templateOptions?.inlineFilters"
+      [update]="update"
+      [delay]="config.delay"
+      [responseField]="config.responseField || 'results'"
+      [paginated]="config.paginated"
+      [supportData]="config.supportData"
+      [metaType]="config.metaType"
+      [actions]="config.actions"
+      [allowPermissions]="allowMethods"
+      [metadataQuery]="config.metadata_query"
+      [addMetadataQuery]="config.add_metadata_query"
+      [disableActions]="config.disableActions"
+      [hasButtonInAction]="
+        hasAddButton && config.templateOptions?.hasButtonInAction
+      "
+      [insertData]="config.insertData"
+      (dataLength)="checkCount($event)"
+      (checkedObjects)="checkedHandler($event)"
+      (event)="eventHandler($event)">
+    </webui-generic-list>
+
+    <div class="text-danger my-2" *ngIf="config.message">
+      {{ config.message }}
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #modal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{
+            config.templateOptions?.add_label || ''
+              | translate : { Default: '+ Add' } || 'Add'
+          }}
+        </h5>
+
+        <webui-close-button class="ml-auto"></webui-close-button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <webui-generic-form
+        [delay]="config.delay"
+        [endpoint]="modalData.endpoint"
+        [data]="modalData.data"
+        [metadataQuery]="config.add_metadata_query"
+        (event)="formEvent($event)">
+        <button
+          type="submit"
+          class="btn btn-primary button-save"
+          [disabled]="saveProcess$ | async">
+          {{ 'save' | translate }}
+          <webui-spinner *ngIf="saveProcess$ | async"></webui-spinner>
+        </button>
+      </webui-generic-form>
+    </div>
+  </div>
+</ng-template>

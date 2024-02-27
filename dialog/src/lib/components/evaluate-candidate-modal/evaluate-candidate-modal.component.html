@@ -1,0 +1,25 @@
+<webui-dialog headerTitle="evaluate.label">
+  <div class="content" dialog-content>
+    <webui-timesheet-details-preview
+      [timeSheet]="timeSheet"></webui-timesheet-details-preview>
+
+    <form
+      class="form"
+      *ngIf="formGroup"
+      [formGroup]="formGroup"
+      (ngSubmit)="evaluate()">
+      <webui-rating-control formControlName="rating"></webui-rating-control>
+
+      <footer class="footer">
+        <button
+          class="btn submit-btn"
+          [disabled]="formInvalid || (processing$ | async)"
+          type="submit">
+          {{ 'submit' | translate }}
+
+          <webui-spinner *ngIf="processing$ | async"></webui-spinner>
+        </button>
+      </footer>
+    </form>
+  </div>
+</webui-dialog>

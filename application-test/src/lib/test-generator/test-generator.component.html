@@ -1,0 +1,88 @@
+<section *ngIf="testConfig$ | async as test; else preloader">
+  <header class="header">
+    <h4 class="title">{{ test.name }}</h4>
+  </header>
+
+  <div class="content">
+    <webui-stepper #cdkStepper>
+      <cdk-step *ngFor="let question of test.questions">
+        <p class="description">{{ question.name }}</p>
+
+        <p *ngIf="question.details">
+          {{ question.details }}
+        </p>
+
+        <div class="images" *ngIf="question.pictures.length">
+          <img
+            class="image"
+            *ngFor="let image of question.pictures"
+            [src]="image"
+            alt="" />
+        </div>
+
+        <form
+          class="form"
+          [formGroup]="question.group"
+          [ngSwitch]="question.type">
+          <webui-form-radio-switch
+            *ngSwitchCase="QuestionType.Options"
+            formControlName="answer"
+            [options]="question.options"></webui-form-radio-switch>
+
+          <webui-form-radio-switch
+            *ngSwitchCase="QuestionType.YesNo"
+            formControlName="answer"
+            [options]="question.options"></webui-form-radio-switch>
+
+          <div class="checkboxes" *ngSwitchCase="QuestionType.Checkboxes">
+            <webui-form-checkbox
+              *ngFor="let option of question.options"
+              [formControlName]="option.value"
+              [label]="option.label"></webui-form-checkbox>
+          </div>
+
+          <div class="text" *ngSwitchCase="QuestionType.Text">
+            <webui-form-textarea
+              formControlName="answer_text"
+              label="answer"></webui-form-textarea>
+
+            <webui-form-input-control
+              *ngIf="!skipScore"
+              formControlName="score"
+              label="score"></webui-form-input-control>
+          </div>
+        </form>
+
+        <footer class="footer">
+          <button
+            type="button"
+            class="button-secondary"
+            [disabled]="question.first"
+            cdkStepperPrevious>
+            {{ 'back' | translate }}
+          </button>
+          <button
+            *ngIf="!question.last"
+            type="button"
+            class="button-primary"
+            [disabled]="question.group.invalid"
+            cdkStepperNext>
+            {{ 'next_step' | translate }}
+          </button>
+
+          <button
+            *ngIf="question.last"
+            type="submit"
+            class="button-primary"
+            (click)="sendForm(test.questions)">
+            {{ 'submit' | translate }}
+          </button>
+        </footer>
+      </cdk-step>
+    </webui-stepper>
+  </div>
+</section>
+
+<ng-template #preloader>
+  <webui-loader class="loader"></webui-loader>
+</ng-template>

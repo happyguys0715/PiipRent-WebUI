@@ -1,0 +1,10 @@
+<label class="control" cdk-overlay-origin>
+  <span *ngIf="label" class="control__label">{{ label | translate }}</span>
+  <span class="control__input-wrapper">
+    <textarea
+      [formControl]="control"
+      [attr.placeholder]="placeholder"
+      class="control__input"
+      rows="1"></textarea>
+  </span>
+</label>

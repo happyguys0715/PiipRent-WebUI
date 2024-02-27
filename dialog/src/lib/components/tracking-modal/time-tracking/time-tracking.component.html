@@ -1,0 +1,44 @@
+<div #tracker class="tracking-slider noselect">
+  <span
+    class="marker"
+    webuiSlider
+    (position)="checkPosition($event)"
+    [parentElement]="tracker">
+    <span class="time">
+      {{ convertMomentToString(time) | dateFormat : 'time' }}
+    </span>
+    <webui-fa-icon [icon]="['fas', 'map-marker-alt']"></webui-fa-icon>
+  </span>
+</div>
+
+<div class="tracking-timeline">
+  <div class="circle"><div class="circle-inner"></div></div>
+  <div class="line"></div>
+  <div class="line bg-warning" [ngStyle]="breakStyles"></div>
+  <div class="circle"><div class="circle-inner"></div></div>
+</div>
+
+<div class="tracking-times">
+  <div class="text-left ml-2">
+    <span class="title">Start</span><br />
+    <span class="tracking-time">
+      {{ convertMomentToString(timePoints.start) | dateFormat : 'time' }}</span
+    >
+  </div>
+  <div class="text-center">
+    <span class="title text-warning">Break</span><br />
+    <span class="tracking-time">
+      {{ convertMomentToString(timePoints.break_start) | dateFormat : 'time' }}
+    </span>
+    -
+    <span class="tracking-time">
+      {{ convertMomentToString(timePoints.break_end) | dateFormat : 'time' }}
+    </span>
+  </div>
+  <div class="text-end mr-2">
+    <span class="title">End</span><br />
+    <span class="tracking-time">
+      {{ convertMomentToString(timePoints.end) | dateFormat : 'time' }}
+    </span>
+  </div>
+</div>

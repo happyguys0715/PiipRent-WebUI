@@ -1,0 +1,39 @@
+%flex-center-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+%circle {
+  border-radius: 50%;
+}
+
+%f-w-500 {
+  font-weight: 500;
+}
+
+%f-w-600 {
+  font-weight: 600;
+}
+
+@mixin scrollbar {
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background-color: #e0e0e0;
+  }
+}
+
+.opacity-15 {
+  opacity: 0.15;
+}
+
+.required::after {
+  display: inline-block;
+  content: '*';
+  color: $danger;
+  margin-left: 0.25rem;
+}

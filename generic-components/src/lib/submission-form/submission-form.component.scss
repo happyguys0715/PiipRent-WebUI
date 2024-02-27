@@ -1,0 +1,53 @@
+@use 'styles/variables';
+@use 'styles/mixins';
+
+.buttons {
+  display: flex;
+  padding: 0 1rem;
+  margin-bottom: 1em;
+
+  @include mixins.media-breakpoint-up('md') {
+    & > *:not(:last-child) {
+      margin-right: 1rem;
+    }
+  }
+
+  .btn.active {
+    background-color: darken(variables.$primary, 10%);
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  @include mixins.media-breakpoint-down('sm') {
+    flex-direction: column;
+
+    & > *:not(:last-child) {
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
+.table,
+.table-footer {
+  margin: 0 20px;
+  width: calc(100% - 40px);
+}
+
+.table-footer {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.table td {
+  font-size: 14px;
+  vertical-align: inherit;
+  padding: 0 0.75rem;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+
+  .btn {
+    align-self: flex-end;
+  }
+}

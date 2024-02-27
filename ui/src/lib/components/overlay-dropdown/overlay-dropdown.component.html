@@ -1,0 +1,9 @@
+<div class="w-full" cdk-overlay-origin>
+  <ng-content select="[target]"></ng-content>
+</div>
+
+<ng-template #content let-payload="payload">
+  <div class="autocomplete-dropdown" [class.w-full]="size === 'full'">
+    <ng-content select="[content]"></ng-content>
+  </div>
+</ng-template>

@@ -1,0 +1,56 @@
+<div
+  [class.has-tabs]="hasTabs"
+  [class.edit-form]="this.edit || this.editForm || this.id">
+  <h4 *ngIf="title" class="title">
+    {{ title | translate : { Default: title } }}
+  </h4>
+  <h4 *ngIf="formName" class="form-name">{{ formName | translate }}</h4>
+
+  <div class="flex justify-center" *ngIf="!showForm">
+    <webui-loader></webui-loader>
+  </div>
+  <webui-dynamic-form
+    *ngIf="showForm"
+    [mode]="mode"
+    [config]="metadata"
+    [errors]="errors"
+    [message]="response"
+    [data]="data"
+    [hiddenFields]="hiddenFields"
+    [formId]="formId"
+    (formGroup)="setFormGroup($event)"
+    (submitForm)="submitForm($event)"
+    (event)="eventHandler($event)"
+    (buttonAction)="buttonActionHandler($event)"
+    (changeValue)="parseCheckObject($event)">
+    <ng-content *ngIf="canEdit"></ng-content>
+  </webui-dynamic-form>
+</div>
+
+<ng-template #confirmProfileModal>
+  <div class="modal-content-wrapper">
+    <div class="modal-header-wrapper">
+      <div class="modal-header">
+        <webui-close-button class="close ml-auto"></webui-close-button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p style="text-indent: 12px">
+        Your will buy profile of this candidate on your own risk! R3sourcer will
+        not take any responsibility on accuracy of this profile and actual
+        availability of this candidate! Your saved CC will be charged
+        <strong>{{ modalInfo.amount }}</strong
+        >. Please confirm you understand this!
+      </p>
+    </div>
+    <div class="modal-footer justify-center py-2">
+      <button
+        type="button"
+        class="btn big-btn btn-shadow btn-primary button-save"
+        (click)="confirmCandidateBuy()">
+        Confirm
+        <webui-spinner *ngIf="saveProcess"></webui-spinner>
+      </button>
+    </div>
+  </div>
+</ng-template>

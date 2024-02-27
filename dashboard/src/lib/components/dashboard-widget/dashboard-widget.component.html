@@ -1,0 +1,13 @@
+<section class="widget">
+  <header class="widget-header">
+    <h3 class="widget-name">
+      {{ label.key | translate : { Default: label.value } }}
+    </h3>
+
+    <ng-content select="[header]"></ng-content>
+  </header>
+
+  <div class="widget-body">
+    <ng-content select="[body]"></ng-content>
+  </div>
+</section>

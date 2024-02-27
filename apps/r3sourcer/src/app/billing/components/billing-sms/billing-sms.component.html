@@ -1,0 +1,132 @@
+<div class="group">
+  <div class="group__content">
+    <h5 class="group__label">{{ 'sms_credit_details.label' | translate }}</h5>
+
+    <ng-container *ngIf="smsBalance">
+      <div class="field">
+        <label class="field__label">
+          {{ 'sms_credit_details.charge_rate' | translate }}:
+        </label>
+        <span>
+          {{
+            'sms_credit_details.charge_rate_value'
+              | translate
+                : {
+                    cost: (smsBalance.segment_cost | currency : currency),
+                    amount: 160
+                  }
+          }}
+        </span>
+      </div>
+
+      <div class="field">
+        <label class="field__label">
+          {{ 'sms_credit_details.auto_top_up' | translate }}:
+        </label>
+        <div>
+          <div class="switch">
+            <span class="on" [class.active]="smsBalance.auto_charge">
+              {{ 'on.label' | translate }}
+            </span>
+            /
+            <span class="off" [class.active]="!smsBalance.auto_charge">
+              {{ 'off.label' | translate }}
+            </span>
+          </div>
+          <a href="#" (click)="autoCharge($event)">
+            {{ 'sms_credit_details.action.configure_auto_charge' | translate }}
+          </a>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <ng-container *ngIf="smsBalance">
+    <div class="field group__footer">
+      <label class="field__label">
+        {{ 'sms_credit_details.current_balance' | translate }}:
+      </label>
+      <div class="flex items-center justify-between grow">
+        <span class="balance">
+          {{ smsBalance.balance | currency : currency }}
+        </span>
+        <button
+          type="button"
+          class="btn btn-primary py-2 px-4"
+          (click)="showAddFundsForm()"
+          [disabled]="!cardExist">
+          {{ 'sms_credit_details.action.add_funds' | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #charge>
+  <div class="modal-header-wrapper">
+    <div class="modal-header">
+      <h5 class="modal-title">
+        {{ 'sms_credit_details.auto_charge' | translate }}
+      </h5>
+
+      <webui-close-button class="ml-auto"></webui-close-button>
+    </div>
+  </div>
+
+  <div class="modal-body">
+    <webui-dynamic-form [config]="modalConfig" [form]="group">
+      <div class="text-center">
+        <button
+          type="submit"
+          class="btn big-btn btn-shadow btn-primary button-save mt-3"
+          (click)="saveAutoCharge()">
+          {{ 'save' | translate : { Default: 'Save' } }}
+        </button>
+      </div>
+    </webui-dynamic-form>
+  </div>
+</ng-template>
+
+<ng-template #funds>
+  <div class="modal-header-wrapper">
+    <div class="modal-header">
+      <h5 class="modal-title">
+        {{ 'sms_credit_details.add_funds' | translate }}
+      </h5>
+
+      <webui-close-button class="ml-auto"></webui-close-button>
+    </div>
+  </div>
+
+  <div class="modal-body text-center">
+    <h6>{{ 'sms_credit_details.add_funds_details' | translate }}</h6>
+
+    <div class="flex items-center justify-center">
+      <div class="form-element">
+        <input
+          class="form-control form-element-content"
+          type="number"
+          name="employees"
+          [formControl]="amountControl"
+          min="20"
+          style="width: 70px" />
+      </div>
+      <small class="description">
+        ({{ 'minimum.label' | translate }}
+        {{ minChargeAmount | currency : currency }})
+      </small>
+    </div>
+
+    <h6 class="mt-2">
+      {{ 'sms_credit_details.add_funds_description_second' | translate }}
+    </h6>
+
+    <button
+      type="submit"
+      class="btn big-btn btn-shadow btn-primary button-save mt-3"
+      [disabled]="amountControl.invalid"
+      (click)="addFunds()">
+      {{ 'action.approve' | translate }}
+    </button>
+  </div>
+</ng-template>

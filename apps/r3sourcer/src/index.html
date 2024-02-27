@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-au">
+  <head>
+    <meta charset="utf-8" />
+    <title>PiipAi</title>
+    <base href="/" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Open+Sans:wght@400;600&family=Poppins:wght@500&family=Roboto:wght@400;500;700&family=Source+Sans+Pro:wght@400;600&display=swap"
+      rel="stylesheet" />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/manifest/apple-touch-icon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/manifest/favicon-32x32.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/manifest/favicon-16x16.png" />
+    <link rel="manifest" href="/manifest/site.webmanifest" />
+
+    <style>
+      .preloader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        border-radius: 50%;
+        background-color: #fff;
+        animation: preloader-pulse 1s infinite;
+        transform: translateY(-50%) translateX(-50%);
+        width: 120px;
+        height: 120px;
+      }
+
+      @keyframes preloader-pulse {
+        0% {
+          box-shadow: 0 0 5px rgba(40, 163, 252, 0.3),
+            0 0 5px rgba(40, 163, 252, 0.3);
+        }
+
+        100% {
+          box-shadow: 0 0 5px rgba(40, 163, 252, 0.3),
+            0 0 0 16px rgba(40, 163, 252, 0);
+        }
+      }
+    </style>
+
+    <!-- Hotjar Tracking Code for r3sourcer.com -->
+    <script>
+      (function (h, o, t, j, a, r) {
+        h.hj =
+          h.hj ||
+          function () {
+            (h.hj.q = h.hj.q || []).push(arguments);
+          };
+        h._hjSettings = {
+          hjid: 1184626,
+          hjsv: 6,
+        };
+        a = o.getElementsByTagName('head')[0];
+        r = o.createElement('script');
+        r.async = 1;
+        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+        a.appendChild(r);
+      })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+    </script>
+  </head>
+
+  <body class="r3sourcer">
+    <webui-root>
+      <img
+        class="preloader"
+        src="/assets/img/logo.svg"
+        alt="R3sourcer"
+        width="120"
+        height="120" />
+    </webui-root>
+
+    <script defer rel="preload" src="https://js.stripe.com/v3/"></script>
+    <script
+      defer
+      rel="preload"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0-XgGs0g5awE_VtUh-_oHlU0nzhy4oOM&libraries=places&language=en"></script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+.iti {
+  width: 100%;
+}
+
+.iti input:not(.control__input) {
+  @apply border-0 border-b border-gray-200;
+
+  width: 100%;
+  font-size: 14px;
+
+  .redesign & {
+    border: 1px solid #d3deea;
+    font-size: 1rem;
+    color: #212529;
+  }
+
+  .registration-form *:not(.ui-datebox-container) .form-element & {
+    padding-left: 60px;
+  }
+}
+
+.iti.separate-dial-code .iti__selected-flag {
+  background-color: transparent;
+}
+
+@each $item in $themes {
+  .#{$item}-theme .iti input:focus:not(.control__input) {
+    outline: none;
+    border-color: map-get($theme-colors, $item);
+  }
+}
+
+.iti--allow-dropdown {
+  input[type='tel'] {
+    padding-right: 6px;
+    padding-left: 52px !important;
+    margin-left: 0;
+  }
+}
+.iti--separate-dial-code {
+  input[type='tel']:not(.control__input) {
+    padding-right: 6px;
+    padding-left: 52px !important;
+    margin-left: 0;
+  }
+}

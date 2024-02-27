@@ -1,0 +1,53 @@
+<div *ngIf="!config.hide" class="form-group" style="position: relative">
+  <label [attr.for]="key" *ngIf="config.templateOptions.label">
+    {{ config.templateOptions.label }}
+  </label>
+
+  <div class="form-group">
+    <div
+      class="row mb-2 items-center"
+      *ngFor="let option of optionsArray; let f = first">
+      <div class="col-11 col-md-5">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Label"
+          [(ngModel)]="option.label"
+          (ngModelChange)="updateValue()" />
+      </div>
+      <div class="col-11 col-md-5">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Value"
+          [(ngModel)]="option.value"
+          (ngModelChange)="updateValue()" />
+      </div>
+      <div class="col-1 col-md-2">
+        <webui-fa-icon
+          *ngIf="!f"
+          [icon]="['fas', 'times']"
+          class="icon text-danger"
+          (click)="deleteOption(option)"></webui-fa-icon>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-sm btn-primary" (click)="addOption()">
+    Add Option
+  </button>
+
+  <small class="text-muted" *ngIf="config.templateOptions.description">
+    {{ config.templateOptions.description }}
+  </small>
+  <div *ngIf="errors">
+    <div class="text-danger mt-3" *ngIf="errors[config.key]">
+      {{ errors[config.key] }}
+    </div>
+  </div>
+  <div *ngIf="message">
+    <div *ngIf="message[config.key]" class="text-success mt-1">
+      {{ message[config.key] }}
+    </div>
+  </div>
+</div>

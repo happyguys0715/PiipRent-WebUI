@@ -1,0 +1,31 @@
+{
+  "name": "stepper",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "stepper/src",
+  "prefix": "webui",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "stepper/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["stepper/**/*.ts", "stepper/**/*.html"]
+      }
+    }
+  }
+}

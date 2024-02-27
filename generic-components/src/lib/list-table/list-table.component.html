@@ -1,0 +1,18 @@
+<table сlass="table-sm table-striped" style="width: 100%">
+  <thead class="bg-secondary-300 hidden-sm-down">
+    <tr>
+      <th
+        *ngFor="let field of config.metadata.list.columns"
+        class="align-middle">
+        {{ field.label }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of config.body">
+      <td *ngFor="let cell of row.content" [attr.data-label]="cell.label">
+        <ng-container webuiListElement [config]="cell.content"> </ng-container>
+      </td>
+    </tr>
+  </tbody>
+</table>

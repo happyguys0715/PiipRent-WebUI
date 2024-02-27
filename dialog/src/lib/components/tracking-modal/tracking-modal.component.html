@@ -1,0 +1,33 @@
+<div class="tracking-header">
+  <h5 class="title">Candidate Tracking</h5>
+  <p class="jobsite">{{ jobsite }}</p>
+
+  <webui-close-button
+    class="close ml-2 mt-2"
+    (click)="dismiss()"></webui-close-button>
+</div>
+
+<google-map [height]="320" [center]="center" [zoom]="14">
+  <map-marker *ngIf="markerPosition" [position]="markerPosition"></map-marker>
+  <map-polyline
+    [path]="breakPath"
+    [options]="{ strokeColor: '#FFA236' }"></map-polyline>
+  <map-polyline
+    [path]="path"
+    [options]="{ strokeColor: '#28A3FC' }"></map-polyline>
+</google-map>
+
+<div [class.tracking-desctop]="!isMobile()" [class.pt-4]="isMobile()">
+  <div *ngIf="!isMobile()" class="tracking-title-wrapper">
+    <h5 class="tracking-title">
+      Time and path
+      <span>{{ timePoints.start | dateFormat : 'date' }}</span>
+    </h5>
+    <p class="tracking-description">Moving the time slider and look the path</p>
+  </div>
+
+  <webui-time-tracking
+    [timePoints]="timePoints"
+    (changeTimeTracking)="trackingMarkerCoordinates($event)">
+  </webui-time-tracking>
+</div>

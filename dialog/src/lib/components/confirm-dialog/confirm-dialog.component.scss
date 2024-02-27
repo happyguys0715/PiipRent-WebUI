@@ -1,0 +1,19 @@
+:host {
+  .accept-btn {
+    @apply text-white min-h-[40px] inline-flex justify-center items-center gap-3 px-8 bg-primary rounded-[100px] min-w-[120px] transition-shadow;
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      @apply shadow-none;
+    }
+  }
+
+  .decline-btn {
+    @apply text-black/[0.6] min-h-[40px] inline-flex justify-center items-center gap-3 px-8 border border-gray/[0.3] bg-white rounded-[100px] transition-colors hover:border-gray hover:text-black;
+  }
+}

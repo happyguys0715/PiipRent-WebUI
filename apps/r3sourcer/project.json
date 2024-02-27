@@ -1,0 +1,137 @@
+{
+  "name": "r3sourcer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "webui",
+  "sourceRoot": "apps/r3sourcer/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/r3sourcer",
+        "index": "apps/r3sourcer/src/index.html",
+        "main": "apps/r3sourcer/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/r3sourcer/tsconfig.app.json",
+        "assets": ["apps/r3sourcer/src/manifest", "apps/r3sourcer/src/assets"],
+        "styles": [
+          "node_modules/ngx-toastr/toastr.css",
+          "node_modules/quill/dist/quill.snow.css",
+          "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+          "node_modules/intl-tel-input/build/css/intlTelInput.css",
+          "node_modules/flag-icons/css/flag-icons.min.css",
+          "styles/styles.scss"
+        ],
+        "scripts": ["node_modules/intl-tel-input/build/js/utils.js"],
+        "allowedCommonJsDependencies": ["moment-timezone", "quill"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "6mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "10kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/r3sourcer/src/environments/environment.ts",
+              "with": "apps/r3sourcer/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "stage": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "6mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "10kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/r3sourcer/src/environments/environment.ts",
+              "with": "apps/r3sourcer/src/environments/environment.stage.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "browserTarget": "r3sourcer:build",
+        "proxyConfig": "proxy.conf.json"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "r3sourcer:build:production"
+        },
+        "development": {
+          "browserTarget": "r3sourcer:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "r3sourcer:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "apps/r3sourcer/**/*.ts",
+          "apps/r3sourcer/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/r3sourcer/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "r3sourcer:build"
+      }
+    }
+  }
+}

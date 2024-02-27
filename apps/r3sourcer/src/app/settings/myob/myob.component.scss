@@ -1,0 +1,46 @@
+@use 'styles/variables' as *;
+
+.content {
+  padding: 0 20px;
+}
+
+.connect-btn {
+  min-width: 140px;
+}
+
+p.description {
+  font-size: 14px;
+  color: $info;
+
+  span {
+    font-size: 12px;
+    line-height: 12px;
+    display: inline-block;
+    padding: 0 5px;
+  }
+}
+
+.label {
+  width: 200px;
+}
+
+.form-element {
+  min-width: 136px;
+}
+
+.test-btn {
+  font-size: 12px;
+  line-height: 14px;
+  padding: 2px 20px;
+}
+
+.date {
+  font-size: 14px;
+}
+
+.group-label {
+  font-size: 14px;
+  text-transform: uppercase;
+  opacity: 0.3;
+  font-weight: 600;
+}

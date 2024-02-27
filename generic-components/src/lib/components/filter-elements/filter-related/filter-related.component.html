@@ -1,0 +1,106 @@
+<div class="filter-element">
+  <webui-filter-header
+    [key]="config.key"
+    [label]="config.label"
+    [resetButton]="(hasQuery$ | async) || false"
+    (resetEvent)="resetFilter()"></webui-filter-header>
+
+  <div class="content">
+    <div
+      class="form-control autocomplete-value"
+      #content
+      (click)="onShowOptions()">
+      <ng-container *ngIf="value$ | async as value; else placeholder">
+        <span class="value" *ngIf="value.length > 1">
+          {{ 'status.selected-items' | translate : { count: value.length } }}
+        </span>
+        <span class="value" *ngIf="value.length === 1">
+          {{ value[0].label | apiTranslate | async }}
+        </span>
+      </ng-container>
+
+      <ng-template #placeholder>
+        {{ 'all' | translate }}
+      </ng-template>
+
+      <webui-spinner *ngIf="fetching$ | async; else icon"></webui-spinner>
+
+      <ng-template #icon>
+        <webui-fa-icon icon="chevron-down" class="ml-4"></webui-fa-icon>
+      </ng-template>
+    </div>
+
+    <input
+      [formControl]="searchControl"
+      *ngIf="!config.property && !config.multiple"
+      [class.active]="active$ | async"
+      #search
+      name="search"
+      autocopmlete="off"
+      type="text"
+      class="form-control mb-1 search-control" />
+
+    <form
+      [formGroup]="valueGroup"
+      class="autocomplete"
+      *ngIf="active$ | async"
+      [ngStyle]="getStyle()">
+      <ul *ngIf="config.multiple" class="list-group w-full actions">
+        <li class="default-value">
+          <button class="btn btn-default" type="button" (click)="selectAll()">
+            {{ 'select_all' | translate }}
+          </button>
+          <button class="btn btn-default" type="button" (click)="resetAll()">
+            {{ 'reset_all' | translate }}
+          </button>
+        </li>
+      </ul>
+
+      <div
+        class="autocomplete-list"
+        infinite-scroll
+        [infiniteScrollDistance]="modalScrollDistance"
+        [infiniteScrollThrottle]="modalScrollThrottle"
+        [scrollWindow]="false"
+        (scrolled)="onScrollDown()">
+        <ul *ngIf="options$ | async as options">
+          <li
+            class="autocomplete-item form-check"
+            *ngFor="let option of options">
+            <label class="form-element-checkbox">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                [formControl]="option.control"
+                [hidden]="true" />
+              <webui-checkbox
+                [class.hidden]="!config.multiple"
+                [sm]="true"
+                [checked]="option.control.value"></webui-checkbox>
+
+              {{
+                option.value.label
+                  | apiTranslate : { Default: option.value.Default }
+                  | async
+              }}
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="loading$ | async" class="spinner-content">
+        <webui-spinner></webui-spinner>
+      </div>
+    </form>
+
+    <ng-container *ngIf="config.multiple">
+      <ng-container *ngIf="selectedOptions$ | async as options">
+        <div *ngIf="options.length" class="filter-values">
+          <span class="badge badge-outline" *ngFor="let option of options">
+            {{ option.value.label | apiTranslate | async }}
+          </span>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

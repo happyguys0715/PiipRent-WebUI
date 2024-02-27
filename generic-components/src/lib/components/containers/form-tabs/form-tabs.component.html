@@ -1,0 +1,75 @@
+<div class="form-tabs">
+  <ul ngbNav #nav="ngbNav" [(activeId)]="config.activeId">
+    <ng-container *ngFor="let field of config.children; let i = index">
+      <li
+        [ngbNavItem]="'ngb-tab-' + i"
+        *ngIf="!field.hide && (!config.editForm ? field.main : true)">
+        <a ngbNavLink>
+          {{
+            getTranslateKey(field.translateKey, 'name')
+              | translate
+                : {
+                    Default:
+                      field.name ||
+                      (field.templateOptions && field.templateOptions.label)
+                  }
+          }}
+        </a>
+        <ng-template ngbNavContent>
+          <div
+            class="header"
+            *ngIf="field.main && !isMobileDevice && !config.notEdit">
+            <button
+              type="button"
+              class="btn edit-mode"
+              webuiSubscriptionRequired
+              *ngIf="canUpdate && mode === 'view' && !hideEditButton()"
+              (click)="changeMode(FormMode.Edit)">
+              <webui-fa-icon icon="pencil-alt"></webui-fa-icon>
+              {{ 'edit_mode' | translate : { Default: 'Edit mode' } }}
+            </button>
+
+            <button
+              type="button"
+              class="btn close-btn"
+              webuiSubscriptionRequired
+              *ngIf="mode === 'edit'"
+              (click)="changeMode(FormMode.View)">
+              {{
+                'close_without_save'
+                  | translate : { Default: 'Close without save' }
+              }}
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+              webuiSubscriptionRequired
+              [class.ml-auto]="mode !== 'edit'"
+              *ngIf="mode === 'edit' || !config.editForm"
+              [disabled]="form && form.disableSaveButton">
+              {{
+                mode !== 'edit'
+                  ? ('save' | translate : { Default: 'Save' })
+                  : ('save_changes' | translate : { Default: 'Save changes' })
+              }}
+              <webui-spinner *ngIf="saving"></webui-spinner>
+            </button>
+          </div>
+
+          <ng-container
+            webuiFormElement
+            [config]="field"
+            [group]="group"
+            [errors]="errors"
+            [message]="message"
+            (event)="eventHandler($event)"
+            (buttonAction)="buttonActionHandler($event)">
+          </ng-container>
+        </ng-template>
+      </li>
+    </ng-container>
+  </ul>
+</div>
+
+<div [ngbNavOutlet]="nav" class="mt-8"></div>

@@ -1,0 +1,30 @@
+<div class="form-group" *ngIf="!config.hide">
+  <div #calendar class="vacancy-dates-wrapper">
+    <ngb-datepicker
+      class="text-center"
+      [minDate]="minDate"
+      [markDisabled]="markDisabled"
+      [dayTemplate]="customDay"
+      [displayMonths]="displayMonths"
+      [navigation]="navigation"
+      (dateSelect)="selectVacancyDate($event)">
+    </ngb-datepicker>
+  </div>
+</div>
+
+<ng-template
+  #customDay
+  let-date="date"
+  let-currentMonth="currentMonth"
+  let-selected="selected"
+  let-disabled="disabled"
+  let-focused="focused">
+  <div
+    class="btn-light"
+    [class.today]="isToday(date.month, date.day)"
+    [class.bg-primary]="selected"
+    [class.tex-muted]="date.month !== currentMonth || disabled"
+    [class.outside]="date.month !== currentMonth || disabled">
+    {{ date.day }}
+  </div>
+</ng-template>

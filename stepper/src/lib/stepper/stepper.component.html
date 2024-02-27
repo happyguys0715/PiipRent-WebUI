@@ -1,0 +1,6 @@
+<webui-stepper-indicator
+  class="indicator"
+  [currentStep]="selectedIndex"
+  [stepCount]="steps.length"></webui-stepper-indicator>
+
+<div [ngTemplateOutlet]="selected ? selected.content : null"></div>

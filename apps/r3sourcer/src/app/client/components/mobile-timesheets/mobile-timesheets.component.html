@@ -1,0 +1,26 @@
+<div class="mobile-timesheets">
+  <ul ngbNav>
+    <li [ngbNavItem]="1">
+      <a ngbNavLink>Unapproved timesheets</a>
+      <ng-template ngbNavContent>
+        <webui-generic-list
+          [clientId]="clientId"
+          [inForm]="true"
+          [allowPermissions]="['update', 'delete', 'get', 'post']"
+          endpoint="/hr/timesheets/unapproved/">
+        </webui-generic-list>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="2">
+      <a ngbNavLink>All timesheets</a>
+      <ng-template ngbNavContent>
+        <webui-generic-list
+          [clientId]="clientId"
+          [inForm]="true"
+          [allowPermissions]="['update', 'delete', 'get', 'post']"
+          endpoint="/hr/timesheets/history/">
+        </webui-generic-list>
+      </ng-template>
+    </li>
+  </ul>
+</div>

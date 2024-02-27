@@ -1,0 +1,210 @@
+<div class="group">
+  <div class="group__content">
+    <h5 class="header group__label">
+      <span>{{ 'subscription_details.label' | translate }}</span>
+
+      <ng-container *ngIf="currentPlan">
+        <button type="button" class="btn hov-opacity" (click)="changePlan()">
+          <webui-fa-icon icon="pencil-alt" class="text-success"></webui-fa-icon>
+        </button>
+
+        <button type="button" class="btn hov-opacity" (click)="cancelPlan()">
+          <webui-fa-icon icon="trash" class="text-danger"></webui-fa-icon>
+        </button>
+      </ng-container>
+    </h5>
+
+    <ng-container *ngIf="currentPlan">
+      <div class="field">
+        <label class="field__label">{{ 'price.label' | translate }}:</label>
+        <span>{{ currentPlan.price | currency : currency }}</span>
+      </div>
+      <div class="field">
+        <label class="field__label">{{ 'workers.label' | translate }}:</label>
+        <span>{{ currentPlan.worker_count }}</span>
+      </div>
+      <div class="field">
+        <label class="field__label">{{ 'type.label' | translate }}:</label>
+        <span style="text-transform: capitalize">
+          {{ types[currentPlan.subscription_type] }}
+        </span>
+      </div>
+      <div class="field">
+        <label class="field__label">{{ 'status.label' | translate }}:</label>
+        <span>{{ currentPlan.active && 'Active' }}</span>
+      </div>
+      <div class="field">
+        <label class="field__label">
+          {{ 'current_period_start.label' | translate }}:
+        </label>
+        <span>
+          {{ currentPlan.current_period_start | dateFormat : 'datetime' }}
+        </span>
+      </div>
+      <div class="field">
+        <label class="field__label">
+          {{ 'current_period_end.label' | translate }}:
+        </label>
+        <span>
+          {{ currentPlan.current_period_end | dateFormat : 'datetime' }}
+        </span>
+      </div>
+    </ng-container>
+
+    <div class="flex gap-16 items-end" *ngIf="!currentPlan">
+      <div class="flex flex-col gap-1" *ngIf="!hasSubscriptions">
+        <p *ngIf="trialExpires" class="secondary-title">
+          {{ 'trial_subscription_expires' | translate }}
+        </p>
+
+        <p class="secondary-title" *ngIf="trialExpires">
+          {{ 'date' | translate }}:
+          <b>{{ trialExpires | dateFormat : 'DD/MM/YYYY' }}</b>
+        </p>
+
+        <p class="secondary-title" *ngIf="trialExpires">
+          {{ 'time' | translate }}:
+          <b>{{ trialExpires | dateFormat : 'hh:mm A Z' }}</b>
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary px-4 py-2"
+        [disabled]="!hasAttachedCC"
+        [title]="!hasAttachedCC ? ('message.add_credit_card' | translate) : ''"
+        (click)="setPlan()">
+        {{ 'action.subscribe' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- <button type="button"
+  class="btn btn-sm btn-primary action-button"
+  [disabled]="!cardExist">Save Card</button> -->
+
+<ng-template #subscription>
+  <div class="modal-header-wrapper">
+    <div class="modal-header bg-primary text-white">
+      <h5 class="modal-title mx-auto text-center text-lg font-semibold">
+        {{ 'select_plan.label' | translate }}
+      </h5>
+
+      <!-- <webui-close-button class="ml-auto"></webui-close-button> -->
+    </div>
+  </div>
+
+  <div class="modal-body">
+    <div class="text-center">
+      <p class="secondary-title">{{ 'select_plan.subLabel' | translate }}</p>
+    </div>
+
+    <section class="flex flex-col gap-2 mt-4">
+      <div class="flex items-center gap-2 justify-center">
+        <label class="mb-0" for="employees">
+          {{ 'employees' | translate }}:
+        </label>
+        <input
+          class="border border-primary-light rounded px-2"
+          size="5"
+          type="number"
+          id="employees"
+          [formControl]="workerCountControl" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mt-3">
+        <section
+          class="relative rounded shadow-md p-3 border cursor-pointer border-2"
+          *ngFor="let plan of plans"
+          [class.border-primary]="checkActivePlan(plan)"
+          (click)="selectPlan(plan)">
+          <header>
+            <h4
+              class="text-2xl font-semibold text-center bg-primary -mt-3 -mx-3 pb-3 pt-2 text-white">
+              {{ plan.heading }}
+            </h4>
+
+            <strong
+              class="ribbon ribbon-top-right"
+              *ngIf="plan.discount_comment">
+              <span>
+                {{ plan.discount_comment }}
+                {{
+                  plan.percentage_discount ? plan.percentage_discount + '%' : ''
+                }}
+              </span>
+            </strong>
+
+            <p class="text-sm text-center">{{ plan.heading_tag_line }}</p>
+          </header>
+
+          <div class="flex flex-col mt-3">
+            <p class="text-center text-xl font-bold">
+              {{ planPay(plan) | currency : currency }}
+            </p>
+
+            <p class="text-sm text-center">
+              ({{ planPayYear(plan) | currency : currency }} annually)
+            </p>
+
+            <p class="text-center text-sm">{{ plan.amount_tag_line }}</p>
+
+            <hr class="mt-3" />
+
+            <ul class="flex flex-col gap-2 py-2 w-full" *ngIf="plan.table">
+              <li
+                class="flex items-start justify-center w-full gap-2"
+                *ngFor="let item of plan.table">
+                <span class="text-primary">
+                  <webui-fa-icon icon="check-circle"></webui-fa-icon>
+                </span>
+
+                <span>{{ item }}</span>
+              </li>
+            </ul>
+
+            <hr />
+
+            <p class="text-center mt-2" *ngIf="plan.amount_comment">
+              {{ plan.amount_comment }}
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <footer class="flex flex-col gap-1">
+        <div
+          class="flex items-start gap-2 text-yellow"
+          *ngIf="(workerCountControl.value || 0) > 1000">
+          <span class="inline-flex items-center mt-1">
+            <webui-fa-icon icon="circle-exclamation"></webui-fa-icon>
+          </span>
+
+          <p>
+            {{ 'message.max_employees' | translate }}:
+            <a href="mailto:sales@piipai.com">sales@piipai.com</a>
+          </p>
+        </div>
+
+        <div class="flex items-start gap-2 text-yellow" *ngIf="hasSelectedPlan">
+          <span class="inline-flex items-center mt-1">
+            <webui-fa-icon icon="circle-exclamation"></webui-fa-icon>
+          </span>
+
+          <p>{{ 'change_plan_warning' | translate }}</p>
+        </div>
+
+        <button
+          class="btn btn-shadow btn-primary button-save mt-3 self-center"
+          *ngIf="hasSelectedPlan"
+          type="button"
+          [disabled]="saving$ | async"
+          (click)="savePlan()">
+          {{ 'save' | translate }}
+          <webui-spinner *ngIf="saving$ | async"></webui-spinner>
+        </button>
+      </footer>
+    </section>
+  </div>
+</ng-template>

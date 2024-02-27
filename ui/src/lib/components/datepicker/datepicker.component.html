@@ -1,0 +1,128 @@
+<ng-container *ngIf="isYearRange">
+  <webui-date-range
+    *ngIf="date$ | async as d"
+    [type]="type"
+    [date]="d"
+    (dateChange)="changeCalendar($event)"
+    (click)="changeRange()"></webui-date-range>
+
+  <div class="body">
+    <div class="calendar-row" *ngFor="let row of yearBody">
+      <div class="calendar-item" *ngFor="let month of row">
+        <button
+          type="button"
+          class="btn calendar-button calendar-month"
+          [class.active]="month.active"
+          (click)="changeDate(month.date)">
+          {{ month.label }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="isWeekRange">
+  <webui-date-range
+    *ngIf="date$ | async as d"
+    [type]="dateRange.Month"
+    [date]="d"
+    (dateChange)="changeCalendar($event)"></webui-date-range>
+
+  <div class="body">
+    <div class="calendar-row calendar-header">
+      <div class="calendar-item" *ngFor="let day of monthBody?.header">
+        {{ day }}
+      </div>
+    </div>
+
+    <ng-container *ngIf="showCustomWeek">
+      <div class="calendar-row" *ngFor="let row of monthBody?.body">
+        <div class="calendar-item" *ngFor="let day of row">
+          <span class="description" *ngIf="!day.currentMonth">
+            {{ day.label }}
+          </span>
+          <button
+            *ngIf="day.currentMonth"
+            type="button"
+            class="calendar-button"
+            (click)="setCustomWeek(day.dateMoment)"
+            placement="bottom"
+            webuiTooltip="New start date">
+            {{ day.label }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!showCustomWeek">
+      <div
+        class="calendar-row week"
+        *ngFor="let row of monthBody?.body"
+        (click)="changeDate(row[0].dateMoment)">
+        <div
+          class="calendar-item"
+          *ngFor="let day of row"
+          [class.first]="isFirstActiveDay(day)"
+          [class.last]="isLastActiveDay(day)"
+          [class.active]="isActiveDay(day)">
+          <span class="description" *ngIf="!day.currentMonth">
+            {{ day.label }}
+          </span>
+          <button
+            *ngIf="day.currentMonth"
+            type="button"
+            class="calendar-button"
+            [class.active]="day.active">
+            {{ day.label }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <footer class="footer">
+    <button
+      *ngIf="!showCustomWeek"
+      type="button"
+      class="btn btn-primary"
+      (click)="showCustomWeekCalendar($event)">
+      {{ 'action.custom-week' | translate }}
+    </button>
+    <div
+      *ngIf="showCustomWeek"
+      [innerHTML]="'message.select-start-date' | translate | safeHtml"></div>
+  </footer>
+</ng-container>
+
+<ng-container *ngIf="isDayRange">
+  <webui-date-range
+    *ngIf="date$ | async as d"
+    [type]="dateRange.Month"
+    [date]="d"
+    (dateChange)="changeCalendar($event)"
+    (click)="changeRange()"></webui-date-range>
+
+  <div class="body">
+    <div class="calendar-row calendar-header">
+      <div class="calendar-item" *ngFor="let day of monthBody?.header">
+        {{ day }}
+      </div>
+    </div>
+    <div class="calendar-row" *ngFor="let row of monthBody?.body">
+      <div class="calendar-item" *ngFor="let day of row">
+        <span class="description" *ngIf="!day.currentMonth">
+          {{ day.label }}
+        </span>
+        <button
+          *ngIf="day.currentMonth"
+          type="button"
+          class="calendar-button"
+          [class.active]="day.date === date.format('YYYY-MM-DD')"
+          [class.disabled]="isDisabled(day.dateMoment)"
+          (click)="!isDisabled(day.dateMoment) && changeDate(day.dateMoment)">
+          {{ day.label }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,30 @@
+@use 'styles/variables' as *;
+
+.more {
+  color: $primary;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  max-width: calc(100% - 0.6rem);
+  line-height: 16px;
+
+  &:not(:last-child) {
+    margin-bottom: 0.25rem;
+  }
+}
+
+.label {
+  @apply opacity-50;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  white-space: nowrap;
+}
+
+.amount {
+  width: 2rem;
+  margin-left: 0.5rem;
+}
